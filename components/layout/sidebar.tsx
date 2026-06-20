@@ -14,6 +14,7 @@ import {
   ChevronDown,
   Building2,
   Zap,
+  Megaphone,
 } from 'lucide-react';
 import { cn, getInitials, avatarColor } from '@/lib/utils';
 import { useAuth } from '@/contexts/auth-context';
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { href: '/leads', label: 'Leads', icon: Users },
   { href: '/inbox', label: 'Inbox', icon: MessageSquare },
   { href: '/appointments', label: 'Appointments', icon: Calendar },
+  { href: '/campaigns', label: 'Campaigns', icon: Megaphone },
   { href: '/knowledge-base', label: 'Knowledge Base', icon: BookOpen },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
 ];

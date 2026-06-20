@@ -11,6 +11,14 @@ export interface BusinessMember {
   addedAt: string;
 }
 
+export interface WhatsAppTemplate {
+  name: string;
+  language: string;
+  bodyPreview: string;
+  variableCount: number;
+  createdAt: string;
+}
+
 export interface Business {
   _id: string;
   businessName: string;
@@ -19,6 +27,7 @@ export interface Business {
   timezone: string;
   ownerId: string | { _id: string; name: string; email: string };
   members?: BusinessMember[];
+  whatsappTemplates?: WhatsAppTemplate[];
   createdAt: string;
   updatedAt: string;
 }
@@ -117,6 +126,33 @@ export interface Availability {
   startTime: string;
   endTime: string;
   isAvailable: boolean;
+}
+
+export interface Campaign {
+  _id: string;
+  businessId: string;
+  templateName: string;
+  language: string;
+  segment: {
+    leadIds?: string[];
+    status?: string;
+    source?: string;
+    intentTag?: string;
+  };
+  status: 'draft' | 'sending' | 'completed' | 'failed';
+  stats: { total: number; sent: number; failed: number };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CampaignRecipient {
+  _id: string;
+  campaignId: string;
+  leadId: Lead | string;
+  phone: string;
+  status: 'pending' | 'sent' | 'failed';
+  error?: string;
+  sentAt?: string;
 }
 
 export interface ApiResponse<T> {

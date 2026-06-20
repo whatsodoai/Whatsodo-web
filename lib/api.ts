@@ -91,6 +91,36 @@ export const api = {
       method: 'DELETE',
     }),
 
+  addTemplate: (businessId: string, data: { name: string; language: string; bodyPreview?: string; variableCount?: number }) =>
+    request<import('@/types').WhatsAppTemplate[]>(`/business/${businessId}/templates`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  removeTemplate: (businessId: string, templateName: string) =>
+    request<import('@/types').WhatsAppTemplate[]>(
+      `/business/${businessId}/templates/${encodeURIComponent(templateName)}`,
+      { method: 'DELETE' }
+    ),
+
+  // ── Campaigns ─────────────────────────────────────────────────────────────
+  createCampaign: (data: {
+    businessId: string;
+    templateName: string;
+    language: string;
+    leadIds?: string[];
+    filter?: { status?: string; source?: string; intentTag?: string };
+    variables?: string[];
+  }) => request<import('@/types').Campaign>('/campaigns', { method: 'POST', body: JSON.stringify(data) }),
+
+  getCampaigns: (businessId: string) =>
+    request<import('@/types').Campaign[]>(`/campaigns/${businessId}`),
+
+  getCampaign: (businessId: string, campaignId: string) =>
+    request<{ campaign: import('@/types').Campaign; recipients: import('@/types').CampaignRecipient[] }>(
+      `/campaigns/${businessId}/${campaignId}`
+    ),
+
   // ── Dashboard ─────────────────────────────────────────────────────────────
   getDashboardSummary: (businessId: string) =>
     request<import('@/types').DashboardSummary>(`/dashboard/summary/${businessId}`),

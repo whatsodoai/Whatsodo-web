@@ -15,6 +15,8 @@ import {
   List,
   Pencil,
   Trash2,
+  Send,
+  X,
 } from 'lucide-react';
 import {
   cn,
@@ -26,6 +28,7 @@ import {
 } from '@/lib/utils';
 import { AddLeadModal } from './add-lead-modal';
 import { EditLeadModal } from './edit-lead-modal';
+import { BroadcastModal } from './broadcast-modal';
 
 const STATUS_COLUMNS: LeadStatus[] = [
   'New Lead',
@@ -67,11 +70,15 @@ function TableView({
   onStatusChange,
   onEdit,
   onDelete,
+  selectedIds,
+  onToggleSelect,
 }: {
   leads: Lead[];
   onStatusChange: (id: string, status: LeadStatus) => void;
   onEdit: (lead: Lead) => void;
   onDelete: (id: string, name: string) => void;
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
 }) {
   return (
     <div className="card">
@@ -79,6 +86,7 @@ function TableView({
         <table className="w-full min-w-[640px]">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100">
+              <th className="px-4 py-3.5 w-10" />
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-5 py-3.5">
                 Lead
               </th>
@@ -103,6 +111,14 @@ function TableView({
           <tbody>
             {leads.map((lead) => (
               <tr key={lead._id} className="table-row">
+                <td className="px-4 py-3.5">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(lead._id)}
+                    onChange={() => onToggleSelect(lead._id)}
+                    className="w-4 h-4 rounded border-gray-300 accent-green-500 cursor-pointer"
+                  />
+                </td>
                 <td className="px-5 py-3.5">
                   <Link
                     href={`/leads/${lead._id}`}
@@ -312,6 +328,17 @@ export default function LeadsPage() {
   const [sourceFilter, setSourceFilter] = useState<string>('All');
   const [showAdd, setShowAdd] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [showBroadcast, setShowBroadcast] = useState(false);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const fetchLeads = async () => {
     if (!activeBusiness) return;
@@ -376,6 +403,27 @@ export default function LeadsPage() {
           <UserPlus size={15} /> Add Lead
         </button>
       </div>
+
+      {/* Bulk action bar */}
+      {selectedIds.size > 0 && (
+        <div className="flex items-center justify-between bg-gray-900 text-white rounded-xl px-4 py-3">
+          <span className="text-sm font-medium">{selectedIds.size} lead{selectedIds.size > 1 ? 's' : ''} selected</span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowBroadcast(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-green-500 hover:bg-green-600 transition-colors"
+            >
+              <Send size={14} /> Send Broadcast
+            </button>
+            <button
+              onClick={() => setSelectedIds(new Set())}
+              className="p-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
@@ -468,6 +516,8 @@ export default function LeadsPage() {
           onStatusChange={handleStatusChange}
           onEdit={setEditingLead}
           onDelete={handleDelete}
+          selectedIds={selectedIds}
+          onToggleSelect={toggleSelect}
         />
       ) : (
         <KanbanView
@@ -491,6 +541,15 @@ export default function LeadsPage() {
           lead={editingLead}
           onClose={() => setEditingLead(null)}
           onSaved={fetchLeads}
+        />
+      )}
+
+      {showBroadcast && activeBusiness && (
+        <BroadcastModal
+          businessId={activeBusiness._id}
+          leadIds={Array.from(selectedIds)}
+          onClose={() => setShowBroadcast(false)}
+          onSent={() => setSelectedIds(new Set())}
         />
       )}
     </div>

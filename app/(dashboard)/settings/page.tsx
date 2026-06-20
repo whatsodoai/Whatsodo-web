@@ -22,6 +22,7 @@ import {
   Trash2,
   Copy,
   Check,
+  MessageSquare,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -50,7 +51,7 @@ function CopyField({ label, value, hint }: { label: string; value: string; hint?
   );
 }
 
-type Tab = 'business' | 'whatsapp' | 'availability' | 'ai' | 'team' | 'account';
+type Tab = 'business' | 'whatsapp' | 'availability' | 'ai' | 'team' | 'templates' | 'account';
 
 const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: 'business', label: 'Business Profile', icon: Building2 },
@@ -58,6 +59,7 @@ const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: 'availability', label: 'Availability', icon: Clock },
   { id: 'ai', label: 'AI Settings', icon: Bot },
   { id: 'team', label: 'Team', icon: Users },
+  { id: 'templates', label: 'Templates', icon: MessageSquare },
   { id: 'account', label: 'Account', icon: User },
 ];
 
@@ -122,7 +124,7 @@ export default function SettingsPage() {
   }, [activeBusiness]);
 
   useEffect(() => {
-    if (activeTab === 'team') fetchTeamBusiness();
+    if (activeTab === 'team' || activeTab === 'templates') fetchTeamBusiness();
   }, [activeTab, fetchTeamBusiness]);
 
   const handleInvite = async () => {
@@ -144,6 +146,45 @@ export default function SettingsPage() {
     if (!activeBusiness) return;
     try {
       await api.removeBusinessMember(activeBusiness._id, userId);
+      fetchTeamBusiness();
+    } catch {
+      // noop
+    }
+  };
+
+  const [templateForm, setTemplateForm] = useState({
+    name: '',
+    language: 'en_US',
+    bodyPreview: '',
+    variableCount: '0',
+  });
+  const [templateSaving, setTemplateSaving] = useState(false);
+  const [templateError, setTemplateError] = useState('');
+
+  const handleAddTemplate = async () => {
+    if (!activeBusiness || !templateForm.name.trim()) return;
+    setTemplateSaving(true);
+    setTemplateError('');
+    try {
+      await api.addTemplate(activeBusiness._id, {
+        name: templateForm.name.trim(),
+        language: templateForm.language.trim() || 'en_US',
+        bodyPreview: templateForm.bodyPreview,
+        variableCount: parseInt(templateForm.variableCount) || 0,
+      });
+      setTemplateForm({ name: '', language: 'en_US', bodyPreview: '', variableCount: '0' });
+      fetchTeamBusiness();
+    } catch (err: unknown) {
+      setTemplateError(err instanceof Error ? err.message : 'Failed to add template');
+    } finally {
+      setTemplateSaving(false);
+    }
+  };
+
+  const handleRemoveTemplate = async (name: string) => {
+    if (!activeBusiness) return;
+    try {
+      await api.removeTemplate(activeBusiness._id, name);
       fetchTeamBusiness();
     } catch {
       // noop
@@ -921,6 +962,133 @@ export default function SettingsPage() {
                   <p><strong>Agent</strong> — View and reply to leads/inbox, assign leads to themselves</p>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Templates */}
+          {activeTab === 'templates' && (
+            <div className="card p-6">
+              <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100">
+                <div className="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <h2 className="font-bold text-gray-900">WhatsApp Message Templates</h2>
+                  <p className="text-gray-400 text-sm">
+                    Register templates already approved in your Meta Business Manager so you can use them for broadcast campaigns
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl mb-5">
+                <p className="text-amber-800 text-xs leading-relaxed">
+                  Meta only allows free-form replies within 24 hours of a customer&apos;s last message. To message
+                  leads outside that window (e.g. re-engaging cold leads), you must use a pre-approved <strong>template</strong>.
+                  Create and get templates approved in <strong>Meta Business Manager → WhatsApp Manager → Message Templates</strong> first,
+                  then register the exact name and language code here.
+                </p>
+              </div>
+
+              {templateError && (
+                <div className="flex items-center gap-2 p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm mb-5">
+                  <AlertCircle size={16} /> {templateError}
+                </div>
+              )}
+
+              <div className="space-y-3 mb-6">
+                {teamBusiness?.whatsappTemplates?.length ? (
+                  teamBusiness.whatsappTemplates.map((t) => (
+                    <div
+                      key={t.name}
+                      className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-900">{t.name}</p>
+                        <p className="text-xs text-gray-400 truncate">{t.bodyPreview || 'No preview saved'}</p>
+                      </div>
+                      <span className="text-xs font-medium text-gray-600 bg-gray-200 px-2.5 py-1 rounded-full">
+                        {t.language}
+                      </span>
+                      {t.variableCount > 0 && (
+                        <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2.5 py-1 rounded-full">
+                          {t.variableCount} var{t.variableCount > 1 ? 's' : ''}
+                        </span>
+                      )}
+                      {isOwner && (
+                        <button
+                          onClick={() => handleRemoveTemplate(t.name)}
+                          className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                          title="Remove"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-400 text-center py-4">No templates registered yet</p>
+                )}
+              </div>
+
+              {isOwner ? (
+                <div className="border-t border-gray-100 pt-6">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Register a Template</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5">Template Name</label>
+                      <input
+                        value={templateForm.name}
+                        onChange={(e) => setTemplateForm({ ...templateForm, name: e.target.value })}
+                        placeholder="order_update"
+                        className="input font-mono text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5">Language Code</label>
+                      <input
+                        value={templateForm.language}
+                        onChange={(e) => setTemplateForm({ ...templateForm, language: e.target.value })}
+                        placeholder="en_US"
+                        className="input font-mono text-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="mb-3">
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Body Preview (for your reference)</label>
+                    <input
+                      value={templateForm.bodyPreview}
+                      onChange={(e) => setTemplateForm({ ...templateForm, bodyPreview: e.target.value })}
+                      placeholder="Hi {{1}}, your order is on its way!"
+                      className="input text-sm"
+                    />
+                  </div>
+                  <div className="mb-4 w-40">
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5"># of Variables</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={templateForm.variableCount}
+                      onChange={(e) => setTemplateForm({ ...templateForm, variableCount: e.target.value })}
+                      className="input text-sm"
+                    />
+                  </div>
+                  <button
+                    onClick={handleAddTemplate}
+                    disabled={templateSaving || !templateForm.name.trim()}
+                    className={cn('btn-primary', templateSaving && 'opacity-70')}
+                  >
+                    {templateSaving ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <><Plus size={15} /> Register Template</>
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <div className="border-t border-gray-100 pt-6">
+                  <p className="text-sm text-gray-400">Only the business owner can register or remove templates.</p>
+                </div>
+              )}
             </div>
           )}
 
