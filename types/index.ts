@@ -1,10 +1,14 @@
 export interface User {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   role: string;
-  createdAt: string;
-  updatedAt: string;
+}
+
+export interface BusinessMember {
+  userId: string | { _id: string; name: string; email: string };
+  role: 'admin' | 'agent';
+  addedAt: string;
 }
 
 export interface Business {
@@ -13,7 +17,8 @@ export interface Business {
   industry: string;
   whatsappNumber: string;
   timezone: string;
-  ownerId: string;
+  ownerId: string | { _id: string; name: string; email: string };
+  members?: BusinessMember[];
   createdAt: string;
   updatedAt: string;
 }
@@ -38,6 +43,7 @@ export interface Lead {
   notes?: string;
   intentTag?: 'hot' | 'warm' | 'cold';
   intentScore?: number;
+  assignedTo?: string | null;
   createdAt: string;
   updatedAt: string;
 }

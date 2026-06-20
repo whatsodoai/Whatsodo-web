@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useBusiness } from '@/contexts/business-context';
 import { useAuth } from '@/contexts/auth-context';
 import { api } from '@/lib/api';
-import { Availability } from '@/types';
+import { Availability, Business as BusinessType } from '@/types';
 import {
   Building2,
   Smartphone,
@@ -98,10 +98,57 @@ export default function SettingsPage() {
   });
 
   const [teamInviteEmail, setTeamInviteEmail] = useState('');
-  const [teamInviteRole, setTeamInviteRole] = useState('Sales');
-  const [teamMembers] = useState([
-    { name: user?.name || 'Owner', email: user?.email || '', role: 'Admin', status: 'Active' },
-  ]);
+  const [teamInviteRole, setTeamInviteRole] = useState<'admin' | 'agent'>('agent');
+  const [teamBusiness, setTeamBusiness] = useState<BusinessType | null>(null);
+  const [teamLoading, setTeamLoading] = useState(false);
+  const [teamInviting, setTeamInviting] = useState(false);
+  const [teamError, setTeamError] = useState('');
+
+  const isOwner =
+    !!activeBusiness &&
+    !!user &&
+    (typeof activeBusiness.ownerId === 'string'
+      ? activeBusiness.ownerId === user.id
+      : activeBusiness.ownerId._id === user.id);
+
+  const fetchTeamBusiness = useCallback(() => {
+    if (!activeBusiness) return;
+    setTeamLoading(true);
+    api
+      .getBusiness(activeBusiness._id)
+      .then(setTeamBusiness)
+      .catch(() => {})
+      .finally(() => setTeamLoading(false));
+  }, [activeBusiness]);
+
+  useEffect(() => {
+    if (activeTab === 'team') fetchTeamBusiness();
+  }, [activeTab, fetchTeamBusiness]);
+
+  const handleInvite = async () => {
+    if (!activeBusiness || !teamInviteEmail.trim()) return;
+    setTeamInviting(true);
+    setTeamError('');
+    try {
+      await api.addBusinessMember(activeBusiness._id, teamInviteEmail.trim(), teamInviteRole);
+      setTeamInviteEmail('');
+      fetchTeamBusiness();
+    } catch (err: unknown) {
+      setTeamError(err instanceof Error ? err.message : 'Failed to invite');
+    } finally {
+      setTeamInviting(false);
+    }
+  };
+
+  const handleRemoveMember = async (userId: string) => {
+    if (!activeBusiness) return;
+    try {
+      await api.removeBusinessMember(activeBusiness._id, userId);
+      fetchTeamBusiness();
+    } catch {
+      // noop
+    }
+  };
 
   const [waDefaults, setWaDefaults] = useState<{
     webhookUrl: string;
@@ -757,70 +804,121 @@ export default function SettingsPage() {
                 </div>
               </div>
 
+              {teamError && (
+                <div className="flex items-center gap-2 p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm mb-5">
+                  <AlertCircle size={16} /> {teamError}
+                </div>
+              )}
+
               <div className="space-y-3 mb-6">
-                {teamMembers.map((member) => (
-                  <div
-                    key={member.email}
-                    className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50"
-                  >
+                {/* Owner row */}
+                {teamBusiness && (
+                  <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                      {member.name.charAt(0)}
+                      {(typeof teamBusiness.ownerId === 'string' ? user?.name : teamBusiness.ownerId.name)?.charAt(0) || 'O'}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900">{member.name}</p>
-                      <p className="text-xs text-gray-400">{member.email}</p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {typeof teamBusiness.ownerId === 'string' ? user?.name : teamBusiness.ownerId.name}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {typeof teamBusiness.ownerId === 'string' ? user?.email : teamBusiness.ownerId.email}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-green-600 bg-green-100 px-2.5 py-1 rounded-full">
-                        {member.status}
-                      </span>
-                      <span className="text-xs font-medium text-purple-600 bg-purple-100 px-2.5 py-1 rounded-full">
+                    <span className="text-xs font-medium text-purple-600 bg-purple-100 px-2.5 py-1 rounded-full">
+                      Owner
+                    </span>
+                  </div>
+                )}
+
+                {teamBusiness?.members?.map((member) => {
+                  const m = typeof member.userId === 'string' ? null : member.userId;
+                  const memberId = typeof member.userId === 'string' ? member.userId : member.userId._id;
+                  return (
+                    <div
+                      key={memberId}
+                      className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                        {m?.name.charAt(0) || '?'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-900">{m?.name}</p>
+                        <p className="text-xs text-gray-400">{m?.email}</p>
+                      </div>
+                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2.5 py-1 rounded-full capitalize">
                         {member.role}
                       </span>
+                      {isOwner && (
+                        <button
+                          onClick={() => handleRemoveMember(memberId)}
+                          className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                          title="Remove"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
+
+                {teamLoading && (
+                  <p className="text-xs text-gray-400 text-center py-2">Loading team...</p>
+                )}
               </div>
 
-              <div className="border-t border-gray-100 pt-6">
-                <h3 className="text-sm font-semibold text-gray-900 mb-4">Invite Team Member</h3>
-                <div className="flex gap-3 flex-wrap">
-                  <div className="relative flex-1 min-w-48">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
-                      type="email"
-                      value={teamInviteEmail}
-                      onChange={(e) => setTeamInviteEmail(e.target.value)}
-                      placeholder="colleague@company.com"
-                      className="input pl-9"
-                    />
+              {isOwner ? (
+                <div className="border-t border-gray-100 pt-6">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Invite Team Member</h3>
+                  <div className="flex gap-3 flex-wrap">
+                    <div className="relative flex-1 min-w-48">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="email"
+                        value={teamInviteEmail}
+                        onChange={(e) => setTeamInviteEmail(e.target.value)}
+                        placeholder="colleague@company.com"
+                        className="input pl-9"
+                      />
+                    </div>
+                    <select
+                      value={teamInviteRole}
+                      onChange={(e) => setTeamInviteRole(e.target.value as 'admin' | 'agent')}
+                      className="input w-36"
+                    >
+                      <option value="agent">Agent</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                    <button
+                      onClick={handleInvite}
+                      disabled={teamInviting || !teamInviteEmail.trim()}
+                      className={cn('btn-primary', teamInviting && 'opacity-70')}
+                    >
+                      {teamInviting ? (
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (
+                        <><Plus size={15} /> Send Invite</>
+                      )}
+                    </button>
                   </div>
-                  <select
-                    value={teamInviteRole}
-                    onChange={(e) => setTeamInviteRole(e.target.value)}
-                    className="input w-36"
-                  >
-                    <option>Sales</option>
-                    <option>Manager</option>
-                    <option>Admin</option>
-                  </select>
-                  <button className="btn-primary">
-                    <Plus size={15} /> Send Invite
-                  </button>
+                  <p className="text-xs text-gray-400 mt-2">
+                    They must already have a Whatsodo account with this email — ask them to sign up first if the invite fails.
+                  </p>
                 </div>
-                <p className="text-xs text-gray-400 mt-2">
-                  They&apos;ll receive an email invitation to join this business workspace.
-                </p>
-              </div>
+              ) : (
+                <div className="border-t border-gray-100 pt-6">
+                  <p className="text-sm text-gray-400">Only the business owner can invite or remove team members.</p>
+                </div>
+              )}
 
               <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl">
                 <p className="text-blue-800 font-semibold text-sm mb-2 flex items-center gap-2">
                   <Shield size={14} /> Role Permissions
                 </p>
                 <div className="space-y-1.5 text-xs text-blue-700">
-                  <p><strong>Admin</strong> — Full access: settings, team, all data</p>
-                  <p><strong>Manager</strong> — View reports, manage leads and appointments</p>
-                  <p><strong>Sales</strong> — Manage assigned leads and inbox only</p>
+                  <p><strong>Owner</strong> — Full access: WhatsApp credentials, team, billing, all data</p>
+                  <p><strong>Admin</strong> — Manage leads, appointments, and the inbox (same as agent for now)</p>
+                  <p><strong>Agent</strong> — View and reply to leads/inbox, assign leads to themselves</p>
                 </div>
               </div>
             </div>

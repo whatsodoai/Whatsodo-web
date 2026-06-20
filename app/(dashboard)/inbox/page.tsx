@@ -3,8 +3,9 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useBusiness } from '@/contexts/business-context';
+import { useAuth } from '@/contexts/auth-context';
 import { api } from '@/lib/api';
-import { InboxItem, Message, Lead } from '@/types';
+import { InboxItem, Message, Lead, BusinessMember } from '@/types';
 import {
   Search,
   MessageSquare,
@@ -31,8 +32,14 @@ import Link from 'next/link';
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
+interface TeamOption {
+  id: string;
+  name: string;
+}
+
 export default function InboxPage() {
   const { activeBusiness } = useBusiness();
+  const { user } = useAuth();
   const [inbox, setInbox] = useState<InboxItem[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -43,6 +50,8 @@ export default function InboxPage() {
   const [sending, setSending] = useState(false);
   const [draft, setDraft] = useState('');
   const [connected, setConnected] = useState(false);
+  const [teamOptions, setTeamOptions] = useState<TeamOption[]>([]);
+  const [onlyAssignedToMe, setOnlyAssignedToMe] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
   const selectedPhoneRef = useRef<string | null>(null);
@@ -72,6 +81,22 @@ export default function InboxPage() {
     const timer = setInterval(fetchInbox, 30000);
     return () => clearInterval(timer);
   }, [activeBusiness, fetchInbox]);
+
+  // Team members (for the "Assign to" dropdown)
+  useEffect(() => {
+    if (!activeBusiness) return;
+    api
+      .getBusiness(activeBusiness._id)
+      .then((biz) => {
+        const owner =
+          typeof biz.ownerId === 'string' ? null : { id: biz.ownerId._id, name: biz.ownerId.name };
+        const members = (biz.members || []).map((m: BusinessMember) =>
+          typeof m.userId === 'string' ? null : { id: m.userId._id, name: m.userId.name }
+        );
+        setTeamOptions([owner, ...members].filter((o): o is TeamOption => !!o));
+      })
+      .catch(() => {});
+  }, [activeBusiness]);
 
   // Socket.io connection
   useEffect(() => {
@@ -157,13 +182,26 @@ export default function InboxPage() {
     } catch {}
   };
 
-  const filteredInbox = inbox.filter(
-    (i) =>
+  const handleAssignChange = async (leadId: string, userId: string) => {
+    try {
+      await api.assignLead(leadId, userId || null);
+      setLeads((prev) => prev.map((l) => (l._id === leadId ? { ...l, assignedTo: userId || null } : l)));
+    } catch {}
+  };
+
+  const filteredInbox = inbox.filter((i) => {
+    const matchesSearch =
       search === '' ||
       (i.leadName || '').toLowerCase().includes(search.toLowerCase()) ||
       i.phone.includes(search) ||
-      i.lastMessage.toLowerCase().includes(search.toLowerCase())
-  );
+      i.lastMessage.toLowerCase().includes(search.toLowerCase());
+    if (!matchesSearch) return false;
+    if (onlyAssignedToMe) {
+      const lead = leads.find((l) => l.phone === i.phone);
+      if (lead?.assignedTo !== user?.id) return false;
+    }
+    return true;
+  });
 
   return (
     <div className="flex h-[calc(100vh-4rem)] bg-gray-50">
@@ -190,6 +228,28 @@ export default function InboxPage() {
               className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-400 transition-all"
             />
           </div>
+          {teamOptions.length > 1 && (
+            <div className="flex items-center gap-1.5 mt-2">
+              <button
+                onClick={() => setOnlyAssignedToMe(false)}
+                className={cn(
+                  'text-xs font-medium px-2.5 py-1 rounded-full transition-colors',
+                  !onlyAssignedToMe ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                )}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setOnlyAssignedToMe(true)}
+                className={cn(
+                  'text-xs font-medium px-2.5 py-1 rounded-full transition-colors',
+                  onlyAssignedToMe ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                )}
+              >
+                Assigned to me
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Conversation List */}
@@ -476,6 +536,22 @@ export default function InboxPage() {
                 ))}
               </select>
             </div>
+
+            {teamOptions.length > 1 && (
+              <div>
+                <label className="block text-xs text-gray-400 mb-1.5">Assigned to</label>
+                <select
+                  value={selectedLead.assignedTo || ''}
+                  onChange={(e) => handleAssignChange(selectedLead._id, e.target.value)}
+                  className="input text-sm"
+                >
+                  <option value="">Unassigned</option>
+                  {teamOptions.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div className="space-y-3 text-sm pt-2">
               {[

@@ -78,6 +78,19 @@ export const api = {
       `/business/whatsapp-defaults?businessId=${businessId}`
     ),
 
+  getBusiness: (id: string) => request<import('@/types').Business>(`/business/${id}`),
+
+  addBusinessMember: (businessId: string, email: string, role: 'admin' | 'agent') =>
+    request<{ userId: string; name: string; email: string; role: string }>(
+      `/business/${businessId}/members`,
+      { method: 'POST', body: JSON.stringify({ email, role }) }
+    ),
+
+  removeBusinessMember: (businessId: string, userId: string) =>
+    request<import('@/types').Business>(`/business/${businessId}/members/${userId}`, {
+      method: 'DELETE',
+    }),
+
   // ── Dashboard ─────────────────────────────────────────────────────────────
   getDashboardSummary: (businessId: string) =>
     request<import('@/types').DashboardSummary>(`/dashboard/summary/${businessId}`),
@@ -103,6 +116,12 @@ export const api = {
 
   deleteLead: (id: string) =>
     request<{ success: boolean }>(`/leads/${id}`, { method: 'DELETE' }),
+
+  assignLead: (leadId: string, userId: string | null) =>
+    request<import('@/types').Lead>(`/leads/${leadId}/assign`, {
+      method: 'PATCH',
+      body: JSON.stringify({ userId }),
+    }),
 
   // ── Inbox ─────────────────────────────────────────────────────────────────
   getInbox: (businessId: string) =>
