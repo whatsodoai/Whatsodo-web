@@ -23,6 +23,20 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return (json.data !== undefined ? json.data : json) as T;
 }
 
+async function requestFormData<T>(path: string, formData: FormData): Promise<T> {
+  const token = getToken();
+  const headers: Record<string, string> = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(`${BASE_URL}${path}`, { method: 'POST', headers, body: formData });
+  const json = await res.json();
+
+  if (!res.ok) {
+    throw new Error(json.message || `Request failed: ${res.status}`);
+  }
+  return (json.data !== undefined ? json.data : json) as T;
+}
+
 export const api = {
   // ── Auth ──────────────────────────────────────────────────────────────────
   login: async (email: string, password: string) => {
@@ -69,6 +83,8 @@ export const api = {
     whatsappAccessToken?: string;
     whatsappPhoneNumberId?: string;
     whatsappVerifyToken?: string;
+    whatsappBusinessAccountId?: string;
+    whatsappAppId?: string;
   }) => request<import('@/types').Business>(`/business/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
 
   getBusinesses: () => request<import('@/types').Business[]>('/business'),
@@ -102,6 +118,17 @@ export const api = {
       `/business/${businessId}/templates/${encodeURIComponent(templateName)}`,
       { method: 'DELETE' }
     ),
+
+  addCarouselTemplate: (businessId: string, data: {
+    name: string;
+    language: string;
+    bodyText: string;
+    cards: import('@/types').CarouselCard[];
+  }) =>
+    request<import('@/types').WhatsAppTemplate[]>(`/business/${businessId}/templates/carousel`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 
   // ── Campaigns ─────────────────────────────────────────────────────────────
   createCampaign: (data: {
@@ -166,6 +193,22 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ businessId, phone, message }),
     }),
+
+  sendMediaMessage: (businessId: string, phone: string, file: File, caption?: string) => {
+    const formData = new FormData();
+    formData.append('businessId', businessId);
+    formData.append('phone', phone);
+    if (caption) formData.append('caption', caption);
+    formData.append('file', file);
+    return requestFormData<import('@/types').Message>('/messages/send-media', formData);
+  },
+
+  // ── Uploads ───────────────────────────────────────────────────────────────
+  uploadFile: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return requestFormData<{ url: string }>('/uploads', formData);
+  },
 
   // ── Appointments ──────────────────────────────────────────────────────────
   getAppointments: (businessId: string) =>

@@ -18,6 +18,10 @@ import {
   Smile,
   Wifi,
   WifiOff,
+  Paperclip,
+  FileText,
+  Play,
+  X,
 } from 'lucide-react';
 import {
   cn,
@@ -37,6 +41,40 @@ interface TeamOption {
   name: string;
 }
 
+const YOUTUBE_URL_REGEX = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{6,})/;
+
+function YouTubePreview({ text }: { text: string }) {
+  const match = text.match(YOUTUBE_URL_REGEX);
+  if (!match) return null;
+  const videoId = match[1];
+  const url = `https://www.youtube.com/watch?v=${videoId}`;
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-2 block rounded-xl overflow-hidden border border-gray-200 bg-white hover:opacity-90 transition-opacity"
+    >
+      <div className="relative">
+        <img
+          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+          alt="YouTube preview"
+          className="w-full h-32 object-cover"
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-10 h-10 bg-black/60 rounded-full flex items-center justify-center">
+            <Play size={16} className="text-white fill-white" />
+          </div>
+        </div>
+      </div>
+      <div className="px-2.5 py-1.5">
+        <p className="text-[11px] text-gray-500">youtube.com</p>
+      </div>
+    </a>
+  );
+}
+
 export default function InboxPage() {
   const { activeBusiness } = useBusiness();
   const { user } = useAuth();
@@ -52,9 +90,12 @@ export default function InboxPage() {
   const [connected, setConnected] = useState(false);
   const [teamOptions, setTeamOptions] = useState<TeamOption[]>([]);
   const [onlyAssignedToMe, setOnlyAssignedToMe] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [sendingMedia, setSendingMedia] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
   const selectedPhoneRef = useRef<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   selectedPhoneRef.current = selectedPhone;
 
@@ -169,6 +210,22 @@ export default function InboxPage() {
       console.error('Send failed:', err);
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleSendMedia = async () => {
+    if (!pendingFile || !selectedPhone || !activeBusiness) return;
+    setSendingMedia(true);
+    const caption = draft.trim();
+    try {
+      const saved = await api.sendMediaMessage(activeBusiness._id, selectedPhone, pendingFile, caption || undefined);
+      setMessages((prev) => [...prev, saved]);
+      setPendingFile(null);
+      setDraft('');
+    } catch (err) {
+      console.error('Send media failed:', err);
+    } finally {
+      setSendingMedia(false);
     }
   };
 
@@ -435,7 +492,35 @@ export default function InboxPage() {
                               : 'chat-bubble-in text-gray-900'
                           )}
                         >
-                          <p className="text-sm leading-relaxed">{msg.message}</p>
+                          {msg.mediaType === 'image' && msg.mediaUrl ? (
+                            <a href={msg.mediaUrl} target="_blank" rel="noopener noreferrer">
+                              <img src={msg.mediaUrl} alt={msg.mediaCaption || 'image'} className="rounded-lg max-h-64 w-full object-cover" />
+                            </a>
+                          ) : msg.mediaType === 'video' && msg.mediaUrl ? (
+                            <video src={msg.mediaUrl} controls className="rounded-lg max-h-64 w-full" />
+                          ) : msg.mediaType === 'document' && msg.mediaUrl ? (
+                            <a
+                              href={msg.mediaUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={cn(
+                                'flex items-center gap-2 p-2 rounded-lg',
+                                msg.direction === 'outgoing' ? 'bg-white/10' : 'bg-gray-100'
+                              )}
+                            >
+                              <FileText size={18} />
+                              <span className="text-sm truncate">{msg.fileName || 'Document'}</span>
+                            </a>
+                          ) : null}
+                          {msg.mediaCaption && (
+                            <p className="text-sm leading-relaxed mt-1">{msg.mediaCaption}</p>
+                          )}
+                          {!msg.mediaType && (
+                            <>
+                              <p className="text-sm leading-relaxed">{msg.message}</p>
+                              <YouTubePreview text={msg.message} />
+                            </>
+                          )}
                           <p
                             className={cn(
                               'text-[10px] mt-1 text-right',
@@ -458,27 +543,59 @@ export default function InboxPage() {
 
           {/* Input */}
           <div className="bg-white border-t border-gray-100 p-4">
+            {pendingFile && (
+              <div className="flex items-center gap-2 mb-2 p-2 bg-gray-50 rounded-xl border border-gray-200">
+                {pendingFile.type.startsWith('image/') ? (
+                  <img src={URL.createObjectURL(pendingFile)} alt="" className="w-10 h-10 rounded-lg object-cover" />
+                ) : (
+                  <FileText size={20} className="text-gray-400" />
+                )}
+                <span className="text-xs text-gray-600 truncate flex-1">{pendingFile.name}</span>
+                <button onClick={() => setPendingFile(null)} className="text-gray-400 hover:text-gray-600">
+                  <X size={14} />
+                </button>
+              </div>
+            )}
             <div className="flex items-center gap-2 bg-gray-50 rounded-2xl border border-gray-200 px-4 py-2.5">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,video/*,application/pdf"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) setPendingFile(file);
+                  e.target.value = '';
+                }}
+              />
+              <button onClick={() => fileInputRef.current?.click()} className="text-gray-400 hover:text-gray-600">
+                <Paperclip size={18} />
+              </button>
               <button className="text-gray-400 hover:text-gray-600">
                 <Smile size={18} />
               </button>
               <input
                 type="text"
-                placeholder="Type a message..."
+                placeholder={pendingFile ? 'Add a caption (optional)...' : 'Type a message...'}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    pendingFile ? handleSendMedia() : handleSend();
+                  }
+                }}
                 className="flex-1 bg-transparent text-sm focus:outline-none text-gray-800 placeholder:text-gray-400"
               />
               <button
-                onClick={handleSend}
-                disabled={sending || !draft.trim()}
+                onClick={pendingFile ? handleSendMedia : handleSend}
+                disabled={pendingFile ? sendingMedia : sending || !draft.trim()}
                 className={cn(
                   'p-1.5 rounded-xl bg-green-500 text-white hover:bg-green-600 transition-colors',
-                  (sending || !draft.trim()) && 'opacity-40 cursor-not-allowed'
+                  (pendingFile ? sendingMedia : sending || !draft.trim()) && 'opacity-40 cursor-not-allowed'
                 )}
               >
-                {sending ? (
+                {sending || sendingMedia ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <Send size={15} />

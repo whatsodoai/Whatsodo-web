@@ -11,12 +11,28 @@ export interface BusinessMember {
   addedAt: string;
 }
 
+export interface CarouselButton {
+  type: 'QUICK_REPLY' | 'URL' | 'PHONE_NUMBER';
+  text: string;
+  value?: string;
+}
+
+export interface CarouselCard {
+  imageUrl: string;
+  bodyText: string;
+  buttons: CarouselButton[];
+}
+
 export interface WhatsAppTemplate {
   name: string;
   language: string;
   bodyPreview: string;
   variableCount: number;
   createdAt: string;
+  type?: 'standard' | 'carousel';
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+  metaTemplateId?: string;
+  cards?: CarouselCard[];
 }
 
 export interface Business {
@@ -28,6 +44,8 @@ export interface Business {
   ownerId: string | { _id: string; name: string; email: string };
   members?: BusinessMember[];
   whatsappTemplates?: WhatsAppTemplate[];
+  whatsappBusinessAccountId?: string;
+  whatsappAppId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -75,6 +93,10 @@ export interface Message {
   phone: string;
   direction: 'incoming' | 'outgoing';
   message: string;
+  mediaType?: 'image' | 'video' | 'document';
+  mediaUrl?: string;
+  mediaCaption?: string;
+  fileName?: string;
   createdAt: string;
   updatedAt: string;
 }

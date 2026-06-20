@@ -191,6 +191,69 @@ export default function SettingsPage() {
     }
   };
 
+  type CarouselCardDraft = {
+    imageFile: File | null;
+    imageUrl: string;
+    bodyText: string;
+    buttons: { type: 'QUICK_REPLY' | 'URL' | 'PHONE_NUMBER'; text: string; value: string }[];
+  };
+
+  const emptyCard = (): CarouselCardDraft => ({ imageFile: null, imageUrl: '', bodyText: '', buttons: [] });
+
+  const [templateMode, setTemplateMode] = useState<'standard' | 'carousel'>('standard');
+  const [carouselForm, setCarouselForm] = useState({ name: '', language: 'en_US', bodyText: '' });
+  const [carouselCards, setCarouselCards] = useState<CarouselCardDraft[]>([emptyCard(), emptyCard()]);
+  const [carouselSaving, setCarouselSaving] = useState(false);
+  const [carouselError, setCarouselError] = useState('');
+
+  const updateCarouselCard = (index: number, patch: Partial<CarouselCardDraft>) => {
+    setCarouselCards((prev) => prev.map((c, i) => (i === index ? { ...c, ...patch } : c)));
+  };
+
+  const handleCarouselImageSelect = async (index: number, file: File) => {
+    updateCarouselCard(index, { imageFile: file });
+    try {
+      const { url } = await api.uploadFile(file);
+      updateCarouselCard(index, { imageUrl: url });
+    } catch (err: unknown) {
+      setCarouselError(err instanceof Error ? err.message : 'Failed to upload card image');
+    }
+  };
+
+  const addCarouselCard = () => setCarouselCards((prev) => [...prev, emptyCard()]);
+  const removeCarouselCard = (index: number) =>
+    setCarouselCards((prev) => prev.filter((_, i) => i !== index));
+
+  const handleAddCarouselTemplate = async () => {
+    if (!activeBusiness || !carouselForm.name.trim() || !carouselForm.bodyText.trim()) return;
+    const readyCards = carouselCards.filter((c) => c.imageUrl && c.bodyText.trim());
+    if (readyCards.length < 2) {
+      setCarouselError('Carousels need at least 2 cards, each with an image and body text');
+      return;
+    }
+    setCarouselSaving(true);
+    setCarouselError('');
+    try {
+      await api.addCarouselTemplate(activeBusiness._id, {
+        name: carouselForm.name.trim(),
+        language: carouselForm.language.trim() || 'en_US',
+        bodyText: carouselForm.bodyText.trim(),
+        cards: readyCards.map((c) => ({
+          imageUrl: c.imageUrl,
+          bodyText: c.bodyText.trim(),
+          buttons: c.buttons.filter((b) => b.text.trim()),
+        })),
+      });
+      setCarouselForm({ name: '', language: 'en_US', bodyText: '' });
+      setCarouselCards([emptyCard(), emptyCard()]);
+      fetchTeamBusiness();
+    } catch (err: unknown) {
+      setCarouselError(err instanceof Error ? err.message : 'Failed to submit carousel template');
+    } finally {
+      setCarouselSaving(false);
+    }
+  };
+
   const [waDefaults, setWaDefaults] = useState<{
     webhookUrl: string;
     verifyToken: string;
@@ -202,6 +265,8 @@ export default function SettingsPage() {
     whatsappAccessToken: '',
     whatsappPhoneNumberId: '',
     whatsappVerifyToken: '',
+    whatsappBusinessAccountId: '',
+    whatsappAppId: '',
   });
   const [waSaving, setWaSaving] = useState(false);
   const [waSaved, setWaSaved] = useState(false);
@@ -245,8 +310,16 @@ export default function SettingsPage() {
         ...(waForm.whatsappAccessToken && { whatsappAccessToken: waForm.whatsappAccessToken }),
         ...(waForm.whatsappPhoneNumberId && { whatsappPhoneNumberId: waForm.whatsappPhoneNumberId }),
         ...(waForm.whatsappVerifyToken && { whatsappVerifyToken: waForm.whatsappVerifyToken }),
+        ...(waForm.whatsappBusinessAccountId && { whatsappBusinessAccountId: waForm.whatsappBusinessAccountId }),
+        ...(waForm.whatsappAppId && { whatsappAppId: waForm.whatsappAppId }),
       });
-      setWaForm({ whatsappAccessToken: '', whatsappPhoneNumberId: '', whatsappVerifyToken: '' });
+      setWaForm({
+        whatsappAccessToken: '',
+        whatsappPhoneNumberId: '',
+        whatsappVerifyToken: '',
+        whatsappBusinessAccountId: '',
+        whatsappAppId: '',
+      });
       setWaDefaults(null); // force refetch so the webhook URL/status reflect the new values
       setWaSaved(true);
       setTimeout(() => setWaSaved(false), 3000);
@@ -564,6 +637,36 @@ export default function SettingsPage() {
                         Generate
                       </button>
                     </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      WhatsApp Business Account ID
+                    </label>
+                    <input
+                      value={waForm.whatsappBusinessAccountId}
+                      onChange={(e) => setWaForm({ ...waForm, whatsappBusinessAccountId: e.target.value })}
+                      className="input font-mono text-xs"
+                      placeholder={activeBusiness?.whatsappBusinessAccountId || 'e.g. 1029384756'}
+                    />
+                    <p className="text-xs text-gray-400 mt-1.5">
+                      Required to submit carousel templates for Meta approval. Find it in Meta Business Manager → WhatsApp Manager.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      Meta App ID
+                    </label>
+                    <input
+                      value={waForm.whatsappAppId}
+                      onChange={(e) => setWaForm({ ...waForm, whatsappAppId: e.target.value })}
+                      className="input font-mono text-xs"
+                      placeholder={activeBusiness?.whatsappAppId || 'e.g. 1029384756'}
+                    />
+                    <p className="text-xs text-gray-400 mt-1.5">
+                      Required to upload carousel card images to Meta before template submission.
+                    </p>
                   </div>
 
                   <div className="pt-1">
@@ -1006,6 +1109,23 @@ export default function SettingsPage() {
                         <p className="text-sm font-semibold text-gray-900">{t.name}</p>
                         <p className="text-xs text-gray-400 truncate">{t.bodyPreview || 'No preview saved'}</p>
                       </div>
+                      {t.type === 'carousel' && (
+                        <span className="text-xs font-medium text-purple-600 bg-purple-100 px-2.5 py-1 rounded-full">
+                          Carousel
+                        </span>
+                      )}
+                      {t.status && (
+                        <span
+                          className={cn(
+                            'text-xs font-medium px-2.5 py-1 rounded-full',
+                            t.status === 'APPROVED' && 'text-green-700 bg-green-100',
+                            t.status === 'PENDING' && 'text-amber-700 bg-amber-100',
+                            t.status === 'REJECTED' && 'text-red-700 bg-red-100'
+                          )}
+                        >
+                          {t.status}
+                        </span>
+                      )}
                       <span className="text-xs font-medium text-gray-600 bg-gray-200 px-2.5 py-1 rounded-full">
                         {t.language}
                       </span>
@@ -1032,6 +1152,133 @@ export default function SettingsPage() {
 
               {isOwner ? (
                 <div className="border-t border-gray-100 pt-6">
+                  <div className="flex items-center gap-1.5 mb-4">
+                    <button
+                      onClick={() => setTemplateMode('standard')}
+                      className={cn(
+                        'text-xs font-medium px-3 py-1.5 rounded-full transition-colors',
+                        templateMode === 'standard' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                      )}
+                    >
+                      Standard
+                    </button>
+                    <button
+                      onClick={() => setTemplateMode('carousel')}
+                      className={cn(
+                        'text-xs font-medium px-3 py-1.5 rounded-full transition-colors',
+                        templateMode === 'carousel' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                      )}
+                    >
+                      Carousel
+                    </button>
+                  </div>
+
+                  {templateMode === 'carousel' ? (
+                    <div>
+                      <p className="text-xs text-gray-400 mb-4">
+                        Submits a real carousel template to Meta for review. Requires the WhatsApp Business Account ID
+                        and Meta App ID set in the WhatsApp tab. Approval can take a few hours to days.
+                      </p>
+
+                      {carouselError && (
+                        <div className="flex items-center gap-2 p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm mb-4">
+                          <AlertCircle size={16} /> {carouselError}
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1.5">Template Name</label>
+                          <input
+                            value={carouselForm.name}
+                            onChange={(e) => setCarouselForm({ ...carouselForm, name: e.target.value })}
+                            placeholder="summer_sale_carousel"
+                            className="input font-mono text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1.5">Language Code</label>
+                          <input
+                            value={carouselForm.language}
+                            onChange={(e) => setCarouselForm({ ...carouselForm, language: e.target.value })}
+                            placeholder="en_US"
+                            className="input font-mono text-sm"
+                          />
+                        </div>
+                      </div>
+                      <div className="mb-5">
+                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Body Text</label>
+                        <input
+                          value={carouselForm.bodyText}
+                          onChange={(e) => setCarouselForm({ ...carouselForm, bodyText: e.target.value })}
+                          placeholder="Check out our latest collection!"
+                          className="input text-sm"
+                        />
+                      </div>
+
+                      <div className="space-y-4 mb-4">
+                        {carouselCards.map((card, i) => (
+                          <div key={i} className="p-4 rounded-xl border border-gray-200 bg-gray-50">
+                            <div className="flex items-center justify-between mb-3">
+                              <p className="text-xs font-semibold text-gray-700">Card {i + 1}</p>
+                              {carouselCards.length > 2 && (
+                                <button
+                                  onClick={() => removeCarouselCard(i)}
+                                  className="text-gray-400 hover:text-red-500"
+                                >
+                                  <Trash2 size={13} />
+                                </button>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-3 mb-3">
+                              {card.imageUrl ? (
+                                <img src={card.imageUrl} alt="" className="w-14 h-14 rounded-lg object-cover" />
+                              ) : (
+                                <div className="w-14 h-14 rounded-lg bg-gray-200 flex-shrink-0" />
+                              )}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleCarouselImageSelect(i, file);
+                                }}
+                                className="text-xs"
+                              />
+                            </div>
+                            <input
+                              value={card.bodyText}
+                              onChange={(e) => updateCarouselCard(i, { bodyText: e.target.value })}
+                              placeholder="Card body text"
+                              className="input text-sm mb-2"
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={addCarouselCard}
+                        className="text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-full mb-5"
+                      >
+                        + Add Card
+                      </button>
+
+                      <div>
+                        <button
+                          onClick={handleAddCarouselTemplate}
+                          disabled={carouselSaving || !carouselForm.name.trim()}
+                          className={cn('btn-primary', carouselSaving && 'opacity-70')}
+                        >
+                          {carouselSaving ? (
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          ) : (
+                            <><Plus size={15} /> Submit Carousel for Approval</>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                <>
                   <h3 className="text-sm font-semibold text-gray-900 mb-4">Register a Template</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                     <div>
@@ -1083,6 +1330,8 @@ export default function SettingsPage() {
                       <><Plus size={15} /> Register Template</>
                     )}
                   </button>
+                </>
+                  )}
                 </div>
               ) : (
                 <div className="border-t border-gray-100 pt-6">
