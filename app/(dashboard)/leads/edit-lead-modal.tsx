@@ -45,8 +45,8 @@ export function EditLeadModal({ lead, onClose, onSaved }: Props) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-pop-lg animate-bounce-in border-2 border-gray-900">
-        <div className="flex items-center justify-between p-5 border-b-2 border-gray-900">
+      <div className="bg-white rounded-2xl w-full max-w-md shadow-soft-lg animate-slide-up">
+        <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <h2 className="text-lg font-bold text-gray-900">Edit Lead</h2>
           <button
             onClick={onClose}

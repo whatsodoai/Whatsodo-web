@@ -23,9 +23,9 @@ import { Reveal } from '@/components/motion/reveal';
 type AptStatus = 'All' | 'Booked' | 'Completed' | 'Cancelled';
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
-  Booked: { bg: 'bg-green-500', text: 'text-white', dot: 'bg-white/80' },
-  Completed: { bg: 'bg-blue-500', text: 'text-white', dot: 'bg-white/80' },
-  Cancelled: { bg: 'bg-red-500', text: 'text-white', dot: 'bg-white/80' },
+  Booked: { bg: 'bg-green-100', text: 'text-green-700', dot: 'bg-green-500' },
+  Completed: { bg: 'bg-blue-100', text: 'text-blue-700', dot: 'bg-blue-500' },
+  Cancelled: { bg: 'bg-red-100', text: 'text-red-700', dot: 'bg-red-500' },
 };
 
 export default function AppointmentsPage() {
@@ -291,12 +291,12 @@ function AppointmentCard({
           </div>
           <p className="font-semibold text-gray-900 truncate">{name}</p>
           {isToday && (
-            <span className="text-[10px] font-bold text-white bg-orange-500 border border-gray-900 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">
               TODAY
             </span>
           )}
           {isTomorrow && (
-            <span className="text-[10px] font-bold text-white bg-blue-500 border border-gray-900 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
               TOMORROW
             </span>
           )}

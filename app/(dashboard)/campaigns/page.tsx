@@ -17,9 +17,9 @@ import { cn, formatRelativeTime, LEAD_STATUSES } from '@/lib/utils';
 
 const STATUS_BADGE: Record<Campaign['status'], { bg: string; color: string; label: string }> = {
   draft: { bg: 'bg-gray-100', color: 'text-gray-500', label: 'Draft' },
-  sending: { bg: 'bg-blue-500', color: 'text-white', label: 'Sending' },
-  completed: { bg: 'bg-green-500', color: 'text-white', label: 'Completed' },
-  failed: { bg: 'bg-red-500', color: 'text-white', label: 'Failed' },
+  sending: { bg: 'bg-blue-100', color: 'text-blue-700', label: 'Sending' },
+  completed: { bg: 'bg-green-100', color: 'text-green-700', label: 'Completed' },
+  failed: { bg: 'bg-red-100', color: 'text-red-700', label: 'Failed' },
 };
 
 function NewCampaignModal({
@@ -69,8 +69,8 @@ function NewCampaignModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-pop-lg w-full max-w-md max-h-[90vh] overflow-y-auto border-2 border-gray-900">
-        <div className="flex items-center justify-between p-5 border-b-2 border-gray-900">
+      <div className="bg-white rounded-2xl shadow-soft-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <h2 className="font-bold text-gray-900">New Broadcast Campaign</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-900">
             <X size={18} />
@@ -79,7 +79,7 @@ function NewCampaignModal({
 
         <div className="p-5 space-y-4">
           {error && (
-            <div className="p-3 bg-red-50 border-2 border-gray-900 rounded-xl text-red-600 text-sm">{error}</div>
+            <div className="p-3 bg-red-50 rounded-xl text-red-600 text-sm">{error}</div>
           )}
 
           {templates.length === 0 ? (
@@ -138,7 +138,7 @@ function NewCampaignModal({
               </div>
 
               {selectedTemplate?.bodyPreview && (
-                <div className="p-3 bg-gray-50 border-2 border-gray-900 rounded-xl text-xs text-gray-700">{selectedTemplate.bodyPreview}</div>
+                <div className="p-3 bg-gray-50 border border-gray-100 rounded-xl text-xs text-gray-700">{selectedTemplate.bodyPreview}</div>
               )}
 
               {variables.map((v, i) => (
@@ -155,7 +155,7 @@ function NewCampaignModal({
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 p-5 border-t-2 border-gray-900">
+        <div className="flex items-center justify-end gap-3 p-5 border-t border-gray-100">
           <button onClick={onClose} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-900">Cancel</button>
           <button
             onClick={handleCreate}
@@ -231,7 +231,7 @@ export default function CampaignsPage() {
             const badge = STATUS_BADGE[c.status];
             return (
               <div key={c._id} className="flex items-center gap-4 p-4">
-                <div className="w-10 h-10 rounded-xl bg-green-50 border-2 border-gray-900 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
                   <Megaphone className="w-4.5 h-4.5 text-green-600" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -249,7 +249,7 @@ export default function CampaignsPage() {
                   )}
                   <span>{c.stats.total} total</span>
                 </div>
-                <span className={cn('text-xs font-medium px-2.5 py-1 rounded-full border-2 border-gray-900', badge.bg, badge.color)}>
+                <span className={cn('text-xs font-medium px-2.5 py-1 rounded-full', badge.bg, badge.color)}>
                   {badge.label}
                 </span>
               </div>

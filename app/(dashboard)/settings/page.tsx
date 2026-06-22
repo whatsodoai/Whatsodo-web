@@ -41,7 +41,7 @@ function CopyField({ label, value, hint }: { label: string; value: string; hint?
         <input readOnly value={value} className="input font-mono text-xs bg-gray-50 flex-1" />
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium text-gray-500 bg-gray-50 border-2 border-gray-900 hover:bg-gray-100 rounded-xl transition-colors flex-shrink-0"
+          className="flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium text-gray-500 bg-gray-50 border border-gray-200 hover:bg-gray-100 rounded-xl transition-colors flex-shrink-0"
         >
           {copied ? <Check size={13} className="text-green-600" /> : <Copy size={13} />}
           {copied ? 'Copied!' : 'Copy'}
@@ -441,7 +441,7 @@ export default function SettingsPage() {
           {activeTab === 'business' && (
             <div className="card p-6">
               <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200">
-                <div className="w-11 h-11 rounded-xl bg-blue-50 border-2 border-gray-900 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
                   <Building2 className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
@@ -453,13 +453,13 @@ export default function SettingsPage() {
               </div>
 
               {saved && (
-                <div className="flex items-center gap-2 p-3.5 bg-green-50 border-2 border-gray-900 rounded-xl text-green-700 text-sm mb-5">
+                <div className="flex items-center gap-2 p-3.5 bg-green-50 rounded-xl text-green-700 text-sm mb-5">
                   <CheckCircle size={16} />
                   Business profile saved successfully!
                 </div>
               )}
               {error && (
-                <div className="flex items-center gap-2 p-3.5 bg-red-50 border-2 border-gray-900 rounded-xl text-red-700 text-sm mb-5">
+                <div className="flex items-center gap-2 p-3.5 bg-red-50 rounded-xl text-red-700 text-sm mb-5">
                   <AlertCircle size={16} />
                   {error}
                 </div>
@@ -546,7 +546,7 @@ export default function SettingsPage() {
               {/* Status */}
               <div className="card p-6">
                 <div className="flex items-center gap-3 mb-5 pb-5 border-b border-gray-200">
-                  <div className="w-11 h-11 rounded-xl bg-green-50 border-2 border-gray-900 flex items-center justify-center">
+                  <div className="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center">
                     <Smartphone className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
@@ -555,7 +555,7 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-4 bg-green-50 border-2 border-gray-900 rounded-xl">
+                <div className="flex items-center gap-3 p-4 bg-green-50 rounded-xl">
                   <div className={cn(
                     'w-3 h-3 rounded-full flex-shrink-0',
                     waDefaults?.hasAccessToken ? 'bg-green-500 animate-pulse' : 'bg-yellow-400'
@@ -594,12 +594,12 @@ export default function SettingsPage() {
                 </p>
 
                 {waSaved && (
-                  <div className="flex items-center gap-2 p-3.5 bg-green-50 border-2 border-gray-900 rounded-xl text-green-700 text-sm mb-4">
+                  <div className="flex items-center gap-2 p-3.5 bg-green-50 rounded-xl text-green-700 text-sm mb-4">
                     <CheckCircle size={16} /> WhatsApp credentials saved!
                   </div>
                 )}
                 {waError && (
-                  <div className="flex items-center gap-2 p-3.5 bg-red-50 border-2 border-gray-900 rounded-xl text-red-700 text-sm mb-4">
+                  <div className="flex items-center gap-2 p-3.5 bg-red-50 rounded-xl text-red-700 text-sm mb-4">
                     <AlertCircle size={16} /> {waError}
                   </div>
                 )}
@@ -727,7 +727,7 @@ export default function SettingsPage() {
                   )}
                 </div>
 
-                <div className="mt-5 p-4 bg-blue-50 border-2 border-gray-900 rounded-xl">
+                <div className="mt-5 p-4 bg-blue-50 rounded-xl">
                   <p className="text-blue-700 font-semibold text-sm mb-2 flex items-center gap-2">
                     <Zap size={14} /> Step-by-step Setup
                   </p>
@@ -749,7 +749,7 @@ export default function SettingsPage() {
             <div className="card p-6">
               <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-200">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-orange-50 border-2 border-gray-900 flex items-center justify-center">
+                  <div className="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center">
                     <Clock className="w-5 h-5 text-orange-600" />
                   </div>
                   <div>
@@ -775,7 +775,7 @@ export default function SettingsPage() {
               </div>
 
               {availSaved && (
-                <div className="flex items-center gap-2 p-3.5 bg-green-50 border-2 border-gray-900 rounded-xl text-green-700 text-sm mb-4">
+                <div className="flex items-center gap-2 p-3.5 bg-green-50 rounded-xl text-green-700 text-sm mb-4">
                   <CheckCircle size={16} /> Availability saved successfully!
                 </div>
               )}
@@ -789,7 +789,7 @@ export default function SettingsPage() {
                       key={day}
                       className={cn(
                         'flex items-center gap-4 p-4 rounded-xl border transition-colors',
-                        existing ? 'border-2 border-gray-900 bg-green-50' : 'border-2 border-gray-200 bg-gray-50'
+                        existing ? 'border border-green-100 bg-green-50' : 'border border-gray-100 bg-gray-50'
                       )}
                     >
                       <div className="w-24">
@@ -823,7 +823,7 @@ export default function SettingsPage() {
                               className="input text-xs py-1.5 w-32"
                             />
                           </div>
-                          <span className="text-xs font-medium bg-green-500 text-white border-2 border-gray-900 px-2.5 py-1 rounded-full">
+                          <span className="text-xs font-medium bg-green-100 text-green-700 px-2.5 py-1 rounded-full">
                             Available
                           </span>
                           <button
@@ -856,7 +856,7 @@ export default function SettingsPage() {
           {activeTab === 'ai' && (
             <div className="card p-6">
               <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200">
-                <div className="w-11 h-11 rounded-xl bg-purple-50 border-2 border-gray-900 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center">
                   <Bot className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
@@ -935,7 +935,7 @@ export default function SettingsPage() {
                   />
                 </div>
 
-                <div className="p-4 bg-amber-50 border-2 border-gray-900 rounded-xl">
+                <div className="p-4 bg-amber-50 rounded-xl">
                   <p className="text-amber-700 font-semibold text-sm mb-1 flex items-center gap-2">
                     <Zap size={14} /> How AI settings work
                   </p>
@@ -951,7 +951,7 @@ export default function SettingsPage() {
           {activeTab === 'team' && (
             <div className="card p-6">
               <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200">
-                <div className="w-11 h-11 rounded-xl bg-blue-50 border-2 border-gray-900 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
                   <Users className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
@@ -961,7 +961,7 @@ export default function SettingsPage() {
               </div>
 
               {teamError && (
-                <div className="flex items-center gap-2 p-3.5 bg-red-50 border-2 border-gray-900 rounded-xl text-red-700 text-sm mb-5">
+                <div className="flex items-center gap-2 p-3.5 bg-red-50 rounded-xl text-red-700 text-sm mb-5">
                   <AlertCircle size={16} /> {teamError}
                 </div>
               )}
@@ -969,7 +969,7 @@ export default function SettingsPage() {
               <div className="space-y-3 mb-6">
                 {/* Owner row */}
                 {teamBusiness && (
-                  <div className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 bg-gray-50">
+                  <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                       {(typeof teamBusiness.ownerId === 'string' ? user?.name : teamBusiness.ownerId.name)?.charAt(0) || 'O'}
                     </div>
@@ -981,7 +981,7 @@ export default function SettingsPage() {
                         {typeof teamBusiness.ownerId === 'string' ? user?.email : teamBusiness.ownerId.email}
                       </p>
                     </div>
-                    <span className="text-xs font-medium bg-purple-500 text-white border-2 border-gray-900 px-2.5 py-1 rounded-full">
+                    <span className="text-xs font-medium bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full">
                       Owner
                     </span>
                   </div>
@@ -993,7 +993,7 @@ export default function SettingsPage() {
                   return (
                     <div
                       key={memberId}
-                      className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 bg-gray-50"
+                      className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50"
                     >
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                         {m?.name.charAt(0) || '?'}
@@ -1002,7 +1002,7 @@ export default function SettingsPage() {
                         <p className="text-sm font-semibold text-gray-900">{m?.name}</p>
                         <p className="text-xs text-gray-500">{m?.email}</p>
                       </div>
-                      <span className="text-xs font-medium bg-blue-500 text-white border-2 border-gray-900 px-2.5 py-1 rounded-full capitalize">
+                      <span className="text-xs font-medium bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full capitalize">
                         {member.role}
                       </span>
                       {isOwner && (
@@ -1067,7 +1067,7 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              <div className="mt-6 p-4 bg-blue-50 border-2 border-gray-900 rounded-xl">
+              <div className="mt-6 p-4 bg-blue-50 rounded-xl">
                 <p className="text-blue-700 font-semibold text-sm mb-2 flex items-center gap-2">
                   <Shield size={14} /> Role Permissions
                 </p>
@@ -1084,7 +1084,7 @@ export default function SettingsPage() {
           {activeTab === 'templates' && (
             <div className="card p-6">
               <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200">
-                <div className="w-11 h-11 rounded-xl bg-green-50 border-2 border-gray-900 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center">
                   <MessageSquare className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
@@ -1095,7 +1095,7 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <div className="p-4 bg-amber-50 border-2 border-gray-900 rounded-xl mb-5">
+              <div className="p-4 bg-amber-50 rounded-xl mb-5">
                 <p className="text-amber-700 text-xs leading-relaxed">
                   Meta only allows free-form replies within 24 hours of a customer&apos;s last message. To message
                   leads outside that window (e.g. re-engaging cold leads), you must use a pre-approved <strong>template</strong>.
@@ -1105,7 +1105,7 @@ export default function SettingsPage() {
               </div>
 
               {templateError && (
-                <div className="flex items-center gap-2 p-3.5 bg-red-50 border-2 border-gray-900 rounded-xl text-red-700 text-sm mb-5">
+                <div className="flex items-center gap-2 p-3.5 bg-red-50 rounded-xl text-red-700 text-sm mb-5">
                   <AlertCircle size={16} /> {templateError}
                 </div>
               )}
@@ -1115,14 +1115,14 @@ export default function SettingsPage() {
                   teamBusiness.whatsappTemplates.map((t) => (
                     <div
                       key={t.name}
-                      className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 bg-gray-50"
+                      className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50"
                     >
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-900">{t.name}</p>
                         <p className="text-xs text-gray-500 truncate">{t.bodyPreview || 'No preview saved'}</p>
                       </div>
                       {t.type === 'carousel' && (
-                        <span className="text-xs font-medium bg-purple-500 text-white border-2 border-gray-900 px-2.5 py-1 rounded-full">
+                        <span className="text-xs font-medium bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full">
                           Carousel
                         </span>
                       )}
@@ -1130,9 +1130,9 @@ export default function SettingsPage() {
                         <span
                           className={cn(
                             'text-xs font-medium px-2.5 py-1 rounded-full',
-                            t.status === 'APPROVED' && 'bg-green-500 text-white border-2 border-gray-900',
-                            t.status === 'PENDING' && 'bg-amber-500 text-white border-2 border-gray-900',
-                            t.status === 'REJECTED' && 'bg-red-500 text-white border-2 border-gray-900'
+                            t.status === 'APPROVED' && 'bg-green-100 text-green-700',
+                            t.status === 'PENDING' && 'bg-amber-100 text-amber-700',
+                            t.status === 'REJECTED' && 'bg-red-100 text-red-700'
                           )}
                         >
                           {t.status}
@@ -1142,7 +1142,7 @@ export default function SettingsPage() {
                         {t.language}
                       </span>
                       {t.variableCount > 0 && (
-                        <span className="text-xs font-medium bg-blue-500 text-white border-2 border-gray-900 px-2.5 py-1 rounded-full">
+                        <span className="text-xs font-medium bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">
                           {t.variableCount} var{t.variableCount > 1 ? 's' : ''}
                         </span>
                       )}
@@ -1193,7 +1193,7 @@ export default function SettingsPage() {
                       </p>
 
                       {carouselError && (
-                        <div className="flex items-center gap-2 p-3.5 bg-red-50 border-2 border-gray-900 rounded-xl text-red-700 text-sm mb-4">
+                        <div className="flex items-center gap-2 p-3.5 bg-red-50 rounded-xl text-red-700 text-sm mb-4">
                           <AlertCircle size={16} /> {carouselError}
                         </div>
                       )}
@@ -1388,7 +1388,7 @@ function AccountTab({ user }: { user: { name: string; email: string; role: strin
   return (
     <div className="card p-6">
       <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200">
-        <div className="w-11 h-11 rounded-xl bg-purple-50 border-2 border-gray-900 flex items-center justify-center">
+        <div className="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center">
           <User className="w-5 h-5 text-purple-600" />
         </div>
         <div>
@@ -1398,12 +1398,12 @@ function AccountTab({ user }: { user: { name: string; email: string; role: strin
       </div>
 
       {saved && (
-        <div className="flex items-center gap-2 p-3.5 bg-green-50 border-2 border-gray-900 rounded-xl text-green-700 text-sm mb-5">
+        <div className="flex items-center gap-2 p-3.5 bg-green-50 rounded-xl text-green-700 text-sm mb-5">
           <CheckCircle size={16} /> Changes saved successfully!
         </div>
       )}
       {error && (
-        <div className="flex items-center gap-2 p-3.5 bg-red-50 border-2 border-gray-900 rounded-xl text-red-700 text-sm mb-5">
+        <div className="flex items-center gap-2 p-3.5 bg-red-50 rounded-xl text-red-700 text-sm mb-5">
           <AlertCircle size={16} /> {error}
         </div>
       )}
@@ -1416,7 +1416,7 @@ function AccountTab({ user }: { user: { name: string; email: string; role: strin
           <div>
             <p className="font-bold text-gray-900 text-lg">{user?.name}</p>
             <p className="text-gray-500 text-sm">{user?.email}</p>
-            <span className="text-xs font-medium bg-purple-500 text-white border-2 border-gray-900 px-2 py-0.5 rounded-full mt-1 inline-block capitalize">
+            <span className="text-xs font-medium bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full mt-1 inline-block capitalize">
               {user?.role}
             </span>
           </div>

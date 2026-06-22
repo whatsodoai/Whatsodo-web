@@ -79,7 +79,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left Brand Panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-gray-950 via-gray-900 to-green-950 flex-col justify-between p-12 relative overflow-hidden border-r-2 border-gray-900">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-gray-950 via-gray-900 to-green-950 flex-col justify-between p-12 relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-green-500/10 rounded-full blur-3xl" />
@@ -140,7 +140,7 @@ export default function LoginPage() {
           ].map(({ value, label }) => (
             <div
               key={label}
-              className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10 shadow-pop-sm"
+              className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10 shadow-soft"
             >
               <p className="text-2xl font-bold text-white">{value}</p>
               <p className="text-gray-400 text-xs mt-1">{label}</p>
@@ -154,13 +154,13 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2.5 mb-8 justify-center">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center border-2 border-gray-900">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
               <Zap className="w-5 h-5 text-white" strokeWidth={2.5} />
             </div>
             <p className="text-gray-900 font-bold text-xl">Whatsodo</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-pop-lg border-2 border-gray-900 p-8">
+          <div className="bg-white rounded-2xl shadow-soft-lg p-8">
             <div className="mb-8">
               <h1 className="text-2xl font-bold text-gray-900">
                 {isLogin ? 'Welcome back' : 'Create account'}
@@ -173,7 +173,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="mb-5 px-4 py-3 bg-red-50 border-2 border-red-500 rounded-xl text-red-600 text-sm font-medium">
+              <div className="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium">
                 {error}
               </div>
             )}

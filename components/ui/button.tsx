@@ -12,10 +12,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'text-white bg-green-500 border-2 border-gray-900 shadow-pop-sm hover:shadow-pop',
-  secondary: 'text-gray-900 bg-white border-2 border-gray-900 shadow-pop-sm hover:shadow-pop',
-  ghost: 'text-gray-700 hover:bg-gray-100',
-  danger: 'text-white bg-red-500 border-2 border-gray-900 shadow-pop-sm hover:shadow-pop',
+  primary: 'text-white bg-green-600 hover:bg-green-700 shadow-soft',
+  secondary: 'text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 shadow-soft',
+  ghost: 'text-gray-600 hover:bg-gray-100',
+  danger: 'text-white bg-red-500 hover:bg-red-600 shadow-soft',
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -30,7 +30,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center rounded-xl font-bold transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 active:shadow-none disabled:opacity-50 disabled:pointer-events-none disabled:hover:translate-x-0 disabled:hover:translate-y-0',
+          'inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-150 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:hover:scale-100',
           variantClasses[variant],
           sizeClasses[size],
           className

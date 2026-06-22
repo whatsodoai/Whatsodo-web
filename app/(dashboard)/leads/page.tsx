@@ -52,9 +52,9 @@ function StatusBadge({ status }: { status: LeadStatus }) {
 }
 
 const INTENT_CONFIG: Record<'hot' | 'warm' | 'cold', { bg: string; color: string; label: string }> = {
-  hot: { bg: 'bg-red-500', color: 'text-white', label: '🔥 Hot' },
-  warm: { bg: 'bg-orange-500', color: 'text-white', label: '☀️ Warm' },
-  cold: { bg: 'bg-blue-500', color: 'text-white', label: '❄️ Cold' },
+  hot: { bg: 'bg-red-100', color: 'text-red-700', label: '🔥 Hot' },
+  warm: { bg: 'bg-orange-100', color: 'text-orange-700', label: '☀️ Warm' },
+  cold: { bg: 'bg-blue-100', color: 'text-blue-700', label: '❄️ Cold' },
 };
 
 function IntentBadge({ intentTag }: { intentTag?: 'hot' | 'warm' | 'cold' }) {
@@ -87,7 +87,7 @@ function TableView({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px]">
           <thead>
-            <tr className="bg-gray-50 border-b-2 border-gray-900">
+            <tr className="bg-gray-50 border-b border-gray-100">
               <th className="px-4 py-3.5 w-10" />
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-5 py-3.5">
                 Lead
@@ -256,7 +256,7 @@ function KanbanView({
               {colLeads.map((lead, i) => (
                 <Reveal key={lead._id} index={i}>
                   <div
-                    className="bg-white rounded-xl p-3.5 border-2 border-gray-900 shadow-pop-sm hover:shadow-pop transition-shadow"
+                    className="bg-white rounded-xl p-3.5 border border-gray-100 shadow-soft hover:shadow-soft-lg transition-shadow"
                   >
                   <div className="flex items-center gap-2.5 mb-2.5">
                     <div
@@ -415,12 +415,12 @@ export default function LeadsPage() {
 
       {/* Bulk action bar */}
       {selectedIds.size > 0 && (
-        <div className="flex items-center justify-between bg-white border-2 border-gray-900 shadow-pop-sm text-gray-900 rounded-xl px-4 py-3">
+        <div className="flex items-center justify-between bg-white border border-gray-100 shadow-soft text-gray-900 rounded-xl px-4 py-3">
           <span className="text-sm font-medium">{selectedIds.size} lead{selectedIds.size > 1 ? 's' : ''} selected</span>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowBroadcast(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-green-500 text-white border-2 border-gray-900 hover:bg-green-600 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-green-500 text-white hover:bg-green-600 transition-colors"
             >
               <Send size={14} /> Send Broadcast
             </button>
@@ -473,7 +473,7 @@ export default function LeadsPage() {
           <select
             value={sourceFilter}
             onChange={(e) => setSourceFilter(e.target.value)}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium border-2 border-gray-900 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400/40"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400/40"
           >
             {sources.map((s) => (
               <option key={s} value={s}>{s === 'All' ? 'All Sources' : s}</option>
@@ -481,7 +481,7 @@ export default function LeadsPage() {
           </select>
         )}
 
-        <div className="flex items-center bg-white border-2 border-gray-900 rounded-lg p-0.5 ml-auto">
+        <div className="flex items-center bg-white border border-gray-200 rounded-lg p-0.5 ml-auto">
           <button
             onClick={() => setView('table')}
             className={cn(

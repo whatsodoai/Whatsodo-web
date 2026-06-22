@@ -9,7 +9,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
         <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-3" />
         <h2 className="text-lg font-bold text-gray-900 mb-1">Failed to load appointments</h2>
         <p className="text-gray-500 text-sm mb-5">{error.message}</p>
-        <button onClick={reset} className="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-900 rounded-xl text-sm font-semibold hover:bg-gray-100 border-2 border-gray-900 shadow-pop-sm">
+        <button onClick={reset} className="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-900 rounded-xl text-sm font-semibold hover:bg-gray-100 border border-gray-200 shadow-soft">
           <RefreshCw size={14} /> Retry
         </button>
       </div>

@@ -42,9 +42,9 @@ export default function SelectBusinessPage() {
   return (
     <div className="min-h-screen bg-[#fafaf7] flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b-2 border-gray-900 px-6 py-4 flex items-center justify-between">
+      <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center border-2 border-gray-900">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
             <Zap className="w-5 h-5 text-white" strokeWidth={2.5} />
           </div>
           <p className="text-gray-900 font-bold text-lg">Whatsodo</p>
@@ -87,12 +87,12 @@ export default function SelectBusinessPage() {
                 <button
                   key={biz._id}
                   onClick={() => handleSelect(biz)}
-                  className="group card hover:shadow-pop-lg hover:border-green-500 transition-all p-6 text-left"
+                  className="group card hover:shadow-soft-lg hover:border-green-500 transition-all p-6 text-left"
                 >
                   <div className="flex items-start gap-4 mb-5">
                     <div
                       className={cn(
-                        'w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0 border-2 border-gray-900',
+                        'w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0',
                         avatarColor(biz.businessName)
                       )}
                     >

@@ -239,11 +239,11 @@ export default function AnalyticsPage() {
                     <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ borderRadius: '12px', background: '#ffffff', border: '2px solid #0f172a', color: '#111827', fontSize: 12 }}
+                  contentStyle={{ background: '#ffffff', border: '1px solid #f1f5f9', borderRadius: '12px', boxShadow: '0 4px 24px -4px rgba(16,24,40,0.10)', color: '#111827', fontSize: 12 }}
                 />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Area type="monotone" dataKey="leads" stroke="#22c55e" strokeWidth={2.5} fill="url(#leadsGrad)" name="Leads" dot={{ r: 3, fill: '#22c55e' }} />
@@ -281,7 +281,7 @@ export default function AnalyticsPage() {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ borderRadius: '12px', background: '#ffffff', border: '2px solid #0f172a', color: '#111827', fontSize: 12 }}
+                    contentStyle={{ background: '#ffffff', border: '1px solid #f1f5f9', borderRadius: '12px', boxShadow: '0 4px 24px -4px rgba(16,24,40,0.10)', color: '#111827', fontSize: 12 }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -323,11 +323,11 @@ export default function AnalyticsPage() {
           ) : (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={sourceData} barSize={32}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" vertical={false} />
-                <XAxis dataKey="source" tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                <XAxis dataKey="source" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ borderRadius: '12px', background: '#ffffff', border: '2px solid #0f172a', color: '#111827', fontSize: 12 }}
+                  contentStyle={{ background: '#ffffff', border: '1px solid #f1f5f9', borderRadius: '12px', boxShadow: '0 4px 24px -4px rgba(16,24,40,0.10)', color: '#111827', fontSize: 12 }}
                 />
                 <Bar dataKey="count" fill="#22c55e" radius={[6, 6, 0, 0]} name="Leads" />
               </BarChart>
@@ -343,10 +343,10 @@ export default function AnalyticsPage() {
           </div>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={weeklyActivity} barSize={16} barGap={4}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" vertical={false} />
-              <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} allowDecimals={false} />
-              <Tooltip contentStyle={{ borderRadius: '12px', background: '#ffffff', border: '2px solid #0f172a', color: '#111827', fontSize: 12 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+              <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} allowDecimals={false} />
+              <Tooltip contentStyle={{ background: '#ffffff', border: '1px solid #f1f5f9', borderRadius: '12px', boxShadow: '0 4px 24px -4px rgba(16,24,40,0.10)', color: '#111827', fontSize: 12 }} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
               <Bar dataKey="leads" fill="#22c55e" radius={[4, 4, 0, 0]} name="New Leads" />
               <Bar dataKey="appointments" fill="#f97316" radius={[4, 4, 0, 0]} name="Appointments" />
@@ -363,21 +363,21 @@ export default function AnalyticsPage() {
             label: 'Win Rate',
             value: s.totalLeads > 0 ? ((s.won / s.totalLeads) * 100).toFixed(1) + '%' : '—',
             sub: `${s.won} won out of ${s.totalLeads}`,
-            color: 'text-green-600 bg-green-50 border-2 border-gray-900',
+            color: 'text-green-600 bg-green-50',
           },
           {
             icon: Clock,
             label: 'Avg. Appointment Rate',
             value: aptRate + '%',
             sub: `${s.totalAppointments} appointments from ${s.totalLeads} leads`,
-            color: 'text-orange-600 bg-orange-50 border-2 border-gray-900',
+            color: 'text-orange-600 bg-orange-50',
           },
           {
             icon: Target,
             label: 'Active Pipeline',
             value: s.contacted + s.qualified,
             sub: `${s.contacted} contacted + ${s.qualified} qualified`,
-            color: 'text-purple-600 bg-purple-50 border-2 border-gray-900',
+            color: 'text-purple-600 bg-purple-50',
           },
         ].map(({ icon: Icon, label, value, sub, color }) => (
           <div key={label} className="card p-5 flex items-center gap-4">

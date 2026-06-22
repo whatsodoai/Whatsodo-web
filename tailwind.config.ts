@@ -89,6 +89,9 @@ const config: Config = {
         'pop-green': '6px 6px 0 0 #16a34a',
         'pop-pink': '6px 6px 0 0 #db2777',
         'pop-cyan': '6px 6px 0 0 #0891b2',
+        soft: '0 1px 2px 0 rgba(16,24,40,0.04), 0 2px 8px -2px rgba(16,24,40,0.06)',
+        'soft-lg': '0 4px 24px -4px rgba(16,24,40,0.10), 0 2px 8px -2px rgba(16,24,40,0.04)',
+        'soft-xl': '0 12px 40px -8px rgba(16,24,40,0.14)',
       },
       backgroundImage: {
         'grid-glow':

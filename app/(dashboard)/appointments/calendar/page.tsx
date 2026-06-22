@@ -153,11 +153,11 @@ export default function CalendarPage() {
                     key={day}
                     onClick={() => setSelectedDate(isSelected ? null : dateStr)}
                     className={cn(
-                      'min-h-[64px] p-1.5 rounded-xl border-2 transition-all text-left',
+                      'min-h-[64px] p-1.5 rounded-xl border transition-all text-left',
                       isSelected
-                        ? 'bg-green-50 border-green-500 shadow-pop-sm'
+                        ? 'bg-green-50 border-green-500 shadow-soft'
                         : isToday
-                        ? 'bg-gray-100 border-gray-900'
+                        ? 'bg-gray-100 border-gray-200'
                         : 'border-transparent hover:bg-gray-50 hover:border-gray-200'
                     )}
                   >
@@ -202,7 +202,7 @@ export default function CalendarPage() {
           )}
 
           {/* Legend */}
-          <div className="flex items-center gap-4 mt-4 pt-4 border-t-2 border-gray-100 text-xs text-gray-500">
+          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500">
             {[
               { color: 'bg-green-400', label: 'Booked' },
               { color: 'bg-blue-400', label: 'Completed' },
@@ -250,7 +250,7 @@ export default function CalendarPage() {
                     return (
                       <div
                         key={apt._id}
-                        className="p-3.5 rounded-xl border-2 border-gray-900 bg-white hover:bg-yellow-50 transition-colors"
+                        className="p-3.5 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 transition-colors"
                       >
                         <div className="flex items-center gap-2.5 mb-2">
                           <div

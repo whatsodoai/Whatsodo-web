@@ -58,8 +58,8 @@ export function BroadcastModal({ businessId, leadIds, onClose, onSent }: Props) 
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-pop-lg w-full max-w-md max-h-[90vh] overflow-y-auto border-2 border-gray-900 animate-bounce-in">
-        <div className="flex items-center justify-between p-5 border-b-2 border-gray-900">
+      <div className="bg-white rounded-2xl shadow-soft-lg w-full max-w-md max-h-[90vh] overflow-y-auto animate-slide-up">
+        <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <h2 className="font-bold text-gray-900">
             Send Broadcast to {leadIds.length} lead{leadIds.length > 1 ? 's' : ''}
           </h2>
@@ -119,7 +119,7 @@ export function BroadcastModal({ businessId, leadIds, onClose, onSent }: Props) 
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 p-5 border-t-2 border-gray-900">
+        <div className="flex items-center justify-end gap-3 p-5 border-t border-gray-100">
           <button onClick={onClose} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-900">
             Cancel
           </button>

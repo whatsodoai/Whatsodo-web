@@ -18,7 +18,6 @@ import {
   XCircle,
   Phone,
   MessageSquare,
-  ArrowUpRight,
   Clock,
   Zap,
   ArrowUp,
@@ -26,44 +25,91 @@ import {
   Minus,
   Flame,
   Sparkles,
+  MoreHorizontal,
+  CheckCircle2,
+  ChevronDown,
+  Sprout,
 } from 'lucide-react';
 import Link from 'next/link';
+import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 import { cn, formatRelativeTime, getInitials, avatarColor, STATUS_CONFIG } from '@/lib/utils';
 import { Reveal } from '@/components/motion/reveal';
+
+/** Buckets items into daily counts for the last `days` days (oldest → newest). */
+function dailyBuckets(items: { createdAt: string }[], days: number): number[] {
+  const buckets = new Array(days).fill(0);
+  const now = new Date();
+  now.setHours(23, 59, 59, 999);
+  for (const item of items) {
+    const diffDays = Math.floor((now.getTime() - new Date(item.createdAt).getTime()) / 86400000);
+    const idx = days - 1 - diffDays;
+    if (idx >= 0 && idx < days) buckets[idx]++;
+  }
+  return buckets;
+}
+
+/** 7-day sparkline + week-over-week % change, derived from a 14-day window. */
+function weeklyTrend(items: { createdAt: string }[]): { trend: number[]; changePct: number } {
+  const buckets = dailyBuckets(items, 14);
+  const trend = buckets.slice(7);
+  const thisWeek = trend.reduce((a, b) => a + b, 0);
+  const lastWeek = buckets.slice(0, 7).reduce((a, b) => a + b, 0);
+  const changePct = lastWeek > 0
+    ? Math.round(((thisWeek - lastWeek) / lastWeek) * 100)
+    : thisWeek > 0 ? 100 : 0;
+  return { trend, changePct };
+}
 
 interface StatCardProps {
   title: string;
   value: number | string;
   icon: React.ElementType;
-  gradient: string;
   iconBg: string;
-  change?: string;
+  trend: number[];
+  trendColor: string;
+  changePct?: number;
   href?: string;
 }
 
-function StatCard({ title, value, icon: Icon, gradient, iconBg, change, href }: StatCardProps) {
+function StatCard({ title, value, icon: Icon, iconBg, trend, trendColor, changePct, href }: StatCardProps) {
+  const gradientId = `spark-${title.replace(/\s+/g, '-')}`;
   const content = (
-    <div className={cn('stat-card group', href && 'cursor-pointer')}>
-      <div className="flex items-start justify-between mb-4">
-        <div className={cn('w-11 h-11 rounded-xl flex items-center justify-center', iconBg)}>
-          <Icon className="w-5 h-5 text-white" />
+    <div className="stat-card group relative overflow-hidden">
+      <div className="flex items-start justify-between mb-3">
+        <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center', iconBg)}>
+          <Icon className="w-5 h-5" />
         </div>
-        {href && (
-          <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
-        )}
+        <MoreHorizontal className="w-4 h-4 text-gray-300 group-hover:text-gray-400 transition-colors" />
       </div>
-      <p className="text-2xl font-bold text-gray-900 mb-1">{value}</p>
-      <p className="text-gray-400 text-sm">{title}</p>
-      {change && (
-        <p className="text-xs text-green-600 font-medium mt-2 flex items-center gap-1">
-          <TrendingUp size={11} /> {change}
+      <p className="text-gray-400 text-xs">{title}</p>
+      <p className="text-2xl font-bold text-gray-900 mt-0.5 mb-1">{value}</p>
+      {changePct !== undefined && (
+        <p className={cn(
+          'text-xs font-medium flex items-center gap-1',
+          changePct > 0 ? 'text-green-600' : changePct < 0 ? 'text-red-500' : 'text-gray-400'
+        )}>
+          {changePct > 0 ? <ArrowUp size={11} /> : changePct < 0 ? <ArrowDown size={11} /> : <Minus size={11} />}
+          {Math.abs(changePct)}% vs last week
         </p>
       )}
-      <div className={cn('h-1 w-full rounded-full mt-3 opacity-20', gradient)} />
+      <div className="h-8 mt-2 -mx-1">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={trend.map((v, i) => ({ v, i }))} margin={{ top: 2, right: 0, bottom: 0, left: 0 }}>
+            <defs>
+              <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={trendColor} stopOpacity={0.35} />
+                <stop offset="100%" stopColor={trendColor} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <Area type="monotone" dataKey="v" stroke={trendColor} strokeWidth={2} fill={`url(#${gradientId})`} dot={false} isAnimationActive={false} />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+      {href && <Link href={href} className="absolute inset-0" aria-label={title} />}
     </div>
   );
 
-  return href ? <Link href={href}>{content}</Link> : content;
+  return content;
 }
 
 function LeadVelocityBar({ leads }: { leads: Lead[] }) {
@@ -79,9 +125,6 @@ function LeadVelocityBar({ leads }: { leads: Lead[] }) {
   const yesterdayCount = leads.filter((l) => new Date(l.createdAt).toDateString() === yesterdayStr).length;
   const weekCount = leads.filter((l) => new Date(l.createdAt) >= weekAgo).length;
 
-  const delta = todayCount - yesterdayCount;
-  const pct = yesterdayCount > 0 ? Math.round(Math.abs(delta / yesterdayCount) * 100) : null;
-
   const items = [
     { label: 'Today', value: todayCount, color: 'text-green-700 bg-green-100' },
     { label: 'Yesterday', value: yesterdayCount, color: 'text-blue-700 bg-blue-100' },
@@ -89,9 +132,9 @@ function LeadVelocityBar({ leads }: { leads: Lead[] }) {
   ];
 
   return (
-    <div className="card p-5 flex items-center gap-6 flex-wrap">
+    <div className="card p-4 flex items-center gap-6 flex-wrap">
       <div className="flex items-center gap-2.5">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0 border-2 border-gray-900">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
           <Zap className="w-4 h-4 text-white" />
         </div>
         <p className="font-semibold text-gray-900 text-sm">Lead Velocity</p>
@@ -106,47 +149,43 @@ function LeadVelocityBar({ leads }: { leads: Lead[] }) {
           </div>
         ))}
       </div>
-      {pct !== null && (
-        <div className={cn(
-          'flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg',
-          delta > 0 ? 'text-green-700 bg-green-100' : delta < 0 ? 'text-red-700 bg-red-100' : 'text-gray-400 bg-gray-100'
-        )}>
-          {delta > 0 ? <ArrowUp size={12} /> : delta < 0 ? <ArrowDown size={12} /> : <Minus size={12} />}
-          {pct}% vs yesterday
-        </div>
-      )}
+      <button className="flex items-center gap-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl px-3 py-2 shadow-soft hover:bg-gray-50 transition-colors">
+        This Week <ChevronDown size={14} className="text-gray-400" />
+      </button>
     </div>
   );
 }
 
 function LeadFunnel({ summary }: { summary: DashboardSummary }) {
   const stages = [
-    { label: 'New', value: summary.newLeads, color: 'bg-blue-500', pct: 100 },
-    { label: 'Contacted', value: summary.contacted, color: 'bg-amber-500', pct: summary.newLeads ? (summary.contacted / summary.newLeads) * 100 : 0 },
-    { label: 'Qualified', value: summary.qualified, color: 'bg-purple-500', pct: summary.newLeads ? (summary.qualified / summary.newLeads) * 100 : 0 },
-    { label: 'Won', value: summary.won, color: 'bg-green-500', pct: summary.newLeads ? (summary.won / summary.newLeads) * 100 : 0 },
+    { label: 'New', value: summary.newLeads, color: '#3b82f6', clip: 'polygon(0% 0%, 100% 0%, 88% 100%, 12% 100%)' },
+    { label: 'Contacted', value: summary.contacted, color: '#f59e0b', clip: 'polygon(12% 0%, 88% 0%, 72% 100%, 28% 100%)' },
+    { label: 'Qualified', value: summary.qualified, color: '#a855f7', clip: 'polygon(28% 0%, 72% 0%, 50% 100%, 50% 100%)' },
+    { label: 'Won', value: summary.won, color: '#22c55e', clip: 'polygon(50% 0%, 50% 0%, 50% 100%, 50% 100%)' },
   ];
 
   return (
     <div className="card p-5">
       <h3 className="font-semibold text-gray-900 mb-4">Lead Funnel</h3>
-      <div className="space-y-3">
-        {stages.map(({ label, value, color, pct }) => (
-          <div key={label}>
-            <div className="flex items-center justify-between text-sm mb-1.5">
-              <span className="text-gray-400">{label}</span>
+      <div className="flex items-center gap-5">
+        <div className="w-28 flex-shrink-0">
+          {stages.map((s) => (
+            <div key={s.label} className="h-9" style={{ backgroundColor: s.color, clipPath: s.clip }} />
+          ))}
+        </div>
+        <div className="flex-1 space-y-3">
+          {stages.map(({ label, value, color }) => (
+            <div key={label} className="flex items-center justify-between text-sm">
+              <span className="flex items-center gap-2 text-gray-500">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+                {label}
+              </span>
               <span className="font-semibold text-gray-900">{value}</span>
             </div>
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden border-2 border-gray-900">
-              <div
-                className={cn('h-full rounded-full transition-all duration-700', color)}
-                style={{ width: `${Math.min(pct, 100)}%` }}
-              />
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-      <div className="mt-4 pt-4 border-t-2 border-gray-100 flex items-center justify-between text-sm">
+      <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between text-sm">
         <span className="text-gray-400">Conversion Rate</span>
         <span className="font-bold text-green-600">
           {summary.totalLeads > 0
@@ -177,11 +216,11 @@ function RecentLeads({ leads }: { leads: Lead[] }) {
               <Link
                 key={lead._id}
                 href={`/leads/${lead._id}`}
-                className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-yellow-50 transition-colors group"
+                className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors group"
               >
                 <div
                   className={cn(
-                    'w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 border-2 border-gray-900',
+                    'w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0',
                     avatarColor(lead.name)
                   )}
                 >
@@ -225,9 +264,9 @@ function UpcomingAppointments({ appointments }: { appointments: Appointment[] })
             return (
               <div
                 key={apt._id}
-                className="flex items-center gap-3 p-3 rounded-xl bg-green-50 border-2 border-green-500"
+                className="flex items-center gap-3 p-3 rounded-xl bg-green-50"
               >
-                <div className="w-10 h-10 rounded-xl bg-green-100 border-2 border-gray-900 flex flex-col items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-white flex flex-col items-center justify-center flex-shrink-0 shadow-soft">
                   <p className="text-green-700 text-[10px] font-bold leading-none">
                     {new Date(apt.date).toLocaleDateString('en', { month: 'short' }).toUpperCase()}
                   </p>
@@ -241,7 +280,7 @@ function UpcomingAppointments({ appointments }: { appointments: Appointment[] })
                     <Clock size={10} /> {apt.time}
                   </p>
                 </div>
-                <span className="text-[10px] font-semibold text-white bg-green-500 border-2 border-gray-900 px-2 py-0.5 rounded-full">
+                <span className="badge text-green-700 bg-green-100">
                   Booked
                 </span>
               </div>
@@ -264,16 +303,16 @@ function AIInsights({ leads }: { leads: Lead[] }) {
     .slice(0, 4);
 
   const counts = [
-    { label: 'Hot', value: hot.length, color: 'text-red-700 bg-red-100 border-2 border-gray-900' },
-    { label: 'Warm', value: warm.length, color: 'text-amber-700 bg-amber-100 border-2 border-gray-900' },
-    { label: 'Cold', value: cold.length, color: 'text-blue-700 bg-blue-100 border-2 border-gray-900' },
+    { label: 'Hot', value: hot.length, color: 'text-red-700 bg-red-100' },
+    { label: 'Warm', value: warm.length, color: 'text-amber-700 bg-amber-100' },
+    { label: 'Cold', value: cold.length, color: 'text-blue-700 bg-blue-100' },
   ];
 
   return (
     <div className="card p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-fuchsia-500 to-purple-600 flex items-center justify-center flex-shrink-0 border-2 border-gray-900 shadow-pop-sm">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-fuchsia-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-soft">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <h3 className="font-semibold text-gray-900">AI Insights</h3>
@@ -304,7 +343,7 @@ function AIInsights({ leads }: { leads: Lead[] }) {
                 <Reveal key={lead._id} index={i}>
                   <Link
                     href={`/leads/${lead._id}`}
-                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-yellow-50 transition-colors"
+                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors"
                   >
                     <Flame className="w-4 h-4 text-red-500 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
@@ -342,11 +381,11 @@ function RecentInbox({ inbox }: { inbox: InboxItem[] }) {
             <Link
               key={item.phone}
               href="/inbox"
-              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-yellow-50 transition-colors"
+              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <div
                 className={cn(
-                  'w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 border-2 border-gray-900',
+                  'w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0',
                   avatarColor(item.leadName || item.phone)
                 )}
               >
@@ -365,6 +404,28 @@ function RecentInbox({ inbox }: { inbox: InboxItem[] }) {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+/** Decorative phone + chat-bubble illustration for the welcome banner — no external image assets. */
+function BannerIllustration() {
+  return (
+    <div className="relative w-40 h-28 hidden lg:block flex-shrink-0">
+      <div className="absolute right-6 top-0 w-20 h-28 rounded-[1.5rem] bg-gray-900 shadow-soft-xl flex items-center justify-center">
+        <div className="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center">
+          <Phone className="w-4 h-4 text-white" />
+        </div>
+      </div>
+      <div className="absolute left-0 top-2 w-9 h-9 rounded-xl bg-white shadow-soft flex items-center justify-center rotate-[-8deg]">
+        <MessageSquare className="w-4 h-4 text-green-600" />
+      </div>
+      <div className="absolute right-0 bottom-2 w-9 h-9 rounded-xl bg-white shadow-soft flex items-center justify-center rotate-[8deg]">
+        <MessageSquare className="w-4 h-4 text-green-600" />
+      </div>
+      <div className="absolute left-2 bottom-0 w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center">
+        <Sprout className="w-3.5 h-3.5 text-emerald-600" />
+      </div>
     </div>
   );
 }
@@ -418,7 +479,7 @@ export default function DashboardPage() {
     return (
       <div className="page-container flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-2xl bg-green-50 border-2 border-gray-900 flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-4">
             <MessageSquare className="w-8 h-8 text-green-600" />
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">No business set up yet</h2>
@@ -446,28 +507,45 @@ export default function DashboardPage() {
   const conversionRate =
     s.totalLeads > 0 ? ((s.won / s.totalLeads) * 100).toFixed(1) + '%' : '0%';
 
+  const leadsTrend = weeklyTrend(leads);
+  const appointmentsTrend = weeklyTrend(appointments);
+  const contactedTrend = weeklyTrend(leads.filter((l) => l.status !== 'New Lead'));
+  const wonTrend = weeklyTrend(leads.filter((l) => l.status === 'Won'));
+
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const firstName = activeBusiness.businessName.split(' ')[0];
+
   return (
     <div className="page-container">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-2xl p-6 relative overflow-hidden border-2 border-gray-900 shadow-pop">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -right-20 -top-20 w-64 h-64 bg-green-500/10 rounded-full blur-3xl" />
-          <div className="absolute right-20 bottom-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl" />
-        </div>
-        <div className="relative z-10 flex items-center justify-between">
-          <div>
-            <h2 className="text-white text-xl font-bold">
-              {activeBusiness.businessName}
-            </h2>
-            <p className="text-gray-400 text-sm mt-1">
-              {activeBusiness.industry} · WhatsApp: {activeBusiness.whatsappNumber}
-            </p>
+      <div className="bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 rounded-2xl p-6 relative overflow-hidden border border-green-100">
+        <div className="absolute inset-0 dot-pattern opacity-60" />
+        <div className="relative z-10 flex items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gray-900 flex items-center justify-center text-white font-bold text-xl flex-shrink-0 shadow-soft">
+              {firstName[0]}
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-gray-900 text-xl font-bold">
+                  {greeting}, {firstName}
+                </h2>
+                <span className="text-xl">👋</span>
+              </div>
+              <p className="text-gray-500 text-sm mt-1 flex items-center gap-1.5">
+                {activeBusiness.businessName}
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+                <span className="text-gray-400">· {activeBusiness.industry} · WhatsApp: {activeBusiness.whatsappNumber}</span>
+              </p>
+            </div>
           </div>
-          <div className="hidden md:flex items-center gap-3">
+          <BannerIllustration />
+          <div className="hidden md:flex items-center gap-3 flex-shrink-0">
             <Link href="/leads" className="btn-primary text-sm">
               <UserPlus size={14} /> Add Lead
             </Link>
-            <Link href="/inbox" className="btn-secondary text-sm bg-white/10 border-white/20 text-white hover:bg-white/20">
+            <Link href="/inbox" className="btn-secondary text-sm">
               <Phone size={14} /> Open Inbox
             </Link>
           </div>
@@ -482,27 +560,33 @@ export default function DashboardPage() {
         {[
           {
             title: 'Total Leads', value: s.totalLeads, icon: Users,
-            gradient: 'bg-blue-500', iconBg: 'bg-gradient-to-br from-blue-400 to-blue-600', href: '/leads',
+            iconBg: 'bg-blue-50 text-blue-500', trend: leadsTrend.trend, changePct: leadsTrend.changePct,
+            trendColor: '#3b82f6', href: '/leads',
           },
           {
             title: 'New Leads', value: s.newLeads, icon: UserPlus,
-            gradient: 'bg-green-500', iconBg: 'bg-gradient-to-br from-green-400 to-green-600', href: '/leads',
+            iconBg: 'bg-indigo-50 text-indigo-500', trend: leadsTrend.trend, changePct: leadsTrend.changePct,
+            trendColor: '#6366f1', href: '/leads',
           },
           {
             title: 'Appointments', value: s.totalAppointments, icon: Calendar,
-            gradient: 'bg-orange-500', iconBg: 'bg-gradient-to-br from-orange-400 to-orange-600', href: '/appointments',
+            iconBg: 'bg-orange-50 text-orange-500', trend: appointmentsTrend.trend, changePct: appointmentsTrend.changePct,
+            trendColor: '#f97316', href: '/appointments',
           },
           {
             title: 'Contacted', value: s.contacted, icon: Phone,
-            gradient: 'bg-amber-500', iconBg: 'bg-gradient-to-br from-amber-400 to-amber-600',
+            iconBg: 'bg-purple-50 text-purple-500', trend: contactedTrend.trend, changePct: contactedTrend.changePct,
+            trendColor: '#a855f7',
           },
           {
             title: 'Won Deals', value: s.won, icon: Trophy,
-            gradient: 'bg-emerald-500', iconBg: 'bg-gradient-to-br from-emerald-400 to-emerald-600',
+            iconBg: 'bg-teal-50 text-teal-500', trend: wonTrend.trend, changePct: wonTrend.changePct,
+            trendColor: '#14b8a6',
           },
           {
             title: 'Conversion', value: conversionRate, icon: TrendingUp,
-            gradient: 'bg-purple-500', iconBg: 'bg-gradient-to-br from-purple-400 to-purple-600',
+            iconBg: 'bg-pink-50 text-pink-500', trend: wonTrend.trend, changePct: wonTrend.changePct,
+            trendColor: '#ec4899',
           },
         ].map((kpi, i) => (
           <Reveal key={kpi.title} index={i}>
@@ -513,7 +597,7 @@ export default function DashboardPage() {
 
       {/* Lost quick alert */}
       {s.lost > 0 && (
-        <div className="flex items-center gap-3 p-4 bg-red-50 border-2 border-red-500 rounded-xl">
+        <div className="flex items-center gap-3 p-4 bg-red-50 rounded-xl">
           <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
           <p className="text-red-700 text-sm">
             <strong>{s.lost} leads</strong> have been marked as Lost. Review and re-engage
@@ -563,7 +647,7 @@ export default function DashboardPage() {
                   key={href}
                   href={href}
                   className={cn(
-                    'flex flex-col items-center gap-2 p-4 rounded-xl transition-colors text-center border-2 border-gray-900',
+                    'flex flex-col items-center gap-2 p-4 rounded-xl transition-colors text-center',
                     color
                   )}
                 >

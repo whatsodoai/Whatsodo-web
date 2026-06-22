@@ -45,7 +45,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border-2 border-gray-900 rounded-lg transition-colors flex-shrink-0"
+      className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-lg transition-colors flex-shrink-0"
     >
       {copied ? <Check size={13} className="text-green-600" /> : <Copy size={13} />}
       {copied ? 'Copied!' : 'Copy'}
@@ -241,9 +241,9 @@ export default function SetupPage() {
   return (
     <div className="min-h-screen bg-[#fafaf7] flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b-2 border-gray-900 px-6 py-4">
+      <div className="bg-white border-b border-gray-100 px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center border-2 border-gray-900">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
             <Zap className="w-5 h-5 text-white" strokeWidth={2.5} />
           </div>
           <p className="text-gray-900 font-bold text-lg">Whatsodo Setup</p>
@@ -259,8 +259,8 @@ export default function SetupPage() {
             return (
               <div key={s.id} className="flex items-center gap-2 flex-shrink-0">
                 <div className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-full text-xs font-medium transition-colors border-2',
-                  isActive ? 'bg-green-500 text-white border-gray-900' :
+                  'flex items-center gap-2 px-3 py-2 rounded-full text-xs font-medium transition-colors border',
+                  isActive ? 'bg-green-500 text-white border-green-500' :
                     isDone ? 'bg-green-100 text-green-700 border-green-500' :
                       'bg-gray-50 text-gray-400 border-gray-200'
                 )}>
@@ -281,9 +281,9 @@ export default function SetupPage() {
 
         {/* Step 1 — Create Business */}
         {step === 1 && (
-          <div className="bg-white rounded-2xl shadow-pop-lg border-2 border-gray-900 p-8">
+          <div className="bg-white rounded-2xl shadow-soft-lg p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-11 h-11 rounded-xl bg-blue-50 border-2 border-gray-900 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
                 <Building2 className="w-5 h-5 text-blue-600" />
               </div>
               <div>
@@ -293,7 +293,7 @@ export default function SetupPage() {
             </div>
 
             {error && (
-              <div className="mb-5 p-3.5 bg-red-50 border-2 border-red-500 rounded-xl text-red-600 text-sm font-medium">
+              <div className="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium">
                 {error}
               </div>
             )}
@@ -360,9 +360,9 @@ export default function SetupPage() {
 
         {/* Step 2 — Connect WhatsApp */}
         {step === 2 && (
-          <div className="bg-white rounded-2xl shadow-pop-lg border-2 border-gray-900 p-8">
+          <div className="bg-white rounded-2xl shadow-soft-lg p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-11 h-11 rounded-xl bg-green-50 border-2 border-gray-900 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center">
                 <Smartphone className="w-5 h-5 text-green-600" />
               </div>
               <div>
@@ -377,7 +377,7 @@ export default function SetupPage() {
               </div>
             ) : (
               <div className="space-y-5">
-                <div className="p-4 bg-amber-50 border-2 border-amber-500 rounded-xl">
+                <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
                   <p className="text-amber-700 font-semibold text-sm mb-1">
                     Connect your existing WhatsApp Business number
                   </p>
@@ -458,7 +458,7 @@ export default function SetupPage() {
                   )}
                 </div>
 
-                <div className="p-4 bg-blue-50 border-2 border-blue-500 rounded-xl">
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
                   <p className="text-blue-700 font-semibold text-sm mb-2">Then finish setup in Meta</p>
                   <ol className="space-y-1 text-blue-700/80 text-xs list-decimal list-inside leading-relaxed">
                     <li>Save your credentials above first</li>
@@ -511,7 +511,7 @@ export default function SetupPage() {
                 )}
 
                 {waDefaults?.hasAccessToken && (
-                  <div className="flex items-center gap-2 p-3 bg-green-50 border-2 border-green-500 rounded-xl">
+                  <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-xl">
                     <div className="w-2.5 h-2.5 bg-green-500 rounded-full" />
                     <p className="text-green-700 text-xs font-medium">WhatsApp access token is configured for this business</p>
                   </div>
@@ -546,9 +546,9 @@ export default function SetupPage() {
 
         {/* Step 3 — AI / Knowledge Base */}
         {step === 3 && (
-          <div className="bg-white rounded-2xl shadow-pop-lg border-2 border-gray-900 p-8">
+          <div className="bg-white rounded-2xl shadow-soft-lg p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-11 h-11 rounded-xl bg-purple-50 border-2 border-gray-900 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center">
                 <Bot className="w-5 h-5 text-purple-600" />
               </div>
               <div>
@@ -647,9 +647,9 @@ export default function SetupPage() {
 
         {/* Step 4 — Availability */}
         {step === 4 && (
-          <div className="bg-white rounded-2xl shadow-pop-lg border-2 border-gray-900 p-8">
+          <div className="bg-white rounded-2xl shadow-soft-lg p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-11 h-11 rounded-xl bg-orange-50 border-2 border-gray-900 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center">
                 <Clock className="w-5 h-5 text-orange-600" />
               </div>
               <div>
@@ -671,7 +671,7 @@ export default function SetupPage() {
                     type="button"
                     onClick={() => setEnabledDays((prev) => ({ ...prev, [day]: !prev[day] }))}
                     className={cn(
-                      'w-10 h-6 rounded-full transition-colors flex-shrink-0 relative border-2 border-gray-900',
+                      'w-10 h-6 rounded-full transition-colors flex-shrink-0 relative',
                       enabledDays[day] ? 'bg-green-500' : 'bg-gray-200'
                     )}
                   >
@@ -740,9 +740,9 @@ export default function SetupPage() {
 
         {/* Step 5 — All Done */}
         {step === 5 && (
-          <div className="bg-white rounded-2xl shadow-pop-lg border-2 border-gray-900 p-8 text-center">
+          <div className="bg-white rounded-2xl shadow-soft-lg p-8 text-center">
             <div className="flex flex-col items-center mb-8">
-              <div className="w-20 h-20 rounded-full bg-green-50 border-2 border-gray-900 flex items-center justify-center mb-4 animate-bounce-in">
+              <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mb-4 animate-slide-up">
                 <CheckCircle className="w-10 h-10 text-green-600" />
               </div>
               <h2 className="font-bold text-gray-900 text-2xl mb-2">You&apos;re all set!</h2>
@@ -765,7 +765,7 @@ export default function SetupPage() {
                   )}
                 >
                   <div className={cn(
-                    'w-9 h-9 rounded-lg flex items-center justify-center mx-auto mb-2 border-2 border-gray-900',
+                    'w-9 h-9 rounded-lg flex items-center justify-center mx-auto mb-2',
                     color === 'blue' ? 'bg-blue-50' : color === 'purple' ? 'bg-purple-50' : 'bg-orange-50'
                   )}>
                     <Icon size={18} className={cn(

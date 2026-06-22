@@ -176,7 +176,7 @@ export default function KnowledgeBasePage() {
     <div className="page-container">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-purple-50 border-2 border-gray-900 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
             <Bot className="w-5 h-5 text-purple-600" />
           </div>
           <div>
@@ -218,21 +218,21 @@ export default function KnowledgeBasePage() {
       </div>
 
       {importError && (
-        <div className="flex items-center gap-2.5 p-4 bg-red-50 border-2 border-gray-900 rounded-xl text-red-600 text-sm">
+        <div className="flex items-center gap-2.5 p-4 bg-red-50 rounded-xl text-red-600 text-sm">
           <AlertTriangle size={16} />
           {importError}
         </div>
       )}
 
       {saved && (
-        <div className="flex items-center gap-2.5 p-4 bg-green-50 border-2 border-gray-900 rounded-xl text-green-700 text-sm">
+        <div className="flex items-center gap-2.5 p-4 bg-green-50 rounded-xl text-green-700 text-sm">
           <CheckCircle size={16} />
           Knowledge base updated successfully. Your AI will use this information.
         </div>
       )}
 
       {/* Tab Navigation */}
-      <div className="flex items-center gap-1 bg-white border-2 border-gray-900 rounded-xl p-1 w-fit shadow-pop-sm">
+      <div className="flex items-center gap-1 bg-white border border-gray-100 rounded-xl p-1 w-fit shadow-soft">
         {TABS.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -624,14 +624,14 @@ export default function KnowledgeBasePage() {
 
         {/* Chat history */}
         {testHistory.length > 0 && (
-          <div className="bg-gray-50 rounded-xl p-4 mb-4 space-y-3 max-h-72 overflow-y-auto border-2 border-gray-200">
+          <div className="bg-gray-50 rounded-xl p-4 mb-4 space-y-3 max-h-72 overflow-y-auto border border-gray-100">
             {testHistory.map((msg, i) => (
               <div key={i} className={cn('flex', msg.role === 'user' ? 'justify-end' : 'justify-start')}>
                 <div className={cn(
                   'max-w-xs lg:max-w-md px-4 py-2.5 rounded-2xl text-sm',
                   msg.role === 'user'
                     ? 'bg-green-500 text-white rounded-br-sm'
-                    : 'bg-white border-2 border-gray-900 text-gray-900 rounded-bl-sm shadow-sm'
+                    : 'bg-white border border-gray-100 text-gray-900 rounded-bl-sm shadow-sm'
                 )}>
                   {msg.role === 'ai' && (
                     <div className="flex items-center gap-1.5 mb-1">
@@ -645,7 +645,7 @@ export default function KnowledgeBasePage() {
             ))}
             {testLoading && (
               <div className="flex justify-start">
-                <div className="bg-white border-2 border-gray-900 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
+                <div className="bg-white border border-gray-100 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
                   <div className="flex gap-1">
                     <span className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                     <span className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />

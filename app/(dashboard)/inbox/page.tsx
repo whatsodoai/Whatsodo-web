@@ -54,7 +54,7 @@ function YouTubePreview({ text }: { text: string }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="mt-2 block rounded-xl overflow-hidden border-2 border-gray-900 bg-white hover:opacity-90 transition-opacity"
+      className="mt-2 block rounded-xl overflow-hidden border border-gray-100 bg-white hover:opacity-90 transition-opacity"
     >
       <div className="relative">
         <img
@@ -263,9 +263,9 @@ export default function InboxPage() {
   return (
     <div className="flex h-[calc(100vh-4rem)] bg-[#fafaf7]">
       {/* Conversations List */}
-      <div className="w-80 flex-shrink-0 bg-white border-r-2 border-gray-900 flex flex-col">
+      <div className="w-80 flex-shrink-0 bg-white border-r border-gray-100 flex flex-col">
         {/* Search + connection indicator */}
-        <div className="p-4 border-b-2 border-gray-900">
+        <div className="p-4 border-b border-gray-100">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
               Conversations
@@ -282,7 +282,7 @@ export default function InboxPage() {
               placeholder="Search conversations..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm bg-white text-gray-900 placeholder:text-gray-400 border-2 border-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
+              className="w-full pl-9 pr-4 py-2 text-sm bg-white text-gray-900 placeholder:text-gray-400 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 transition-all"
             />
           </div>
           {teamOptions.length > 1 && (
@@ -290,8 +290,8 @@ export default function InboxPage() {
               <button
                 onClick={() => setOnlyAssignedToMe(false)}
                 className={cn(
-                  'text-xs font-medium px-2.5 py-1 rounded-full transition-colors border-2 border-gray-900',
-                  !onlyAssignedToMe ? 'bg-gray-900 text-white' : 'bg-white text-gray-500 hover:bg-yellow-50'
+                  'text-xs font-medium px-2.5 py-1 rounded-full transition-colors border border-gray-200',
+                  !onlyAssignedToMe ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-500 hover:bg-gray-50'
                 )}
               >
                 All
@@ -299,8 +299,8 @@ export default function InboxPage() {
               <button
                 onClick={() => setOnlyAssignedToMe(true)}
                 className={cn(
-                  'text-xs font-medium px-2.5 py-1 rounded-full transition-colors border-2 border-gray-900',
-                  onlyAssignedToMe ? 'bg-gray-900 text-white' : 'bg-white text-gray-500 hover:bg-yellow-50'
+                  'text-xs font-medium px-2.5 py-1 rounded-full transition-colors border border-gray-200',
+                  onlyAssignedToMe ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-500 hover:bg-gray-50'
                 )}
               >
                 Assigned to me
@@ -337,12 +337,12 @@ export default function InboxPage() {
                     'w-full flex items-center gap-3 p-3.5 transition-colors text-left',
                     isSelected
                       ? 'bg-green-50 border-l-4 border-green-500'
-                      : 'hover:bg-yellow-50/60 border-l-4 border-transparent'
+                      : 'hover:bg-gray-50 border-l-4 border-transparent'
                   )}
                 >
                   <div
                     className={cn(
-                      'w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 relative border-2 border-gray-900',
+                      'w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 relative',
                       avatarColor(item.leadName || item.phone)
                     )}
                   >
@@ -398,10 +398,10 @@ export default function InboxPage() {
       {selectedPhone && selectedItem ? (
         <div className="flex-1 flex flex-col min-w-0">
           {/* Chat Header */}
-          <div className="bg-white border-b-2 border-gray-900 px-5 py-3.5 flex items-center gap-3">
+          <div className="bg-white border-b border-gray-100 px-5 py-3.5 flex items-center gap-3">
             <div
               className={cn(
-                'w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 border-2 border-gray-900',
+                'w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0',
                 avatarColor(selectedItem.leadName || selectedItem.phone)
               )}
             >
@@ -468,7 +468,7 @@ export default function InboxPage() {
                   <div key={msg._id}>
                     {showDate && (
                       <div className="flex items-center justify-center my-3">
-                        <span className="px-3 py-1 bg-white border-2 border-gray-900 rounded-full text-xs text-gray-500 shadow-pop-sm">
+                        <span className="px-3 py-1 bg-white border border-gray-100 rounded-full text-xs text-gray-500 shadow-soft">
                           {new Date(msg.createdAt).toLocaleDateString('en-IN', {
                             weekday: 'long',
                             day: 'numeric',
@@ -542,9 +542,9 @@ export default function InboxPage() {
           </div>
 
           {/* Input */}
-          <div className="bg-white border-t-2 border-gray-900 p-4">
+          <div className="bg-white border-t border-gray-100 p-4">
             {pendingFile && (
-              <div className="flex items-center gap-2 mb-2 p-2 bg-gray-50 rounded-xl border-2 border-gray-900">
+              <div className="flex items-center gap-2 mb-2 p-2 bg-gray-50 rounded-xl border border-gray-200">
                 {pendingFile.type.startsWith('image/') ? (
                   <img src={URL.createObjectURL(pendingFile)} alt="" className="w-10 h-10 rounded-lg object-cover" />
                 ) : (
@@ -556,7 +556,7 @@ export default function InboxPage() {
                 </button>
               </div>
             )}
-            <div className="flex items-center gap-2 bg-white rounded-2xl border-2 border-gray-900 px-4 py-2.5">
+            <div className="flex items-center gap-2 bg-white rounded-2xl border border-gray-200 px-4 py-2.5">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -591,7 +591,7 @@ export default function InboxPage() {
                 onClick={pendingFile ? handleSendMedia : handleSend}
                 disabled={pendingFile ? sendingMedia : sending || !draft.trim()}
                 className={cn(
-                  'p-1.5 rounded-xl bg-green-500 text-white border-2 border-gray-900 hover:bg-green-600 transition-colors',
+                  'p-1.5 rounded-xl bg-green-500 text-white hover:bg-green-600 transition-colors',
                   (pendingFile ? sendingMedia : sending || !draft.trim()) && 'opacity-40 cursor-not-allowed'
                 )}
               >
@@ -621,8 +621,8 @@ export default function InboxPage() {
 
       {/* Lead Info Panel */}
       {selectedLead && (
-        <div className="w-72 flex-shrink-0 bg-white border-l-2 border-gray-900 flex-col overflow-y-auto hidden xl:flex">
-          <div className="p-5 border-b-2 border-gray-900">
+        <div className="w-72 flex-shrink-0 bg-white border-l border-gray-100 flex-col overflow-y-auto hidden xl:flex">
+          <div className="p-5 border-b border-gray-100">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
               Lead Profile
             </p>
@@ -631,7 +631,7 @@ export default function InboxPage() {
             <div className="text-center">
               <div
                 className={cn(
-                  'w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-lg mx-auto mb-2 border-2 border-gray-900',
+                  'w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-lg mx-auto mb-2',
                   avatarColor(selectedLead.name)
                 )}
               >
@@ -697,26 +697,26 @@ export default function InboxPage() {
             <div className="space-y-2 pt-2">
               <a
                 href={`tel:${selectedLead.phone}`}
-                className="flex items-center gap-2.5 p-3 rounded-xl bg-blue-50 text-blue-600 border-2 border-gray-900 hover:bg-blue-100 transition-colors text-sm font-medium w-full"
+                className="flex items-center gap-2.5 p-3 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors text-sm font-medium w-full"
               >
                 <Phone size={14} /> Call Customer
               </a>
               <Link
                 href={`/leads/${selectedLead._id}`}
-                className="flex items-center gap-2.5 p-3 rounded-xl bg-purple-50 text-purple-600 border-2 border-gray-900 hover:bg-purple-100 transition-colors text-sm font-medium w-full"
+                className="flex items-center gap-2.5 p-3 rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors text-sm font-medium w-full"
               >
                 <User size={14} /> View Lead Profile
               </Link>
               <Link
                 href="/appointments"
-                className="flex items-center gap-2.5 p-3 rounded-xl bg-orange-50 text-orange-600 border-2 border-gray-900 hover:bg-orange-100 transition-colors text-sm font-medium w-full"
+                className="flex items-center gap-2.5 p-3 rounded-xl bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors text-sm font-medium w-full"
               >
                 <Calendar size={14} /> Book Appointment
               </Link>
             </div>
 
             {selectedLead.notes && (
-              <div className="p-3.5 bg-amber-50 border-2 border-gray-900 rounded-xl">
+              <div className="p-3.5 bg-amber-50 border border-amber-100 rounded-xl">
                 <p className="text-xs font-medium text-amber-700 mb-1">Notes</p>
                 <p className="text-xs text-amber-700/80">{selectedLead.notes}</p>
               </div>

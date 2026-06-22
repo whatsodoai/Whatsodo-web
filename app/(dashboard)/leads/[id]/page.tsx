@@ -152,7 +152,7 @@ export default function LeadDetailPage() {
                 <button
                   onClick={() => setStatusOpen(!statusOpen)}
                   className={cn(
-                    'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border-2 border-gray-900',
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium',
                     cfg.bg,
                     cfg.color
                   )}
@@ -162,13 +162,13 @@ export default function LeadDetailPage() {
                   <ChevronDown size={13} className={cn(statusOpen && 'rotate-180')} />
                 </button>
                 {statusOpen && (
-                  <div className="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 bg-white border-2 border-gray-900 rounded-xl shadow-pop z-10 py-1 min-w-[180px]">
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 bg-white border border-gray-100 rounded-xl shadow-soft-lg z-10 py-1 min-w-[180px]">
                     {LEAD_STATUSES.map((s) => (
                       <button
                         key={s}
                         onClick={() => handleStatusChange(s)}
                         className={cn(
-                          'w-full text-left px-3.5 py-2 text-sm text-gray-700 hover:bg-yellow-50 flex items-center gap-2.5',
+                          'w-full text-left px-3.5 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5',
                           lead.status === s && 'bg-gray-100 font-medium'
                         )}
                       >
@@ -254,7 +254,7 @@ export default function LeadDetailPage() {
                 {leadAppointments.map((apt) => (
                   <div
                     key={apt._id}
-                    className="p-3 rounded-xl border-2 border-gray-900 bg-gray-50"
+                    className="p-3 rounded-xl border border-gray-100 bg-gray-50"
                   >
                     <div className="flex items-center justify-between mb-1">
                       <p className="text-sm font-semibold text-gray-900">
@@ -275,7 +275,7 @@ export default function LeadDetailPage() {
 
         {/* Conversation History */}
         <div className="lg:col-span-2 card flex flex-col" style={{ maxHeight: '75vh' }}>
-          <div className="p-5 border-b-2 border-gray-900 flex items-center gap-3">
+          <div className="p-5 border-b border-gray-100 flex items-center gap-3">
             <MessageSquare size={18} className="text-green-600" />
             <h3 className="font-semibold text-gray-900">Conversation History</h3>
             <span className="ml-auto text-xs text-gray-400">{messages.length} messages</span>
@@ -306,7 +306,7 @@ export default function LeadDetailPage() {
                       'max-w-sm px-4 py-2.5',
                       msg.direction === 'outgoing'
                         ? 'chat-bubble-out text-white'
-                        : 'chat-bubble-in text-gray-900 border-2 border-gray-900'
+                        : 'chat-bubble-in text-gray-900'
                     )}
                   >
                     <p className="text-sm">{msg.message}</p>
@@ -329,8 +329,8 @@ export default function LeadDetailPage() {
       {/* Edit Lead Modal */}
       {editOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-900 rounded-2xl w-full max-w-md shadow-pop-lg animate-bounce-in">
-            <div className="flex items-center justify-between p-5 border-b-2 border-gray-900">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-soft-lg animate-slide-up">
+            <div className="flex items-center justify-between p-5 border-b border-gray-100">
               <h2 className="text-lg font-bold text-gray-900">Edit Lead</h2>
               <button onClick={() => setEditOpen(false)} className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100">
                 <X size={18} />

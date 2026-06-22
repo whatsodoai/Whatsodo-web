@@ -66,8 +66,8 @@ export function BookAppointmentModal({ businessId, leads, onClose, onBooked }: P
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-pop-lg animate-bounce-in border-2 border-gray-900">
-        <div className="flex items-center justify-between p-5 border-b-2 border-gray-900">
+      <div className="bg-white rounded-2xl w-full max-w-md shadow-soft-lg animate-slide-up border border-gray-100">
+        <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <h2 className="text-lg font-bold text-gray-900">Book Appointment</h2>
           <button onClick={onClose} className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100">
             <X size={18} />
@@ -142,9 +142,9 @@ export function BookAppointmentModal({ businessId, leads, onClose, onBooked }: P
                     type="button"
                     onClick={() => setForm({ ...form, time: slot })}
                     className={cn(
-                      'px-2 py-1.5 rounded-lg text-xs font-medium transition-colors border-2',
+                      'px-2 py-1.5 rounded-lg text-xs font-medium transition-colors border',
                       form.time === slot
-                        ? 'bg-green-500 text-white border-gray-900'
+                        ? 'bg-green-500 text-white border-green-500'
                         : 'bg-white text-gray-700 border-gray-200 hover:border-green-500 hover:text-green-600'
                     )}
                   >
