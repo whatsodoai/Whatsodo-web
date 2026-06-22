@@ -82,7 +82,7 @@ export default function CalendarPage() {
   return (
     <div className="page-container">
       <div className="flex items-center justify-between">
-        <Link href="/appointments" className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800">
+        <Link href="/appointments" className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-200">
           <ArrowLeft size={15} /> Back to List
         </Link>
         <button onClick={() => setShowBook(true)} className="btn-primary">
@@ -95,25 +95,25 @@ export default function CalendarPage() {
         <div className="lg:col-span-2 card p-6">
           {/* Month Nav */}
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold text-gray-900">
+            <h2 className="text-lg font-bold text-gray-100">
               {MONTHS[viewMonth]} {viewYear}
             </h2>
             <div className="flex items-center gap-1">
               <button
                 onClick={prevMonth}
-                className="p-2 rounded-xl text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                className="p-2 rounded-xl text-gray-500 hover:bg-white/5 hover:text-gray-300 transition-colors"
               >
                 <ChevronLeft size={18} />
               </button>
               <button
                 onClick={() => { setViewMonth(today.getMonth()); setViewYear(today.getFullYear()); }}
-                className="px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                className="px-3 py-1.5 text-xs font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors"
               >
                 Today
               </button>
               <button
                 onClick={nextMonth}
-                className="p-2 rounded-xl text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                className="p-2 rounded-xl text-gray-500 hover:bg-white/5 hover:text-gray-300 transition-colors"
               >
                 <ChevronRight size={18} />
               </button>
@@ -123,7 +123,7 @@ export default function CalendarPage() {
           {/* Day headers */}
           <div className="grid grid-cols-7 mb-2">
             {DAYS.map((d) => (
-              <div key={d} className="text-center text-xs font-semibold text-gray-400 py-2">
+              <div key={d} className="text-center text-xs font-semibold text-gray-500 py-2">
                 {d}
               </div>
             ))}
@@ -155,20 +155,20 @@ export default function CalendarPage() {
                     className={cn(
                       'min-h-[64px] p-1.5 rounded-xl border transition-all text-left',
                       isSelected
-                        ? 'bg-green-50 border-green-300 shadow-sm'
+                        ? 'bg-green-500/10 border-green-500/30 shadow-sm'
                         : isToday
-                        ? 'bg-gray-900 border-gray-900'
-                        : 'border-transparent hover:bg-gray-50 hover:border-gray-200'
+                        ? 'bg-white/10 border-white/20'
+                        : 'border-transparent hover:bg-white/5 hover:border-white/10'
                     )}
                   >
                     <p
                       className={cn(
                         'text-sm font-semibold mb-1',
                         isToday
-                          ? 'text-white'
+                          ? 'text-gray-100'
                           : isSelected
-                          ? 'text-green-700'
-                          : 'text-gray-700'
+                          ? 'text-green-300'
+                          : 'text-gray-300'
                       )}
                     >
                       {day}
@@ -180,17 +180,17 @@ export default function CalendarPage() {
                           className={cn(
                             'text-[9px] font-medium px-1 py-0.5 rounded truncate',
                             apt.status === 'Booked'
-                              ? 'bg-green-100 text-green-700'
+                              ? 'bg-green-500/10 text-green-300'
                               : apt.status === 'Completed'
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'bg-red-100 text-red-700'
+                              ? 'bg-blue-500/10 text-blue-300'
+                              : 'bg-red-500/10 text-red-300'
                           )}
                         >
                           {apt.time.split(' ')[0]}
                         </div>
                       ))}
                       {dayApts.length > 2 && (
-                        <p className="text-[9px] text-gray-400 font-medium">
+                        <p className="text-[9px] text-gray-500 font-medium">
                           +{dayApts.length - 2} more
                         </p>
                       )}
@@ -202,7 +202,7 @@ export default function CalendarPage() {
           )}
 
           {/* Legend */}
-          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-50 text-xs text-gray-500">
+          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-white/5 text-xs text-gray-500">
             {[
               { color: 'bg-green-400', label: 'Booked' },
               { color: 'bg-blue-400', label: 'Completed' },
@@ -220,19 +220,19 @@ export default function CalendarPage() {
         <div className="card p-5">
           {selectedDate ? (
             <>
-              <h3 className="font-semibold text-gray-900 mb-1">
+              <h3 className="font-semibold text-gray-100 mb-1">
                 {new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-IN', {
                   weekday: 'long',
                   day: 'numeric',
                   month: 'long',
                 })}
               </h3>
-              <p className="text-sm text-gray-400 mb-4">
+              <p className="text-sm text-gray-500 mb-4">
                 {selectedApts.length} appointment{selectedApts.length !== 1 ? 's' : ''}
               </p>
               {selectedApts.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-400 text-sm">No appointments on this day</p>
+                  <p className="text-gray-500 text-sm">No appointments on this day</p>
                   <button
                     onClick={() => setShowBook(true)}
                     className="btn-primary inline-flex mt-3 text-xs"
@@ -250,7 +250,7 @@ export default function CalendarPage() {
                     return (
                       <div
                         key={apt._id}
-                        className="p-3.5 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white transition-colors"
+                        className="p-3.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.08] transition-colors"
                       >
                         <div className="flex items-center gap-2.5 mb-2">
                           <div
@@ -262,8 +262,8 @@ export default function CalendarPage() {
                             {getInitials(name)}
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-gray-900">{name}</p>
-                            <div className="flex items-center gap-1 text-xs text-gray-400">
+                            <p className="text-sm font-semibold text-gray-100">{name}</p>
+                            <div className="flex items-center gap-1 text-xs text-gray-500">
                               <Clock size={10} /> {apt.time}
                             </div>
                           </div>
@@ -273,10 +273,10 @@ export default function CalendarPage() {
                             className={cn(
                               'text-[10px] font-semibold px-2 py-0.5 rounded-full',
                               apt.status === 'Booked'
-                                ? 'bg-green-100 text-green-700'
+                                ? 'bg-green-500/10 text-green-300'
                                 : apt.status === 'Completed'
-                                ? 'bg-blue-100 text-blue-700'
-                                : 'bg-red-100 text-red-700'
+                                ? 'bg-blue-500/10 text-blue-300'
+                                : 'bg-red-500/10 text-red-300'
                             )}
                           >
                             {apt.status}
@@ -284,14 +284,14 @@ export default function CalendarPage() {
                           {lead && (
                             <Link
                               href={`/leads/${lead._id}`}
-                              className="text-xs text-green-600 hover:underline"
+                              className="text-xs text-green-400 hover:underline"
                             >
                               View Lead →
                             </Link>
                           )}
                         </div>
                         {apt.notes && (
-                          <p className="text-xs text-gray-400 mt-2 border-t border-gray-100 pt-2 truncate">
+                          <p className="text-xs text-gray-500 mt-2 border-t border-white/10 pt-2 truncate">
                             {apt.notes}
                           </p>
                         )}
@@ -303,8 +303,8 @@ export default function CalendarPage() {
             </>
           ) : (
             <div className="flex flex-col items-center justify-center h-48 text-center">
-              <p className="text-gray-400 text-sm font-medium">Select a date</p>
-              <p className="text-gray-300 text-xs mt-1">
+              <p className="text-gray-500 text-sm font-medium">Select a date</p>
+              <p className="text-gray-600 text-xs mt-1">
                 Click on any date to see its appointments
               </p>
             </div>

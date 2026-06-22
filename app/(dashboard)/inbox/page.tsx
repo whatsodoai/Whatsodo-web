@@ -54,7 +54,7 @@ function YouTubePreview({ text }: { text: string }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="mt-2 block rounded-xl overflow-hidden border border-gray-200 bg-white hover:opacity-90 transition-opacity"
+      className="mt-2 block rounded-xl overflow-hidden border border-white/10 bg-white/5 hover:opacity-90 transition-opacity"
     >
       <div className="relative">
         <img
@@ -69,7 +69,7 @@ function YouTubePreview({ text }: { text: string }) {
         </div>
       </div>
       <div className="px-2.5 py-1.5">
-        <p className="text-[11px] text-gray-500">youtube.com</p>
+        <p className="text-[11px] text-gray-400">youtube.com</p>
       </div>
     </a>
   );
@@ -261,28 +261,28 @@ export default function InboxPage() {
   });
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-gray-50">
+    <div className="flex h-[calc(100vh-4rem)] bg-surface-950">
       {/* Conversations List */}
-      <div className="w-80 flex-shrink-0 bg-white border-r border-gray-100 flex flex-col">
+      <div className="w-80 flex-shrink-0 bg-white/[0.03] backdrop-blur-xl border-r border-white/10 flex flex-col">
         {/* Search + connection indicator */}
-        <div className="p-4 border-b border-gray-100">
+        <div className="p-4 border-b border-white/10">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
               Conversations
             </span>
-            <span className={cn('flex items-center gap-1 text-[10px] font-medium', connected ? 'text-green-500' : 'text-gray-400')}>
+            <span className={cn('flex items-center gap-1 text-[10px] font-medium', connected ? 'text-green-400' : 'text-gray-500')}>
               {connected ? <Wifi size={10} /> : <WifiOff size={10} />}
               {connected ? 'Live' : 'Polling'}
             </span>
           </div>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <input
               type="text"
               placeholder="Search conversations..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-400 transition-all"
+              className="w-full pl-9 pr-4 py-2 text-sm bg-white/5 text-gray-100 placeholder:text-gray-500 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-400 transition-all"
             />
           </div>
           {teamOptions.length > 1 && (
@@ -291,7 +291,7 @@ export default function InboxPage() {
                 onClick={() => setOnlyAssignedToMe(false)}
                 className={cn(
                   'text-xs font-medium px-2.5 py-1 rounded-full transition-colors',
-                  !onlyAssignedToMe ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                  !onlyAssignedToMe ? 'bg-white/15 text-gray-100' : 'bg-white/5 text-gray-400 hover:bg-white/10'
                 )}
               >
                 All
@@ -300,7 +300,7 @@ export default function InboxPage() {
                 onClick={() => setOnlyAssignedToMe(true)}
                 className={cn(
                   'text-xs font-medium px-2.5 py-1 rounded-full transition-colors',
-                  onlyAssignedToMe ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                  onlyAssignedToMe ? 'bg-white/15 text-gray-100' : 'bg-white/5 text-gray-400 hover:bg-white/10'
                 )}
               >
                 Assigned to me
@@ -319,9 +319,9 @@ export default function InboxPage() {
             </div>
           ) : filteredInbox.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center p-6">
-              <MessageSquare className="w-10 h-10 text-gray-200 mb-3" />
-              <p className="text-gray-500 text-sm font-medium">No conversations</p>
-              <p className="text-gray-400 text-xs mt-1">
+              <MessageSquare className="w-10 h-10 text-gray-600 mb-3" />
+              <p className="text-gray-400 text-sm font-medium">No conversations</p>
+              <p className="text-gray-500 text-xs mt-1">
                 WhatsApp messages will appear here
               </p>
             </div>
@@ -336,8 +336,8 @@ export default function InboxPage() {
                   className={cn(
                     'w-full flex items-center gap-3 p-3.5 transition-colors text-left',
                     isSelected
-                      ? 'bg-green-50 border-l-2 border-green-500'
-                      : 'hover:bg-gray-50 border-l-2 border-transparent'
+                      ? 'bg-green-500/10 border-l-2 border-green-500'
+                      : 'hover:bg-white/5 border-l-2 border-transparent'
                   )}
                 >
                   <div
@@ -348,7 +348,7 @@ export default function InboxPage() {
                   >
                     {getInitials(item.leadName || item.phone)}
                     {item.unread && (
-                      <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+                      <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-surface-950" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -356,23 +356,23 @@ export default function InboxPage() {
                       <p
                         className={cn(
                           'text-sm truncate',
-                          isSelected ? 'font-semibold text-gray-900' : 'font-medium text-gray-800'
+                          isSelected ? 'font-semibold text-gray-100' : 'font-medium text-gray-300'
                         )}
                       >
                         {item.leadName || item.phone}
                       </p>
-                      <p className="text-[10px] text-gray-400 flex-shrink-0 ml-2">
+                      <p className="text-[10px] text-gray-500 flex-shrink-0 ml-2">
                         {formatRelativeTime(item.lastMessageTime)}
                       </p>
                     </div>
                     <p
                       className={cn(
                         'text-xs truncate',
-                        item.direction === 'outgoing' ? 'text-gray-400' : 'text-gray-600'
+                        item.direction === 'outgoing' ? 'text-gray-500' : 'text-gray-400'
                       )}
                     >
                       {item.direction === 'outgoing' && (
-                        <span className="text-green-500 mr-1">↗</span>
+                        <span className="text-green-400 mr-1">↗</span>
                       )}
                       {item.lastMessage}
                     </p>
@@ -398,7 +398,7 @@ export default function InboxPage() {
       {selectedPhone && selectedItem ? (
         <div className="flex-1 flex flex-col min-w-0">
           {/* Chat Header */}
-          <div className="bg-white border-b border-gray-100 px-5 py-3.5 flex items-center gap-3">
+          <div className="bg-white/[0.03] backdrop-blur-xl border-b border-white/10 px-5 py-3.5 flex items-center gap-3">
             <div
               className={cn(
                 'w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0',
@@ -408,11 +408,11 @@ export default function InboxPage() {
               {getInitials(selectedItem.leadName || selectedItem.phone)}
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-gray-900">
+              <p className="font-semibold text-gray-100">
                 {selectedItem.leadName || selectedItem.phone}
               </p>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400">{selectedItem.phone}</span>
+                <span className="text-xs text-gray-500">{selectedItem.phone}</span>
                 {selectedLead && (
                   <span className={cn('text-[10px] font-semibold px-1.5 py-0.5 rounded-full', STATUS_CONFIG[selectedLead.status].bg, STATUS_CONFIG[selectedLead.status].color)}>
                     {selectedLead.status}
@@ -423,19 +423,19 @@ export default function InboxPage() {
             <div className="flex items-center gap-1.5">
               <a
                 href={`tel:${selectedPhone}`}
-                className="p-2 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                className="p-2 rounded-xl text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"
               >
                 <Phone size={16} />
               </a>
               {selectedLead && (
                 <Link
                   href={`/leads/${selectedLead._id}`}
-                  className="p-2 rounded-xl text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+                  className="p-2 rounded-xl text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 transition-colors"
                 >
                   <User size={16} />
                 </Link>
               )}
-              <button className="p-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+              <button className="p-2 rounded-xl text-gray-500 hover:text-gray-200 hover:bg-white/10 transition-colors">
                 <MoreVertical size={16} />
               </button>
             </div>
@@ -446,17 +446,17 @@ export default function InboxPage() {
             className="flex-1 overflow-y-auto p-5 space-y-3"
             style={{
               backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e8f5e9' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2334d399' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
             }}
           >
             {msgLoading ? (
               <div className="flex items-center justify-center h-full">
-                <div className="w-6 h-6 border-2 border-green-200 border-t-green-500 rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-white/10 border-t-green-500 rounded-full animate-spin" />
               </div>
             ) : messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
-                <MessageSquare className="w-12 h-12 text-gray-200 mb-3" />
-                <p className="text-gray-400 text-sm">No messages yet</p>
+                <MessageSquare className="w-12 h-12 text-gray-600 mb-3" />
+                <p className="text-gray-500 text-sm">No messages yet</p>
               </div>
             ) : (
               messages.map((msg, idx) => {
@@ -468,7 +468,7 @@ export default function InboxPage() {
                   <div key={msg._id}>
                     {showDate && (
                       <div className="flex items-center justify-center my-3">
-                        <span className="px-3 py-1 bg-white/80 rounded-full text-xs text-gray-400 shadow-sm">
+                        <span className="px-3 py-1 bg-white/10 rounded-full text-xs text-gray-400 shadow-sm">
                           {new Date(msg.createdAt).toLocaleDateString('en-IN', {
                             weekday: 'long',
                             day: 'numeric',
@@ -489,7 +489,7 @@ export default function InboxPage() {
                             'px-4 py-2.5 shadow-sm',
                             msg.direction === 'outgoing'
                               ? 'chat-bubble-out text-white'
-                              : 'chat-bubble-in text-gray-900'
+                              : 'chat-bubble-in text-gray-100'
                           )}
                         >
                           {msg.mediaType === 'image' && msg.mediaUrl ? (
@@ -505,7 +505,7 @@ export default function InboxPage() {
                               rel="noopener noreferrer"
                               className={cn(
                                 'flex items-center gap-2 p-2 rounded-lg',
-                                msg.direction === 'outgoing' ? 'bg-white/10' : 'bg-gray-100'
+                                msg.direction === 'outgoing' ? 'bg-white/10' : 'bg-white/10'
                               )}
                             >
                               <FileText size={18} />
@@ -526,7 +526,7 @@ export default function InboxPage() {
                               'text-[10px] mt-1 text-right',
                               msg.direction === 'outgoing'
                                 ? 'text-green-100'
-                                : 'text-gray-400'
+                                : 'text-gray-500'
                             )}
                           >
                             {formatTime(msg.createdAt)}
@@ -542,21 +542,21 @@ export default function InboxPage() {
           </div>
 
           {/* Input */}
-          <div className="bg-white border-t border-gray-100 p-4">
+          <div className="bg-white/[0.03] backdrop-blur-xl border-t border-white/10 p-4">
             {pendingFile && (
-              <div className="flex items-center gap-2 mb-2 p-2 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="flex items-center gap-2 mb-2 p-2 bg-white/5 rounded-xl border border-white/10">
                 {pendingFile.type.startsWith('image/') ? (
                   <img src={URL.createObjectURL(pendingFile)} alt="" className="w-10 h-10 rounded-lg object-cover" />
                 ) : (
-                  <FileText size={20} className="text-gray-400" />
+                  <FileText size={20} className="text-gray-500" />
                 )}
-                <span className="text-xs text-gray-600 truncate flex-1">{pendingFile.name}</span>
-                <button onClick={() => setPendingFile(null)} className="text-gray-400 hover:text-gray-600">
+                <span className="text-xs text-gray-300 truncate flex-1">{pendingFile.name}</span>
+                <button onClick={() => setPendingFile(null)} className="text-gray-500 hover:text-gray-200">
                   <X size={14} />
                 </button>
               </div>
             )}
-            <div className="flex items-center gap-2 bg-gray-50 rounded-2xl border border-gray-200 px-4 py-2.5">
+            <div className="flex items-center gap-2 bg-white/5 rounded-2xl border border-white/10 px-4 py-2.5">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -568,10 +568,10 @@ export default function InboxPage() {
                   e.target.value = '';
                 }}
               />
-              <button onClick={() => fileInputRef.current?.click()} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => fileInputRef.current?.click()} className="text-gray-500 hover:text-gray-200">
                 <Paperclip size={18} />
               </button>
-              <button className="text-gray-400 hover:text-gray-600">
+              <button className="text-gray-500 hover:text-gray-200">
                 <Smile size={18} />
               </button>
               <input
@@ -585,7 +585,7 @@ export default function InboxPage() {
                     pendingFile ? handleSendMedia() : handleSend();
                   }
                 }}
-                className="flex-1 bg-transparent text-sm focus:outline-none text-gray-800 placeholder:text-gray-400"
+                className="flex-1 bg-transparent text-sm focus:outline-none text-gray-100 placeholder:text-gray-500"
               />
               <button
                 onClick={pendingFile ? handleSendMedia : handleSend}
@@ -602,17 +602,17 @@ export default function InboxPage() {
                 )}
               </button>
             </div>
-            <p className="text-[10px] text-gray-400 text-center mt-1.5">
+            <p className="text-[10px] text-gray-500 text-center mt-1.5">
               AI replies automatically · You can also reply manually above
             </p>
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex items-center justify-center bg-gray-50">
+        <div className="flex-1 flex items-center justify-center bg-surface-950">
           <div className="text-center">
-            <MessageSquare className="w-14 h-14 text-gray-200 mx-auto mb-4" />
-            <p className="text-gray-500 font-medium">Select a conversation</p>
-            <p className="text-gray-400 text-sm mt-1">
+            <MessageSquare className="w-14 h-14 text-gray-600 mx-auto mb-4" />
+            <p className="text-gray-400 font-medium">Select a conversation</p>
+            <p className="text-gray-500 text-sm mt-1">
               Click on a chat to view the conversation
             </p>
           </div>
@@ -621,8 +621,8 @@ export default function InboxPage() {
 
       {/* Lead Info Panel */}
       {selectedLead && (
-        <div className="w-72 flex-shrink-0 bg-white border-l border-gray-100 flex-col overflow-y-auto hidden xl:flex">
-          <div className="p-5 border-b border-gray-100">
+        <div className="w-72 flex-shrink-0 bg-white/[0.03] backdrop-blur-xl border-l border-white/10 flex-col overflow-y-auto hidden xl:flex">
+          <div className="p-5 border-b border-white/10">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
               Lead Profile
             </p>
@@ -637,8 +637,8 @@ export default function InboxPage() {
               >
                 {getInitials(selectedLead.name)}
               </div>
-              <p className="font-semibold text-gray-900">{selectedLead.name}</p>
-              <p className="text-sm text-gray-400 mt-0.5">{selectedLead.phone}</p>
+              <p className="font-semibold text-gray-100">{selectedLead.name}</p>
+              <p className="text-sm text-gray-500 mt-0.5">{selectedLead.phone}</p>
               <select
                 value={selectedLead.status}
                 onChange={(e) => handleLeadStatusChange(selectedLead._id, e.target.value as import('@/types').LeadStatus)}
@@ -656,7 +656,7 @@ export default function InboxPage() {
 
             {teamOptions.length > 1 && (
               <div>
-                <label className="block text-xs text-gray-400 mb-1.5">Assigned to</label>
+                <label className="block text-xs text-gray-500 mb-1.5">Assigned to</label>
                 <select
                   value={selectedLead.assignedTo || ''}
                   onChange={(e) => handleAssignChange(selectedLead._id, e.target.value)}
@@ -685,10 +685,10 @@ export default function InboxPage() {
                 },
               ].map(({ icon: Icon, label, value }) => (
                 <div key={label} className="flex items-start gap-3">
-                  <Icon size={14} className="text-gray-400 mt-0.5 flex-shrink-0" />
+                  <Icon size={14} className="text-gray-500 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="text-xs text-gray-400">{label}</p>
-                    <p className="text-gray-800 font-medium text-sm">{value}</p>
+                    <p className="text-xs text-gray-500">{label}</p>
+                    <p className="text-gray-200 font-medium text-sm">{value}</p>
                   </div>
                 </div>
               ))}
@@ -697,28 +697,28 @@ export default function InboxPage() {
             <div className="space-y-2 pt-2">
               <a
                 href={`tel:${selectedLead.phone}`}
-                className="flex items-center gap-2.5 p-3 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors text-sm font-medium w-full"
+                className="flex items-center gap-2.5 p-3 rounded-xl bg-blue-500/10 text-blue-300 hover:bg-blue-500/20 transition-colors text-sm font-medium w-full"
               >
                 <Phone size={14} /> Call Customer
               </a>
               <Link
                 href={`/leads/${selectedLead._id}`}
-                className="flex items-center gap-2.5 p-3 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors text-sm font-medium w-full"
+                className="flex items-center gap-2.5 p-3 rounded-xl bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 transition-colors text-sm font-medium w-full"
               >
                 <User size={14} /> View Lead Profile
               </Link>
               <Link
                 href="/appointments"
-                className="flex items-center gap-2.5 p-3 rounded-xl bg-orange-50 text-orange-700 hover:bg-orange-100 transition-colors text-sm font-medium w-full"
+                className="flex items-center gap-2.5 p-3 rounded-xl bg-orange-500/10 text-orange-300 hover:bg-orange-500/20 transition-colors text-sm font-medium w-full"
               >
                 <Calendar size={14} /> Book Appointment
               </Link>
             </div>
 
             {selectedLead.notes && (
-              <div className="p-3.5 bg-amber-50 border border-amber-100 rounded-xl">
-                <p className="text-xs font-medium text-amber-700 mb-1">Notes</p>
-                <p className="text-xs text-amber-900">{selectedLead.notes}</p>
+              <div className="p-3.5 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                <p className="text-xs font-medium text-amber-300 mb-1">Notes</p>
+                <p className="text-xs text-amber-200/80">{selectedLead.notes}</p>
               </div>
             )}
           </div>

@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Topbar } from '@/components/layout/topbar';
+import { CommandPalette } from '@/components/command-palette';
 import { useAuth } from '@/contexts/auth-context';
 import { NotificationProvider } from '@/contexts/notification-context';
 
@@ -19,10 +20,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-surface-950">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-2 border-green-200 border-t-green-500 rounded-full animate-spin" />
-          <p className="text-gray-400 text-sm">Loading...</p>
+          <div className="w-10 h-10 border-2 border-green-500/20 border-t-green-400 rounded-full animate-spin" />
+          <p className="text-gray-500 text-sm">Loading...</p>
         </div>
       </div>
     );
@@ -32,7 +33,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <NotificationProvider>
-      <div className="flex h-screen bg-gray-50 overflow-hidden">
+      <CommandPalette />
+      <div className="flex h-screen bg-surface-950 overflow-hidden">
         <Sidebar />
         <div className="flex-1 flex flex-col ml-64 min-w-0">
           <Topbar />

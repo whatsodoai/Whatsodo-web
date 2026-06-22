@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 import { AuthProvider } from '@/contexts/auth-context';
 import { BusinessProvider } from '@/contexts/business-context';
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <BusinessProvider>{children}</BusinessProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );

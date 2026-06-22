@@ -150,22 +150,22 @@ export default function LoginPage() {
       </div>
 
       {/* Right Auth Panel */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-gray-50">
+      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-surface-950">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2.5 mb-8 justify-center">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
               <Zap className="w-5 h-5 text-white" strokeWidth={2.5} />
             </div>
-            <p className="text-gray-900 font-bold text-xl">Whatsodo</p>
+            <p className="text-gray-100 font-bold text-xl">Whatsodo</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-8">
+          <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl shadow-glass border border-white/10 p-8">
             <div className="mb-8">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-100">
                 {isLogin ? 'Welcome back' : 'Create account'}
               </h1>
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-gray-400 text-sm mt-1">
                 {isLogin
                   ? 'Sign in to your Whatsodo account'
                   : 'Start your 14-day free trial'}
@@ -173,7 +173,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+              <div className="mb-5 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-300 text-sm">
                 {error}
               </div>
             )}
@@ -181,11 +181,11 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-gray-300 mb-1.5">
                     Full Name
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                     <input
                       name="name"
                       type="text"
@@ -193,18 +193,18 @@ export default function LoginPage() {
                       value={form.name}
                       onChange={handleChange}
                       placeholder="John Doe"
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all bg-gray-50 focus:bg-white"
+                      className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-xl text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all bg-white/5 focus:bg-white/[0.08]"
                     />
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-300 mb-1.5">
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                   <input
                     name="email"
                     type="email"
@@ -212,17 +212,17 @@ export default function LoginPage() {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="you@example.com"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all bg-gray-50 focus:bg-white"
+                    className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-xl text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all bg-white/5 focus:bg-white/[0.08]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-300 mb-1.5">
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                   <input
                     name="password"
                     type={showPassword ? 'text' : 'password'}
@@ -230,12 +230,12 @@ export default function LoginPage() {
                     value={form.password}
                     onChange={handleChange}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-11 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all bg-gray-50 focus:bg-white"
+                    className="w-full pl-10 pr-11 py-3 border border-white/10 rounded-xl text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all bg-white/5 focus:bg-white/[0.08]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -262,14 +262,14 @@ export default function LoginPage() {
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-400 text-sm">
                 {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
                 <button
                   onClick={() => {
                     setIsLogin(!isLogin);
                     setError('');
                   }}
-                  className="text-green-600 font-semibold hover:text-green-700"
+                  className="text-green-400 font-semibold hover:text-green-300"
                 >
                   {isLogin ? 'Sign up free' : 'Sign in'}
                 </button>
@@ -277,7 +277,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <p className="text-center text-gray-400 text-xs mt-6">
+          <p className="text-center text-gray-500 text-xs mt-6">
             By continuing, you agree to our Terms of Service and Privacy Policy.
           </p>
         </div>

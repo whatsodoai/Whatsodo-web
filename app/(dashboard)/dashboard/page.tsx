@@ -24,6 +24,8 @@ import {
   ArrowUp,
   ArrowDown,
   Minus,
+  Flame,
+  Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn, formatRelativeTime, getInitials, avatarColor, STATUS_CONFIG } from '@/lib/utils';
@@ -46,13 +48,13 @@ function StatCard({ title, value, icon: Icon, gradient, iconBg, change, href }: 
           <Icon className="w-5 h-5 text-white" />
         </div>
         {href && (
-          <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors" />
+          <ArrowUpRight className="w-4 h-4 text-gray-600 group-hover:text-gray-400 transition-colors" />
         )}
       </div>
-      <p className="text-2xl font-bold text-gray-900 mb-1">{value}</p>
-      <p className="text-gray-500 text-sm">{title}</p>
+      <p className="text-2xl font-bold text-gray-100 mb-1">{value}</p>
+      <p className="text-gray-400 text-sm">{title}</p>
       {change && (
-        <p className="text-xs text-green-600 font-medium mt-2 flex items-center gap-1">
+        <p className="text-xs text-green-400 font-medium mt-2 flex items-center gap-1">
           <TrendingUp size={11} /> {change}
         </p>
       )}
@@ -80,9 +82,9 @@ function LeadVelocityBar({ leads }: { leads: Lead[] }) {
   const pct = yesterdayCount > 0 ? Math.round(Math.abs(delta / yesterdayCount) * 100) : null;
 
   const items = [
-    { label: 'Today', value: todayCount, color: 'text-green-600 bg-green-50' },
-    { label: 'Yesterday', value: yesterdayCount, color: 'text-blue-600 bg-blue-50' },
-    { label: 'Last 7 Days', value: weekCount, color: 'text-purple-600 bg-purple-50' },
+    { label: 'Today', value: todayCount, color: 'text-green-300 bg-green-500/10' },
+    { label: 'Yesterday', value: yesterdayCount, color: 'text-blue-300 bg-blue-500/10' },
+    { label: 'Last 7 Days', value: weekCount, color: 'text-purple-300 bg-purple-500/10' },
   ];
 
   return (
@@ -91,7 +93,7 @@ function LeadVelocityBar({ leads }: { leads: Lead[] }) {
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
           <Zap className="w-4 h-4 text-white" />
         </div>
-        <p className="font-semibold text-gray-900 text-sm">Lead Velocity</p>
+        <p className="font-semibold text-gray-100 text-sm">Lead Velocity</p>
       </div>
       <div className="flex items-center gap-6 flex-1 flex-wrap">
         {items.map(({ label, value, color }) => (
@@ -99,14 +101,14 @@ function LeadVelocityBar({ leads }: { leads: Lead[] }) {
             <span className={cn('text-xl font-bold tabular-nums px-2.5 py-0.5 rounded-lg', color)}>
               {value}
             </span>
-            <span className="text-xs text-gray-500">{label}</span>
+            <span className="text-xs text-gray-400">{label}</span>
           </div>
         ))}
       </div>
       {pct !== null && (
         <div className={cn(
           'flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg',
-          delta > 0 ? 'text-green-700 bg-green-50' : delta < 0 ? 'text-red-700 bg-red-50' : 'text-gray-600 bg-gray-100'
+          delta > 0 ? 'text-green-300 bg-green-500/10' : delta < 0 ? 'text-red-300 bg-red-500/10' : 'text-gray-400 bg-white/5'
         )}>
           {delta > 0 ? <ArrowUp size={12} /> : delta < 0 ? <ArrowDown size={12} /> : <Minus size={12} />}
           {pct}% vs yesterday
@@ -126,15 +128,15 @@ function LeadFunnel({ summary }: { summary: DashboardSummary }) {
 
   return (
     <div className="card p-5">
-      <h3 className="font-semibold text-gray-900 mb-4">Lead Funnel</h3>
+      <h3 className="font-semibold text-gray-100 mb-4">Lead Funnel</h3>
       <div className="space-y-3">
         {stages.map(({ label, value, color, pct }) => (
           <div key={label}>
             <div className="flex items-center justify-between text-sm mb-1.5">
-              <span className="text-gray-600">{label}</span>
-              <span className="font-semibold text-gray-900">{value}</span>
+              <span className="text-gray-400">{label}</span>
+              <span className="font-semibold text-gray-100">{value}</span>
             </div>
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-2 bg-white/5 rounded-full overflow-hidden">
               <div
                 className={cn('h-full rounded-full transition-all duration-700', color)}
                 style={{ width: `${Math.min(pct, 100)}%` }}
@@ -143,9 +145,9 @@ function LeadFunnel({ summary }: { summary: DashboardSummary }) {
           </div>
         ))}
       </div>
-      <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between text-sm">
-        <span className="text-gray-500">Conversion Rate</span>
-        <span className="font-bold text-green-600">
+      <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between text-sm">
+        <span className="text-gray-400">Conversion Rate</span>
+        <span className="font-bold text-green-400">
           {summary.totalLeads > 0
             ? ((summary.won / summary.totalLeads) * 100).toFixed(1)
             : '0.0'}%
@@ -159,13 +161,13 @@ function RecentLeads({ leads }: { leads: Lead[] }) {
   return (
     <div className="card p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-900">Recent Leads</h3>
-        <Link href="/leads" className="text-green-600 text-xs font-medium hover:underline">
+        <h3 className="font-semibold text-gray-100">Recent Leads</h3>
+        <Link href="/leads" className="text-green-400 text-xs font-medium hover:underline">
           View all
         </Link>
       </div>
       {leads.length === 0 ? (
-        <div className="text-center py-8 text-gray-400 text-sm">No leads yet</div>
+        <div className="text-center py-8 text-gray-500 text-sm">No leads yet</div>
       ) : (
         <div className="space-y-3">
           {leads.slice(0, 5).map((lead) => {
@@ -174,7 +176,7 @@ function RecentLeads({ leads }: { leads: Lead[] }) {
               <Link
                 key={lead._id}
                 href={`/leads/${lead._id}`}
-                className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors group"
+                className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors group"
               >
                 <div
                   className={cn(
@@ -185,8 +187,8 @@ function RecentLeads({ leads }: { leads: Lead[] }) {
                   {getInitials(lead.name)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{lead.name}</p>
-                  <p className="text-xs text-gray-400 truncate">{lead.interest || lead.phone}</p>
+                  <p className="text-sm font-medium text-gray-100 truncate">{lead.name}</p>
+                  <p className="text-xs text-gray-500 truncate">{lead.interest || lead.phone}</p>
                 </div>
                 <span className={cn('badge', status.bg, status.color)}>{status.label}</span>
               </Link>
@@ -207,13 +209,13 @@ function UpcomingAppointments({ appointments }: { appointments: Appointment[] })
   return (
     <div className="card p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-900">Upcoming Appointments</h3>
-        <Link href="/appointments" className="text-green-600 text-xs font-medium hover:underline">
+        <h3 className="font-semibold text-gray-100">Upcoming Appointments</h3>
+        <Link href="/appointments" className="text-green-400 text-xs font-medium hover:underline">
           View all
         </Link>
       </div>
       {upcoming.length === 0 ? (
-        <div className="text-center py-8 text-gray-400 text-sm">No upcoming appointments</div>
+        <div className="text-center py-8 text-gray-500 text-sm">No upcoming appointments</div>
       ) : (
         <div className="space-y-3">
           {upcoming.map((apt) => {
@@ -222,23 +224,23 @@ function UpcomingAppointments({ appointments }: { appointments: Appointment[] })
             return (
               <div
                 key={apt._id}
-                className="flex items-center gap-3 p-3 rounded-xl bg-green-50 border border-green-100"
+                className="flex items-center gap-3 p-3 rounded-xl bg-green-500/10 border border-green-500/20"
               >
-                <div className="w-10 h-10 rounded-xl bg-green-100 flex flex-col items-center justify-center flex-shrink-0">
-                  <p className="text-green-700 text-[10px] font-bold leading-none">
+                <div className="w-10 h-10 rounded-xl bg-green-500/15 flex flex-col items-center justify-center flex-shrink-0">
+                  <p className="text-green-300 text-[10px] font-bold leading-none">
                     {new Date(apt.date).toLocaleDateString('en', { month: 'short' }).toUpperCase()}
                   </p>
-                  <p className="text-green-800 text-sm font-bold">
+                  <p className="text-green-200 text-sm font-bold">
                     {new Date(apt.date).getDate()}
                   </p>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{name}</p>
-                  <p className="text-xs text-gray-500 flex items-center gap-1">
+                  <p className="text-sm font-medium text-gray-100 truncate">{name}</p>
+                  <p className="text-xs text-gray-400 flex items-center gap-1">
                     <Clock size={10} /> {apt.time}
                   </p>
                 </div>
-                <span className="text-[10px] font-semibold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-semibold text-green-300 bg-green-500/15 px-2 py-0.5 rounded-full">
                   Booked
                 </span>
               </div>
@@ -250,24 +252,95 @@ function UpcomingAppointments({ appointments }: { appointments: Appointment[] })
   );
 }
 
+function AIInsights({ leads }: { leads: Lead[] }) {
+  const hot = leads.filter((l) => l.intentTag === 'hot');
+  const warm = leads.filter((l) => l.intentTag === 'warm');
+  const cold = leads.filter((l) => l.intentTag === 'cold');
+  const scored = leads.filter((l) => l.intentTag);
+
+  const topHot = [...hot]
+    .sort((a, b) => (b.intentScore ?? 0) - (a.intentScore ?? 0))
+    .slice(0, 4);
+
+  const counts = [
+    { label: 'Hot', value: hot.length, color: 'text-red-300 bg-red-500/10 border border-red-500/20' },
+    { label: 'Warm', value: warm.length, color: 'text-amber-300 bg-amber-500/10 border border-amber-500/20' },
+    { label: 'Cold', value: cold.length, color: 'text-blue-300 bg-blue-500/10 border border-blue-500/20' },
+  ];
+
+  return (
+    <div className="card p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-fuchsia-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-glow-cyan">
+            <Sparkles className="w-4 h-4 text-white" />
+          </div>
+          <h3 className="font-semibold text-gray-100">AI Insights</h3>
+        </div>
+        <Link href="/leads" className="text-green-400 text-xs font-medium hover:underline">
+          View all
+        </Link>
+      </div>
+
+      {scored.length === 0 ? (
+        <div className="text-center py-8 text-gray-500 text-sm">
+          AI lead scoring will appear here once leads start replying on WhatsApp
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center gap-3 mb-4">
+            {counts.map(({ label, value, color }) => (
+              <span key={label} className={cn('flex-1 text-center py-2 rounded-xl text-sm font-semibold', color)}>
+                {value}
+                <span className="block text-[10px] font-medium opacity-80">{label}</span>
+              </span>
+            ))}
+          </div>
+
+          {topHot.length > 0 && (
+            <div className="space-y-2">
+              {topHot.map((lead) => (
+                <Link
+                  key={lead._id}
+                  href={`/leads/${lead._id}`}
+                  className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors"
+                >
+                  <Flame className="w-4 h-4 text-red-400 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-100 truncate">{lead.name}</p>
+                    <p className="text-xs text-gray-500 truncate">{lead.interest || lead.phone}</p>
+                  </div>
+                  {lead.intentScore != null && (
+                    <span className="text-xs font-bold text-red-300 tabular-nums">{lead.intentScore}</span>
+                  )}
+                </Link>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
 function RecentInbox({ inbox }: { inbox: InboxItem[] }) {
   return (
     <div className="card p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-900">Recent Conversations</h3>
-        <Link href="/inbox" className="text-green-600 text-xs font-medium hover:underline">
+        <h3 className="font-semibold text-gray-100">Recent Conversations</h3>
+        <Link href="/inbox" className="text-green-400 text-xs font-medium hover:underline">
           Open Inbox
         </Link>
       </div>
       {inbox.length === 0 ? (
-        <div className="text-center py-8 text-gray-400 text-sm">No conversations yet</div>
+        <div className="text-center py-8 text-gray-500 text-sm">No conversations yet</div>
       ) : (
         <div className="space-y-2">
           {inbox.slice(0, 5).map((item) => (
             <Link
               key={item.phone}
               href="/inbox"
-              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors"
             >
               <div
                 className={cn(
@@ -278,12 +351,12 @@ function RecentInbox({ inbox }: { inbox: InboxItem[] }) {
                 {getInitials(item.leadName || item.phone)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-gray-100 truncate">
                   {item.leadName || item.phone}
                 </p>
-                <p className="text-xs text-gray-400 truncate">{item.lastMessage}</p>
+                <p className="text-xs text-gray-500 truncate">{item.lastMessage}</p>
               </div>
-              <p className="text-[10px] text-gray-400 flex-shrink-0">
+              <p className="text-[10px] text-gray-500 flex-shrink-0">
                 {formatRelativeTime(item.lastMessageTime)}
               </p>
             </Link>
@@ -343,11 +416,11 @@ export default function DashboardPage() {
     return (
       <div className="page-container flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-4">
-            <MessageSquare className="w-8 h-8 text-green-500" />
+          <div className="w-16 h-16 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto mb-4">
+            <MessageSquare className="w-8 h-8 text-green-400" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">No business set up yet</h2>
-          <p className="text-gray-500 mb-4">
+          <h2 className="text-xl font-bold text-gray-100 mb-2">No business set up yet</h2>
+          <p className="text-gray-400 mb-4">
             Go to Settings to create your first business profile.
           </p>
           <Link href="/settings" className="btn-primary inline-flex">
@@ -453,13 +526,13 @@ export default function DashboardPage() {
 
       {/* Lost quick alert */}
       {s.lost > 0 && (
-        <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-100 rounded-xl">
-          <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-          <p className="text-red-700 text-sm">
+        <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+          <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+          <p className="text-red-300 text-sm">
             <strong>{s.lost} leads</strong> have been marked as Lost. Review and re-engage
             where possible.
           </p>
-          <Link href="/leads" className="ml-auto text-red-600 text-xs font-semibold hover:underline flex-shrink-0">
+          <Link href="/leads" className="ml-auto text-red-400 text-xs font-semibold hover:underline flex-shrink-0">
             Review →
           </Link>
         </div>
@@ -472,18 +545,19 @@ export default function DashboardPage() {
         <UpcomingAppointments appointments={appointments} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <AIInsights leads={leads} />
         <RecentInbox inbox={inbox} />
 
         {/* Quick Actions */}
         <div className="card p-5">
-          <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
+          <h3 className="font-semibold text-gray-100 mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { href: '/leads', icon: UserPlus, label: 'Add Lead', color: 'bg-blue-50 text-blue-600 hover:bg-blue-100' },
-              { href: '/inbox', icon: MessageSquare, label: 'Open Inbox', color: 'bg-green-50 text-green-600 hover:bg-green-100' },
-              { href: '/appointments', icon: Calendar, label: 'Book Appointment', color: 'bg-orange-50 text-orange-600 hover:bg-orange-100' },
-              { href: '/knowledge-base', icon: TrendingUp, label: 'Update AI', color: 'bg-purple-50 text-purple-600 hover:bg-purple-100' },
+              { href: '/leads', icon: UserPlus, label: 'Add Lead', color: 'bg-blue-500/10 text-blue-300 hover:bg-blue-500/20' },
+              { href: '/inbox', icon: MessageSquare, label: 'Open Inbox', color: 'bg-green-500/10 text-green-300 hover:bg-green-500/20' },
+              { href: '/appointments', icon: Calendar, label: 'Book Appointment', color: 'bg-orange-500/10 text-orange-300 hover:bg-orange-500/20' },
+              { href: '/knowledge-base', icon: TrendingUp, label: 'Update AI', color: 'bg-purple-500/10 text-purple-300 hover:bg-purple-500/20' },
             ].map(({ href, icon: Icon, label, color }) => (
               <Link
                 key={href}

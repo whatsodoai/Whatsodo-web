@@ -22,9 +22,9 @@ import { BookAppointmentModal } from './book-appointment-modal';
 type AptStatus = 'All' | 'Booked' | 'Completed' | 'Cancelled';
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
-  Booked: { bg: 'bg-green-50', text: 'text-green-700', dot: 'bg-green-500' },
-  Completed: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500' },
-  Cancelled: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500' },
+  Booked: { bg: 'bg-green-500/10', text: 'text-green-300', dot: 'bg-green-500' },
+  Completed: { bg: 'bg-blue-500/10', text: 'text-blue-300', dot: 'bg-blue-500' },
+  Cancelled: { bg: 'bg-red-500/10', text: 'text-red-300', dot: 'bg-red-500' },
 };
 
 export default function AppointmentsPage() {
@@ -94,7 +94,7 @@ export default function AppointmentsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-400">
             {appointments.length} total · {upcoming.length} upcoming
           </div>
         </div>
@@ -120,8 +120,8 @@ export default function AppointmentsPage() {
             className={cn(
               'px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors',
               statusFilter === s
-                ? 'bg-gray-900 text-white'
-                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                ? 'bg-white/15 text-gray-100'
+                : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10'
             )}
           >
             {s}
@@ -142,9 +142,9 @@ export default function AppointmentsPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="card p-12 text-center">
-          <Calendar className="w-10 h-10 text-gray-200 mx-auto mb-3" />
-          <p className="text-gray-600 font-medium">No appointments found</p>
-          <p className="text-gray-400 text-sm mt-1">
+          <Calendar className="w-10 h-10 text-gray-600 mx-auto mb-3" />
+          <p className="text-gray-300 font-medium">No appointments found</p>
+          <p className="text-gray-500 text-sm mt-1">
             Book your first appointment to get started
           </p>
           <button
@@ -254,13 +254,13 @@ function AppointmentCard({
       <div
         className={cn(
           'w-14 h-14 rounded-2xl flex flex-col items-center justify-center flex-shrink-0',
-          apt.status === 'Booked' ? 'bg-green-50' : 'bg-gray-50'
+          apt.status === 'Booked' ? 'bg-green-500/10' : 'bg-white/5'
         )}
       >
         <p
           className={cn(
             'text-[10px] font-bold uppercase leading-none',
-            apt.status === 'Booked' ? 'text-green-600' : 'text-gray-400'
+            apt.status === 'Booked' ? 'text-green-400' : 'text-gray-500'
           )}
         >
           {aptDate.toLocaleDateString('en', { month: 'short' })}
@@ -268,7 +268,7 @@ function AppointmentCard({
         <p
           className={cn(
             'text-2xl font-bold leading-tight',
-            apt.status === 'Booked' ? 'text-green-700' : 'text-gray-500'
+            apt.status === 'Booked' ? 'text-green-300' : 'text-gray-400'
           )}
         >
           {aptDate.getDate()}
@@ -286,33 +286,33 @@ function AppointmentCard({
           >
             {getInitials(name)}
           </div>
-          <p className="font-semibold text-gray-900 truncate">{name}</p>
+          <p className="font-semibold text-gray-100 truncate">{name}</p>
           {isToday && (
-            <span className="text-[10px] font-bold text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-orange-300 bg-orange-500/15 px-2 py-0.5 rounded-full">
               TODAY
             </span>
           )}
           {isTomorrow && (
-            <span className="text-[10px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-blue-300 bg-blue-500/15 px-2 py-0.5 rounded-full">
               TOMORROW
             </span>
           )}
         </div>
-        <div className="flex items-center gap-3 text-sm text-gray-500">
+        <div className="flex items-center gap-3 text-sm text-gray-400">
           <span className="flex items-center gap-1">
             <Clock size={12} /> {apt.time}
           </span>
           {phone && (
             <a
               href={`tel:${phone}`}
-              className="text-gray-400 hover:text-blue-600 font-mono text-xs"
+              className="text-gray-500 hover:text-blue-400 font-mono text-xs"
             >
               {phone}
             </a>
           )}
         </div>
         {apt.notes && (
-          <p className="text-xs text-gray-400 mt-1 truncate">{apt.notes}</p>
+          <p className="text-xs text-gray-500 mt-1 truncate">{apt.notes}</p>
         )}
       </div>
 
@@ -327,14 +327,14 @@ function AppointmentCard({
             <button
               onClick={() => handleUpdate('Completed')}
               disabled={updating}
-              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-500/10 text-blue-300 hover:bg-blue-500/20 rounded-lg transition-colors disabled:opacity-50"
             >
               <CheckCircle size={12} /> Complete
             </button>
             <button
               onClick={() => handleUpdate('Cancelled')}
               disabled={updating}
-              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-red-50 text-red-700 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-red-500/10 text-red-300 hover:bg-red-500/20 rounded-lg transition-colors disabled:opacity-50"
             >
               <XCircle size={12} /> Cancel
             </button>
@@ -344,7 +344,7 @@ function AppointmentCard({
           <button
             onClick={() => handleUpdate('Booked')}
             disabled={updating}
-            className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-green-50 text-green-700 hover:bg-green-100 rounded-lg transition-colors disabled:opacity-50"
+            className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-green-500/10 text-green-300 hover:bg-green-500/20 rounded-lg transition-colors disabled:opacity-50"
           >
             Restore
           </button>
@@ -352,7 +352,7 @@ function AppointmentCard({
         {lead && (
           <Link
             href={`/leads/${lead._id}`}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+            className="p-1.5 rounded-lg text-gray-500 hover:text-purple-400 hover:bg-purple-500/10 transition-colors"
           >
             <User size={14} />
           </Link>

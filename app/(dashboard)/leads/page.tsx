@@ -50,9 +50,9 @@ function StatusBadge({ status }: { status: LeadStatus }) {
 }
 
 const INTENT_CONFIG: Record<'hot' | 'warm' | 'cold', { bg: string; color: string; label: string }> = {
-  hot: { bg: 'bg-red-50', color: 'text-red-600', label: '🔥 Hot' },
-  warm: { bg: 'bg-orange-50', color: 'text-orange-600', label: '☀️ Warm' },
-  cold: { bg: 'bg-blue-50', color: 'text-blue-500', label: '❄️ Cold' },
+  hot: { bg: 'bg-red-500/10', color: 'text-red-300', label: '🔥 Hot' },
+  warm: { bg: 'bg-orange-500/10', color: 'text-orange-300', label: '☀️ Warm' },
+  cold: { bg: 'bg-blue-500/10', color: 'text-blue-300', label: '❄️ Cold' },
 };
 
 function IntentBadge({ intentTag }: { intentTag?: 'hot' | 'warm' | 'cold' }) {
@@ -85,7 +85,7 @@ function TableView({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px]">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-100">
+            <tr className="bg-white/5 border-b border-white/10">
               <th className="px-4 py-3.5 w-10" />
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-5 py-3.5">
                 Lead
@@ -116,7 +116,7 @@ function TableView({
                     type="checkbox"
                     checked={selectedIds.has(lead._id)}
                     onChange={() => onToggleSelect(lead._id)}
-                    className="w-4 h-4 rounded border-gray-300 accent-green-500 cursor-pointer"
+                    className="w-4 h-4 rounded border-white/20 accent-green-500 cursor-pointer"
                   />
                 </td>
                 <td className="px-5 py-3.5">
@@ -134,23 +134,23 @@ function TableView({
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <p className="text-sm font-medium text-gray-900">{lead.name}</p>
+                        <p className="text-sm font-medium text-gray-100">{lead.name}</p>
                         <IntentBadge intentTag={lead.intentTag} />
                       </div>
-                      <p className="text-xs text-gray-400 md:hidden">{lead.phone}</p>
+                      <p className="text-xs text-gray-500 md:hidden">{lead.phone}</p>
                     </div>
                   </Link>
                 </td>
                 <td className="px-4 py-3.5 hidden md:table-cell">
                   <a
                     href={`tel:${lead.phone}`}
-                    className="text-sm text-gray-600 hover:text-green-600 font-mono"
+                    className="text-sm text-gray-300 hover:text-green-400 font-mono"
                   >
                     {lead.phone}
                   </a>
                 </td>
                 <td className="px-4 py-3.5 hidden lg:table-cell">
-                  <p className="text-sm text-gray-600 max-w-[180px] truncate">
+                  <p className="text-sm text-gray-300 max-w-[180px] truncate">
                     {lead.interest || '—'}
                   </p>
                 </td>
@@ -171,39 +171,39 @@ function TableView({
                   </select>
                 </td>
                 <td className="px-4 py-3.5 hidden xl:table-cell">
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                  <span className="text-xs text-gray-400 bg-white/5 px-2 py-0.5 rounded-full">
                     {lead.source}
                   </span>
                 </td>
-                <td className="px-4 py-3.5 hidden xl:table-cell text-xs text-gray-400">
+                <td className="px-4 py-3.5 hidden xl:table-cell text-xs text-gray-500">
                   {formatRelativeTime(lead.createdAt)}
                 </td>
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-1 justify-end">
                     <Link
                       href="/inbox"
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-green-600 hover:bg-green-50 transition-colors"
+                      className="p-1.5 rounded-lg text-gray-500 hover:text-green-400 hover:bg-green-500/10 transition-colors"
                       title="Open chat"
                     >
                       <MessageSquare size={14} />
                     </Link>
                     <a
                       href={`tel:${lead.phone}`}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                      className="p-1.5 rounded-lg text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"
                       title="Call"
                     >
                       <Phone size={14} />
                     </a>
                     <button
                       onClick={() => onEdit(lead)}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                      className="p-1.5 rounded-lg text-gray-500 hover:text-indigo-400 hover:bg-indigo-500/10 transition-colors"
                       title="Edit lead"
                     >
                       <Pencil size={14} />
                     </button>
                     <button
                       onClick={() => onDelete(lead._id, lead.name)}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                      className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                       title="Delete lead"
                     >
                       <Trash2 size={14} />
@@ -239,8 +239,8 @@ function KanbanView({
           <div key={status} className="flex-shrink-0 w-64">
             <div className="flex items-center gap-2 mb-3">
               <span className={cn('w-2.5 h-2.5 rounded-full', cfg.dot)} />
-              <span className="text-sm font-semibold text-gray-700">{status}</span>
-              <span className="ml-auto text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+              <span className="text-sm font-semibold text-gray-300">{status}</span>
+              <span className="ml-auto text-xs text-gray-500 bg-white/5 px-2 py-0.5 rounded-full">
                 {colLeads.length}
               </span>
             </div>
@@ -248,7 +248,7 @@ function KanbanView({
               {colLeads.map((lead) => (
                 <div
                   key={lead._id}
-                  className="bg-white rounded-xl p-3.5 border border-gray-100 shadow-card hover:shadow-card-hover transition-shadow"
+                  className="bg-white/[0.03] backdrop-blur-xl rounded-xl p-3.5 border border-white/10 shadow-glass hover:shadow-glow transition-shadow"
                 >
                   <div className="flex items-center gap-2.5 mb-2.5">
                     <div
@@ -261,34 +261,34 @@ function KanbanView({
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
-                        <p className="text-sm font-medium text-gray-900 truncate">{lead.name}</p>
+                        <p className="text-sm font-medium text-gray-100 truncate">{lead.name}</p>
                         <IntentBadge intentTag={lead.intentTag} />
                       </div>
-                      <p className="text-xs text-gray-400 truncate">{lead.phone}</p>
+                      <p className="text-xs text-gray-500 truncate">{lead.phone}</p>
                     </div>
                   </div>
                   {lead.interest && (
-                    <p className="text-xs text-gray-500 bg-gray-50 rounded-lg p-2 mb-2.5 line-clamp-2">
+                    <p className="text-xs text-gray-400 bg-white/5 rounded-lg p-2 mb-2.5 line-clamp-2">
                       {lead.interest}
                     </p>
                   )}
                   <div className="flex items-center gap-1.5">
                     <Link
                       href={`/leads/${lead._id}`}
-                      className="flex-1 text-center text-xs text-gray-500 hover:text-gray-700 py-1 rounded-lg hover:bg-gray-50"
+                      className="flex-1 text-center text-xs text-gray-400 hover:text-gray-200 py-1 rounded-lg hover:bg-white/5"
                     >
                       Details
                     </Link>
                     <button
                       onClick={() => onEdit(lead)}
-                      className="p-1 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                      className="p-1 rounded-lg text-gray-500 hover:text-indigo-400 hover:bg-indigo-500/10 transition-colors"
                       title="Edit"
                     >
                       <Pencil size={13} />
                     </button>
                     <button
                       onClick={() => onDelete(lead._id, lead.name)}
-                      className="p-1 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                      className="p-1 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                       title="Delete"
                     >
                       <Trash2 size={13} />
@@ -296,7 +296,7 @@ function KanbanView({
                     <select
                       value={lead.status}
                       onChange={(e) => onStatusChange(lead._id, e.target.value as LeadStatus)}
-                      className="text-xs border-0 bg-transparent text-gray-400 cursor-pointer focus:outline-none"
+                      className="text-xs border-0 bg-transparent text-gray-500 cursor-pointer focus:outline-none"
                     >
                       {LEAD_STATUSES.map((s) => (
                         <option key={s} value={s}>→ {s}</option>
@@ -306,7 +306,7 @@ function KanbanView({
                 </div>
               ))}
               {colLeads.length === 0 && (
-                <div className="border-2 border-dashed border-gray-100 rounded-xl p-4 text-center text-xs text-gray-300">
+                <div className="border-2 border-dashed border-white/10 rounded-xl p-4 text-center text-xs text-gray-600">
                   No leads
                 </div>
               )}
@@ -397,7 +397,7 @@ export default function LeadsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-gray-500 text-sm">{leads.length} total leads</p>
+          <p className="text-gray-400 text-sm">{leads.length} total leads</p>
         </div>
         <button onClick={() => setShowAdd(true)} className="btn-primary">
           <UserPlus size={15} /> Add Lead
@@ -406,7 +406,7 @@ export default function LeadsPage() {
 
       {/* Bulk action bar */}
       {selectedIds.size > 0 && (
-        <div className="flex items-center justify-between bg-gray-900 text-white rounded-xl px-4 py-3">
+        <div className="flex items-center justify-between bg-surface-900 border border-white/10 text-gray-100 rounded-xl px-4 py-3">
           <span className="text-sm font-medium">{selectedIds.size} lead{selectedIds.size > 1 ? 's' : ''} selected</span>
           <div className="flex items-center gap-2">
             <button
@@ -417,7 +417,7 @@ export default function LeadsPage() {
             </button>
             <button
               onClick={() => setSelectedIds(new Set())}
-              className="p-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
+              className="p-1.5 rounded-lg text-gray-400 hover:text-gray-100 hover:bg-white/10 transition-colors"
             >
               <X size={14} />
             </button>
@@ -428,7 +428,7 @@ export default function LeadsPage() {
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-56">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input
             type="text"
             placeholder="Search leads..."
@@ -446,8 +446,8 @@ export default function LeadsPage() {
               className={cn(
                 'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
                 statusFilter === s
-                  ? 'bg-gray-900 text-white'
-                  : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                  ? 'bg-white/15 text-gray-100'
+                  : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10'
               )}
             >
               {s === 'All' ? 'All' : STATUS_CONFIG[s].label}
@@ -464,7 +464,7 @@ export default function LeadsPage() {
           <select
             value={sourceFilter}
             onChange={(e) => setSourceFilter(e.target.value)}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium border border-gray-200 bg-white text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium border border-white/10 bg-surface-900 text-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500/30"
           >
             {sources.map((s) => (
               <option key={s} value={s}>{s === 'All' ? 'All Sources' : s}</option>
@@ -472,12 +472,12 @@ export default function LeadsPage() {
           </select>
         )}
 
-        <div className="flex items-center bg-white border border-gray-200 rounded-lg p-0.5 ml-auto">
+        <div className="flex items-center bg-white/5 border border-white/10 rounded-lg p-0.5 ml-auto">
           <button
             onClick={() => setView('table')}
             className={cn(
               'p-1.5 rounded-md transition-colors',
-              view === 'table' ? 'bg-gray-900 text-white' : 'text-gray-400 hover:text-gray-600'
+              view === 'table' ? 'bg-white/15 text-gray-100' : 'text-gray-500 hover:text-gray-300'
             )}
           >
             <List size={15} />
@@ -486,7 +486,7 @@ export default function LeadsPage() {
             onClick={() => setView('kanban')}
             className={cn(
               'p-1.5 rounded-md transition-colors',
-              view === 'kanban' ? 'bg-gray-900 text-white' : 'text-gray-400 hover:text-gray-600'
+              view === 'kanban' ? 'bg-white/15 text-gray-100' : 'text-gray-500 hover:text-gray-300'
             )}
           >
             <LayoutGrid size={15} />
@@ -502,9 +502,9 @@ export default function LeadsPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="card p-12 text-center">
-          <Filter className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-600 font-medium">No leads found</p>
-          <p className="text-gray-400 text-sm mt-1">
+          <Filter className="w-10 h-10 text-gray-600 mx-auto mb-3" />
+          <p className="text-gray-300 font-medium">No leads found</p>
+          <p className="text-gray-500 text-sm mt-1">
             {search || statusFilter !== 'All'
               ? 'Try adjusting your filters'
               : 'Add your first lead to get started'}
