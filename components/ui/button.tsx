@@ -12,13 +12,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary:
-    'text-white bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-400 hover:to-cyan-400 shadow-glow',
-  secondary:
-    'text-gray-200 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20',
-  ghost: 'text-gray-300 hover:bg-white/5 hover:text-white',
-  danger:
-    'text-red-300 bg-red-500/10 border border-red-500/20 hover:bg-red-500/15 hover:text-red-200',
+  primary: 'text-white bg-green-500 border-2 border-gray-900 shadow-pop-sm hover:shadow-pop',
+  secondary: 'text-gray-900 bg-white border-2 border-gray-900 shadow-pop-sm hover:shadow-pop',
+  ghost: 'text-gray-700 hover:bg-gray-100',
+  danger: 'text-white bg-red-500 border-2 border-gray-900 shadow-pop-sm hover:shadow-pop',
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -33,7 +30,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:hover:scale-100',
+          'inline-flex items-center justify-center rounded-xl font-bold transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 active:shadow-none disabled:opacity-50 disabled:pointer-events-none disabled:hover:translate-x-0 disabled:hover:translate-y-0',
           variantClasses[variant],
           sizeClasses[size],
           className

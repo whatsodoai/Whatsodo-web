@@ -46,13 +46,13 @@ export function AddLeadModal({ businessId, onClose, onAdded }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-surface-900 rounded-2xl w-full max-w-md shadow-2xl animate-slide-up border border-white/10">
-        <div className="flex items-center justify-between p-5 border-b border-white/10">
-          <h2 className="text-lg font-bold text-gray-100">Add New Lead</h2>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl w-full max-w-md shadow-pop-lg animate-bounce-in border-2 border-gray-900">
+        <div className="flex items-center justify-between p-5 border-b-2 border-gray-900">
+          <h2 className="text-lg font-bold text-gray-900">Add New Lead</h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-gray-500 hover:text-gray-200 hover:bg-white/10"
+            className="p-1.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100"
           >
             <X size={18} />
           </button>
@@ -60,15 +60,15 @@ export function AddLeadModal({ businessId, onClose, onAdded }: Props) {
 
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           {error && (
-            <p className="text-sm text-red-300 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2.5">
+            <p className="text-sm text-red-700 bg-red-50 border-2 border-red-300 rounded-xl px-4 py-2.5">
               {error}
             </p>
           )}
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                Full Name <span className="text-red-400">*</span>
+              <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                Full Name <span className="text-red-500">*</span>
               </label>
               <input
                 name="name"
@@ -80,8 +80,8 @@ export function AddLeadModal({ businessId, onClose, onAdded }: Props) {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-300 mb-1.5">
-                Phone <span className="text-red-400">*</span>
+              <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                Phone <span className="text-red-500">*</span>
               </label>
               <input
                 name="phone"
@@ -95,7 +95,7 @@ export function AddLeadModal({ businessId, onClose, onAdded }: Props) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-300 mb-1.5">Email</label>
+            <label className="block text-xs font-medium text-gray-700 mb-1.5">Email</label>
             <input
               name="email"
               type="email"
@@ -107,7 +107,7 @@ export function AddLeadModal({ businessId, onClose, onAdded }: Props) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-300 mb-1.5">
+            <label className="block text-xs font-medium text-gray-700 mb-1.5">
               Interest / Service Needed
             </label>
             <input
@@ -120,7 +120,7 @@ export function AddLeadModal({ businessId, onClose, onAdded }: Props) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-300 mb-1.5">Source</label>
+            <label className="block text-xs font-medium text-gray-700 mb-1.5">Source</label>
             <select name="source" value={form.source} onChange={handleChange} className="input">
               <option value="Manual">Manual</option>
               <option value="WhatsApp">WhatsApp</option>
@@ -131,7 +131,7 @@ export function AddLeadModal({ businessId, onClose, onAdded }: Props) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-300 mb-1.5">Notes</label>
+            <label className="block text-xs font-medium text-gray-700 mb-1.5">Notes</label>
             <textarea
               name="notes"
               value={form.notes}

@@ -65,25 +65,25 @@ export function BookAppointmentModal({ businessId, leads, onClose, onBooked }: P
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-surface-900 rounded-2xl w-full max-w-md shadow-2xl animate-slide-up border border-white/10">
-        <div className="flex items-center justify-between p-5 border-b border-white/10">
-          <h2 className="text-lg font-bold text-gray-100">Book Appointment</h2>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-gray-500 hover:bg-white/10">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl w-full max-w-md shadow-pop-lg animate-bounce-in border-2 border-gray-900">
+        <div className="flex items-center justify-between p-5 border-b-2 border-gray-900">
+          <h2 className="text-lg font-bold text-gray-900">Book Appointment</h2>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100">
             <X size={18} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           {error && (
-            <p className="text-sm text-red-300 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2.5">
+            <p className="text-sm text-red-700 bg-red-50 border-2 border-red-300 rounded-xl px-4 py-2.5">
               {error}
             </p>
           )}
 
           <div>
-            <label className="block text-xs font-medium text-gray-300 mb-1.5">
-              Select Lead <span className="text-red-400">*</span>
+            <label className="block text-xs font-medium text-gray-700 mb-1.5">
+              Select Lead <span className="text-red-500">*</span>
             </label>
             <select
               value={form.leadId}
@@ -101,8 +101,8 @@ export function BookAppointmentModal({ businessId, leads, onClose, onBooked }: P
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-300 mb-1.5">
-              Date <span className="text-red-400">*</span>
+            <label className="block text-xs font-medium text-gray-700 mb-1.5">
+              Date <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -116,13 +116,13 @@ export function BookAppointmentModal({ businessId, leads, onClose, onBooked }: P
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-medium text-gray-300">
-                Available Slots <span className="text-red-400">*</span>
+              <label className="text-xs font-medium text-gray-700">
+                Available Slots <span className="text-red-500">*</span>
               </label>
               <button
                 type="button"
                 onClick={() => fetchSlots(form.date)}
-                className="text-xs text-green-400 hover:text-green-300 flex items-center gap-1"
+                className="text-xs text-green-600 hover:text-green-700 flex items-center gap-1"
               >
                 <RefreshCw size={11} /> Refresh
               </button>
@@ -130,7 +130,7 @@ export function BookAppointmentModal({ businessId, leads, onClose, onBooked }: P
 
             {slotsLoading ? (
               <div className="flex items-center justify-center py-4">
-                <div className="w-5 h-5 border-2 border-white/10 border-t-green-500 rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-gray-200 border-t-green-500 rounded-full animate-spin" />
               </div>
             ) : slots.length === 0 ? (
               <p className="text-sm text-gray-400 text-center py-3">No available slots for this date.</p>
@@ -142,10 +142,10 @@ export function BookAppointmentModal({ businessId, leads, onClose, onBooked }: P
                     type="button"
                     onClick={() => setForm({ ...form, time: slot })}
                     className={cn(
-                      'px-2 py-1.5 rounded-lg text-xs font-medium transition-colors border',
+                      'px-2 py-1.5 rounded-lg text-xs font-medium transition-colors border-2',
                       form.time === slot
-                        ? 'bg-green-500 text-white border-green-500'
-                        : 'bg-white/5 text-gray-300 border-white/10 hover:border-green-500/30 hover:text-green-400'
+                        ? 'bg-green-500 text-white border-gray-900'
+                        : 'bg-white text-gray-700 border-gray-200 hover:border-green-500 hover:text-green-600'
                     )}
                   >
                     {slot}
@@ -156,7 +156,7 @@ export function BookAppointmentModal({ businessId, leads, onClose, onBooked }: P
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-300 mb-1.5">Notes</label>
+            <label className="block text-xs font-medium text-gray-700 mb-1.5">Notes</label>
             <textarea
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}

@@ -106,13 +106,13 @@ export function ConnectWhatsAppButton({ businessId, onConnected }: ConnectWhatsA
       <Script src="https://connect.facebook.net/en_US/sdk.js" strategy="lazyOnload" />
 
       <div className="card p-6">
-        <h3 className="font-bold text-gray-100 mb-1">Connect with Meta</h3>
-        <p className="text-gray-400 text-sm mb-4">
+        <h3 className="font-bold text-gray-900 mb-1">Connect with Meta</h3>
+        <p className="text-gray-500 text-sm mb-4">
           Link your existing WhatsApp Business number in one click — no manual tokens needed.
         </p>
 
         {error && (
-          <p className="text-red-300 text-sm mb-3 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+          <p className="text-red-700 text-sm mb-3 bg-red-50 border-2 border-gray-900 rounded-xl p-3">
             {error}
           </p>
         )}
@@ -135,9 +135,9 @@ export function ConnectWhatsAppButton({ businessId, onConnected }: ConnectWhatsA
         </button>
 
         <div className="flex items-center gap-3 mt-5 mb-1">
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs text-gray-500">or enter credentials manually</span>
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-xs text-gray-400">or enter credentials manually</span>
+          <div className="flex-1 h-px bg-gray-200" />
         </div>
       </div>
     </>

@@ -11,11 +11,7 @@
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    @apply bg-surface-950 text-gray-100;
-    background-image:
-      radial-gradient(circle at 15% 0%, rgba(34, 197, 94, 0.10), transparent 45%),
-      radial-gradient(circle at 85% 0%, rgba(34, 211, 238, 0.08), transparent 45%);
-    background-attachment: fixed;
+    @apply bg-[#fafaf7] text-gray-900;
   }
   ::-webkit-scrollbar {
     width: 5px;
@@ -25,57 +21,58 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #2a3142;
+    background: #d4d4d8;
     border-radius: 10px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #3a4358;
+    background: #a1a1aa;
   }
 }
 
 @layer components {
   .stat-card {
-    @apply relative bg-white/[0.03] backdrop-blur-xl rounded-2xl p-5 border border-white/10 shadow-glass hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300;
+    @apply relative bg-white rounded-2xl p-5 border-2 border-gray-900 shadow-pop hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-pop-lg transition-all duration-200;
   }
 
   .btn-primary {
-    @apply flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-400 hover:to-cyan-400 transition-all shadow-glow hover:scale-[1.02] active:scale-[0.98];
+    @apply flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-green-500 border-2 border-gray-900 shadow-pop-sm hover:shadow-pop hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 active:shadow-none transition-all duration-150;
   }
 
   .btn-secondary {
-    @apply flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-200 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all;
+    @apply flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-gray-900 bg-white border-2 border-gray-900 shadow-pop-sm hover:shadow-pop hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 active:shadow-none transition-all duration-150;
   }
 
   .input {
-    @apply w-full px-3.5 py-2.5 border border-white/10 rounded-xl text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400/50 transition-all bg-white/5 focus:bg-white/[0.07];
+    @apply w-full px-3.5 py-2.5 border-2 border-gray-900 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-offset-0 transition-all bg-white;
   }
 
   .badge {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border-2 border-gray-900;
   }
 
   .page-container {
-    @apply p-6 space-y-6 animate-fade-in;
+    @apply relative p-6 space-y-6 animate-fade-in;
   }
 
   .card {
-    @apply relative bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/10 shadow-glass;
+    @apply relative bg-white rounded-2xl border-2 border-gray-900 shadow-pop;
   }
 
   .table-row {
-    @apply border-b border-white/5 hover:bg-white/[0.04] transition-colors;
+    @apply border-b-2 border-gray-100 hover:bg-yellow-50/60 transition-colors;
   }
 }
 
 /* WhatsApp-style chat bubbles */
 .chat-bubble-out {
-  background: linear-gradient(135deg, #22c55e, #0891b2);
+  background: #22c55e;
+  border: 2px solid #0f172a;
   border-radius: 18px 18px 4px 18px;
 }
 
 .chat-bubble-in {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 2px solid #0f172a;
   border-radius: 18px 18px 18px 4px;
 }
 
@@ -86,7 +83,7 @@
 }
 
 .skeleton {
-  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 75%);
+  background: linear-gradient(90deg, #f1f1ee 25%, #e4e4e0 50%, #f1f1ee 75%);
   background-size: 200% 100%;
   animation: skeleton 1.5s ease-in-out infinite;
   border-radius: 6px;
@@ -95,4 +92,14 @@
 /* Subtle animated glow ring used by primitives that want to draw attention */
 .glow-ring {
   box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25), 0 0 20px -4px rgba(34, 197, 94, 0.4);
+}
+
+/* Decorative floating gradient blobs for the bright/creative background */
+.bg-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
 }

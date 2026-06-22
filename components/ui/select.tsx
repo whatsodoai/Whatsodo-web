@@ -7,7 +7,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSel
       <select
         ref={ref}
         className={cn(
-          'input appearance-none cursor-pointer bg-surface-900',
+          'input appearance-none cursor-pointer bg-white',
           className
         )}
         {...props}

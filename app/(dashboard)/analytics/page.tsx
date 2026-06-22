@@ -207,9 +207,9 @@ export default function AnalyticsPage() {
             <div className={cn('w-11 h-11 rounded-xl flex items-center justify-center mb-3', color)}>
               <Icon className="w-5 h-5 text-white" />
             </div>
-            <p className="text-2xl font-bold text-gray-100">{value}</p>
-            <p className="text-gray-400 text-sm mt-0.5">{label}</p>
-            <p className="text-xs text-gray-500 mt-2">{sub}</p>
+            <p className="text-2xl font-bold text-gray-900">{value}</p>
+            <p className="text-gray-500 text-sm mt-0.5">{label}</p>
+            <p className="text-xs text-gray-400 mt-2">{sub}</p>
           </div>
         ))}
       </div>
@@ -219,11 +219,11 @@ export default function AnalyticsPage() {
         {/* Monthly Leads & Appointments */}
         <div className="card p-5">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="font-semibold text-gray-100">Leads & Appointments</h3>
-            <span className="text-xs text-gray-400">This year</span>
+            <h3 className="font-semibold text-gray-900">Leads & Appointments</h3>
+            <span className="text-xs text-gray-500">This year</span>
           </div>
           {combinedMonthly.length === 0 ? (
-            <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
+            <div className="h-48 flex items-center justify-center text-gray-500 text-sm">
               No data available yet
             </div>
           ) : (
@@ -239,11 +239,11 @@ export default function AnalyticsPage() {
                     <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ borderRadius: '12px', background: '#11151f', border: '1px solid rgba(255,255,255,0.1)', color: '#f3f4f6', fontSize: 12 }}
+                  contentStyle={{ borderRadius: '12px', background: '#ffffff', border: '2px solid #0f172a', color: '#111827', fontSize: 12 }}
                 />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Area type="monotone" dataKey="leads" stroke="#22c55e" strokeWidth={2.5} fill="url(#leadsGrad)" name="Leads" dot={{ r: 3, fill: '#22c55e' }} />
@@ -256,11 +256,11 @@ export default function AnalyticsPage() {
         {/* Status Distribution */}
         <div className="card p-5">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="font-semibold text-gray-100">Lead Status Distribution</h3>
-            <span className="text-xs text-gray-400">{leads.length} total</span>
+            <h3 className="font-semibold text-gray-900">Lead Status Distribution</h3>
+            <span className="text-xs text-gray-500">{leads.length} total</span>
           </div>
           {statusData.length === 0 ? (
-            <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
+            <div className="h-48 flex items-center justify-center text-gray-500 text-sm">
               No leads data yet
             </div>
           ) : (
@@ -281,7 +281,7 @@ export default function AnalyticsPage() {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ borderRadius: '12px', background: '#11151f', border: '1px solid rgba(255,255,255,0.1)', color: '#f3f4f6', fontSize: 12 }}
+                    contentStyle={{ borderRadius: '12px', background: '#ffffff', border: '2px solid #0f172a', color: '#111827', fontSize: 12 }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -293,11 +293,11 @@ export default function AnalyticsPage() {
                         className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                         style={{ backgroundColor: color }}
                       />
-                      <span className="text-xs text-gray-400">{name}</span>
+                      <span className="text-xs text-gray-500">{name}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-semibold text-gray-200">{value}</span>
-                      <span className="text-[10px] text-gray-400">
+                      <span className="text-[10px] text-gray-500">
                         ({leads.length > 0 ? ((value / leads.length) * 100).toFixed(0) : 0}%)
                       </span>
                     </div>
@@ -314,20 +314,20 @@ export default function AnalyticsPage() {
         {/* Lead Sources */}
         <div className="card p-5">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="font-semibold text-gray-100">Lead Sources</h3>
+            <h3 className="font-semibold text-gray-900">Lead Sources</h3>
           </div>
           {sourceData.length === 0 ? (
-            <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
+            <div className="h-48 flex items-center justify-center text-gray-500 text-sm">
               No source data yet
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={sourceData} barSize={32}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
-                <XAxis dataKey="source" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" vertical={false} />
+                <XAxis dataKey="source" tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ borderRadius: '12px', background: '#11151f', border: '1px solid rgba(255,255,255,0.1)', color: '#f3f4f6', fontSize: 12 }}
+                  contentStyle={{ borderRadius: '12px', background: '#ffffff', border: '2px solid #0f172a', color: '#111827', fontSize: 12 }}
                 />
                 <Bar dataKey="count" fill="#22c55e" radius={[6, 6, 0, 0]} name="Leads" />
               </BarChart>
@@ -338,15 +338,15 @@ export default function AnalyticsPage() {
         {/* Weekly Activity */}
         <div className="card p-5">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="font-semibold text-gray-100">This Week&apos;s Activity</h3>
-            <span className="text-xs text-gray-400">Current week</span>
+            <h3 className="font-semibold text-gray-900">This Week&apos;s Activity</h3>
+            <span className="text-xs text-gray-500">Current week</span>
           </div>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={weeklyActivity} barSize={16} barGap={4}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
-              <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} allowDecimals={false} />
-              <Tooltip contentStyle={{ borderRadius: '12px', background: '#11151f', border: '1px solid rgba(255,255,255,0.1)', color: '#f3f4f6', fontSize: 12 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" vertical={false} />
+              <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} allowDecimals={false} />
+              <Tooltip contentStyle={{ borderRadius: '12px', background: '#ffffff', border: '2px solid #0f172a', color: '#111827', fontSize: 12 }} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
               <Bar dataKey="leads" fill="#22c55e" radius={[4, 4, 0, 0]} name="New Leads" />
               <Bar dataKey="appointments" fill="#f97316" radius={[4, 4, 0, 0]} name="Appointments" />
@@ -363,21 +363,21 @@ export default function AnalyticsPage() {
             label: 'Win Rate',
             value: s.totalLeads > 0 ? ((s.won / s.totalLeads) * 100).toFixed(1) + '%' : '—',
             sub: `${s.won} won out of ${s.totalLeads}`,
-            color: 'text-green-300 bg-green-500/10 border border-green-500/20',
+            color: 'text-green-600 bg-green-50 border-2 border-gray-900',
           },
           {
             icon: Clock,
             label: 'Avg. Appointment Rate',
             value: aptRate + '%',
             sub: `${s.totalAppointments} appointments from ${s.totalLeads} leads`,
-            color: 'text-orange-300 bg-orange-500/10 border border-orange-500/20',
+            color: 'text-orange-600 bg-orange-50 border-2 border-gray-900',
           },
           {
             icon: Target,
             label: 'Active Pipeline',
             value: s.contacted + s.qualified,
             sub: `${s.contacted} contacted + ${s.qualified} qualified`,
-            color: 'text-purple-300 bg-purple-500/10 border border-purple-500/20',
+            color: 'text-purple-600 bg-purple-50 border-2 border-gray-900',
           },
         ].map(({ icon: Icon, label, value, sub, color }) => (
           <div key={label} className="card p-5 flex items-center gap-4">
@@ -385,9 +385,9 @@ export default function AnalyticsPage() {
               <Icon size={20} />
             </div>
             <div>
-              <p className="text-gray-500 text-sm">{label}</p>
-              <p className="text-2xl font-bold text-gray-100 my-0.5">{value}</p>
-              <p className="text-xs text-gray-400">{sub}</p>
+              <p className="text-gray-400 text-sm">{label}</p>
+              <p className="text-2xl font-bold text-gray-900 my-0.5">{value}</p>
+              <p className="text-xs text-gray-500">{sub}</p>
             </div>
           </div>
         ))}

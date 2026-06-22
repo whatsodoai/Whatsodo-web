@@ -45,9 +45,9 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-300 bg-white/5 hover:bg-white/10 rounded-lg transition-colors flex-shrink-0"
+      className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border-2 border-gray-900 rounded-lg transition-colors flex-shrink-0"
     >
-      {copied ? <Check size={13} className="text-green-400" /> : <Copy size={13} />}
+      {copied ? <Check size={13} className="text-green-600" /> : <Copy size={13} />}
       {copied ? 'Copied!' : 'Copy'}
     </button>
   );
@@ -239,14 +239,14 @@ export default function SetupPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-surface-950 flex flex-col">
+    <div className="min-h-screen bg-[#fafaf7] flex flex-col">
       {/* Header */}
-      <div className="bg-white/[0.03] backdrop-blur-xl border-b border-white/10 px-6 py-4">
+      <div className="bg-white border-b-2 border-gray-900 px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center border-2 border-gray-900">
             <Zap className="w-5 h-5 text-white" strokeWidth={2.5} />
           </div>
-          <p className="text-gray-100 font-bold text-lg">Whatsodo Setup</p>
+          <p className="text-gray-900 font-bold text-lg">Whatsodo Setup</p>
         </div>
       </div>
 
@@ -259,10 +259,10 @@ export default function SetupPage() {
             return (
               <div key={s.id} className="flex items-center gap-2 flex-shrink-0">
                 <div className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-full text-xs font-medium transition-colors',
-                  isActive ? 'bg-green-500 text-white' :
-                    isDone ? 'bg-green-500/10 text-green-300 border border-green-500/20' :
-                      'bg-white/5 text-gray-500'
+                  'flex items-center gap-2 px-3 py-2 rounded-full text-xs font-medium transition-colors border-2',
+                  isActive ? 'bg-green-500 text-white border-gray-900' :
+                    isDone ? 'bg-green-100 text-green-700 border-green-500' :
+                      'bg-gray-50 text-gray-400 border-gray-200'
                 )}>
                   {isDone ? (
                     <CheckCircle size={13} />
@@ -272,7 +272,7 @@ export default function SetupPage() {
                   <span>{s.label}</span>
                 </div>
                 {idx < STEPS.length - 1 && (
-                  <ChevronRight size={14} className="text-gray-600 flex-shrink-0" />
+                  <ChevronRight size={14} className="text-gray-400 flex-shrink-0" />
                 )}
               </div>
             );
@@ -281,44 +281,44 @@ export default function SetupPage() {
 
         {/* Step 1 — Create Business */}
         {step === 1 && (
-          <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl shadow-glass border border-white/10 p-8">
+          <div className="bg-white rounded-2xl shadow-pop-lg border-2 border-gray-900 p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                <Building2 className="w-5 h-5 text-blue-300" />
+              <div className="w-11 h-11 rounded-xl bg-blue-50 border-2 border-gray-900 flex items-center justify-center">
+                <Building2 className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h2 className="font-bold text-gray-100 text-lg">Create Your Business</h2>
-                <p className="text-gray-500 text-sm">Tell us a bit about your business</p>
+                <h2 className="font-bold text-gray-900 text-lg">Create Your Business</h2>
+                <p className="text-gray-400 text-sm">Tell us a bit about your business</p>
               </div>
             </div>
 
             {error && (
-              <div className="mb-5 p-3.5 bg-red-500/10 border border-red-500/20 rounded-xl text-red-300 text-sm">
+              <div className="mb-5 p-3.5 bg-red-50 border-2 border-red-500 rounded-xl text-red-600 text-sm font-medium">
                 {error}
               </div>
             )}
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                  Business Name <span className="text-red-400">*</span>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Business Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   value={bizForm.businessName}
                   onChange={(e) => setBizForm({ ...bizForm, businessName: e.target.value })}
                   placeholder="e.g. Acme Consulting"
-                  className="w-full px-4 py-3 border border-white/10 rounded-xl text-sm text-gray-100 bg-white/5 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all"
+                  className="input w-full px-4 py-3"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                  Industry <span className="text-red-400">*</span>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Industry <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={bizForm.industry}
                   onChange={(e) => setBizForm({ ...bizForm, industry: e.target.value })}
-                  className="w-full px-4 py-3 border border-white/10 rounded-xl text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all bg-surface-900"
+                  className="input w-full px-4 py-3"
                 >
                   <option value="">Select your industry...</option>
                   {INDUSTRIES.map((i) => <option key={i}>{i}</option>)}
@@ -326,16 +326,16 @@ export default function SetupPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                  WhatsApp Business Number <span className="text-red-400">*</span>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  WhatsApp Business Number <span className="text-red-500">*</span>
                 </label>
                 <input
                   value={bizForm.whatsappNumber}
                   onChange={(e) => setBizForm({ ...bizForm, whatsappNumber: e.target.value })}
                   placeholder="e.g. 917305333573"
-                  className="w-full px-4 py-3 border border-white/10 rounded-xl text-sm font-mono text-gray-100 bg-white/5 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all"
+                  className="input w-full px-4 py-3 font-mono"
                 />
-                <p className="text-xs text-gray-500 mt-1">Include country code without + (e.g. 91 for India)</p>
+                <p className="text-xs text-gray-400 mt-1">Include country code without + (e.g. 91 for India)</p>
               </div>
 
               <div className="pt-2 flex justify-end">
@@ -343,7 +343,7 @@ export default function SetupPage() {
                   onClick={handleStep1}
                   disabled={isLoading || !bizForm.businessName || !bizForm.industry || !bizForm.whatsappNumber}
                   className={cn(
-                    'flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg shadow-green-500/25',
+                    'btn-primary flex items-center gap-2 px-6 py-3 text-sm',
                     (isLoading || !bizForm.businessName || !bizForm.industry || !bizForm.whatsappNumber) && 'opacity-60 cursor-not-allowed'
                   )}
                 >
@@ -360,28 +360,28 @@ export default function SetupPage() {
 
         {/* Step 2 — Connect WhatsApp */}
         {step === 2 && (
-          <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl shadow-glass border border-white/10 p-8">
+          <div className="bg-white rounded-2xl shadow-pop-lg border-2 border-gray-900 p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-11 h-11 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center">
-                <Smartphone className="w-5 h-5 text-green-400" />
+              <div className="w-11 h-11 rounded-xl bg-green-50 border-2 border-gray-900 flex items-center justify-center">
+                <Smartphone className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <h2 className="font-bold text-gray-100 text-lg">Connect WhatsApp</h2>
-                <p className="text-gray-500 text-sm">Configure your Meta webhook to receive messages</p>
+                <h2 className="font-bold text-gray-900 text-lg">Connect WhatsApp</h2>
+                <p className="text-gray-400 text-sm">Configure your Meta webhook to receive messages</p>
               </div>
             </div>
 
             {waLoading ? (
               <div className="flex items-center justify-center py-10">
-                <div className="w-6 h-6 border-2 border-white/10 border-t-green-500 rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-gray-200 border-t-green-500 rounded-full animate-spin" />
               </div>
             ) : (
               <div className="space-y-5">
-                <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-                  <p className="text-amber-300 font-semibold text-sm mb-1">
+                <div className="p-4 bg-amber-50 border-2 border-amber-500 rounded-xl">
+                  <p className="text-amber-700 font-semibold text-sm mb-1">
                     Connect your existing WhatsApp Business number
                   </p>
-                  <p className="text-amber-200/80 text-xs leading-relaxed">
+                  <p className="text-amber-700/80 text-xs leading-relaxed">
                     In Meta Developer Console → your App → WhatsApp → API Setup, you can add a phone number you
                     already use for WhatsApp Business. Paste that number&apos;s Access Token and Phone Number ID
                     below so this business automates its <strong>own</strong> WhatsApp account — separate from
@@ -390,45 +390,45 @@ export default function SetupPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Access Token (System User token from Meta)
                   </label>
                   <input
                     type="password"
                     value={waCredsForm.whatsappAccessToken}
                     onChange={(e) => setWaCredsForm({ ...waCredsForm, whatsappAccessToken: e.target.value })}
-                    className="w-full px-4 py-3 border border-white/10 rounded-xl text-sm font-mono text-gray-100 bg-white/5 placeholder:text-gray-500"
+                    className="input w-full px-4 py-3 font-mono"
                     placeholder={waDefaults?.hasAccessToken ? '•••••••••••••••• (already set — enter to replace)' : 'EAAxxxxxxxxxxxxxxxxxxxxxxxx'}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Phone Number ID
                   </label>
                   <input
                     value={waCredsForm.whatsappPhoneNumberId}
                     onChange={(e) => setWaCredsForm({ ...waCredsForm, whatsappPhoneNumberId: e.target.value })}
-                    className="w-full px-4 py-3 border border-white/10 rounded-xl text-sm font-mono text-gray-100 bg-white/5 placeholder:text-gray-500"
+                    className="input w-full px-4 py-3 font-mono"
                     placeholder={waDefaults?.phoneNumberId || '1064xxxxxxxxxxx'}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Verify Token
                   </label>
                   <div className="flex items-center gap-2">
                     <input
                       value={waCredsForm.whatsappVerifyToken}
                       onChange={(e) => setWaCredsForm({ ...waCredsForm, whatsappVerifyToken: e.target.value })}
-                      className="flex-1 px-4 py-3 border border-white/10 rounded-xl text-sm font-mono text-gray-100 bg-white/5 placeholder:text-gray-500"
+                      className="input flex-1 px-4 py-3 font-mono"
                       placeholder={waDefaults?.verifyToken || 'any random string you choose'}
                     />
                     <button
                       type="button"
                       onClick={generateVerifyToken}
-                      className="px-3 py-3 text-xs font-medium text-gray-300 bg-white/5 hover:bg-white/10 rounded-xl transition-colors flex-shrink-0"
+                      className="btn-secondary px-3 py-3 text-xs flex-shrink-0"
                     >
                       Generate
                     </button>
@@ -441,26 +441,26 @@ export default function SetupPage() {
                     onClick={handleSaveWhatsAppCreds}
                     disabled={waSaving}
                     className={cn(
-                      'flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/10 transition-all',
+                      'btn-secondary flex items-center gap-2 px-5 py-2.5 text-sm',
                       waSaving && 'opacity-70'
                     )}
                   >
                     {waSaving ? (
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
                     ) : (
                       'Save WhatsApp Credentials'
                     )}
                   </button>
                   {waSaved && (
-                    <span className="flex items-center gap-1.5 text-green-400 text-sm font-medium">
+                    <span className="flex items-center gap-1.5 text-green-600 text-sm font-medium">
                       <CheckCircle size={15} /> Saved!
                     </span>
                   )}
                 </div>
 
-                <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-                  <p className="text-blue-300 font-semibold text-sm mb-2">Then finish setup in Meta</p>
-                  <ol className="space-y-1 text-blue-200/80 text-xs list-decimal list-inside leading-relaxed">
+                <div className="p-4 bg-blue-50 border-2 border-blue-500 rounded-xl">
+                  <p className="text-blue-700 font-semibold text-sm mb-2">Then finish setup in Meta</p>
+                  <ol className="space-y-1 text-blue-700/80 text-xs list-decimal list-inside leading-relaxed">
                     <li>Save your credentials above first</li>
                     <li>Go to <strong>Meta Developer Console</strong> → Your App → WhatsApp → Configuration</li>
                     <li>Under <strong>Webhook</strong>, click Edit and paste the values below</li>
@@ -470,28 +470,28 @@ export default function SetupPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Webhook URL
                   </label>
                   <div className="flex items-center gap-2">
                     <input
                       readOnly
                       value={waDefaults?.webhookUrl || 'https://whatsodo.onrender.com/api/webhook'}
-                      className="flex-1 px-4 py-3 border border-white/10 rounded-xl text-sm font-mono bg-white/5 text-gray-300"
+                      className="input flex-1 px-4 py-3 font-mono text-gray-700 bg-gray-50"
                     />
                     <CopyButton text={waDefaults?.webhookUrl || 'https://whatsodo.onrender.com/api/webhook'} />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Verify Token
                   </label>
                   <div className="flex items-center gap-2">
                     <input
                       readOnly
                       value={waDefaults?.verifyToken || ''}
-                      className="flex-1 px-4 py-3 border border-white/10 rounded-xl text-sm font-mono bg-white/5 text-gray-300"
+                      className="input flex-1 px-4 py-3 font-mono text-gray-700 bg-gray-50"
                     />
                     <CopyButton text={waDefaults?.verifyToken || ''} />
                   </div>
@@ -499,41 +499,41 @@ export default function SetupPage() {
 
                 {waDefaults?.phoneNumberId && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Phone Number ID <span className="font-normal text-gray-500">(for reference)</span>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone Number ID <span className="font-normal text-gray-400">(for reference)</span>
                     </label>
                     <input
                       readOnly
                       value={waDefaults.phoneNumberId}
-                      className="w-full px-4 py-3 border border-white/10 rounded-xl text-sm font-mono bg-white/5 text-gray-500"
+                      className="input w-full px-4 py-3 font-mono text-gray-400 bg-gray-50"
                     />
                   </div>
                 )}
 
                 {waDefaults?.hasAccessToken && (
-                  <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-xl">
+                  <div className="flex items-center gap-2 p-3 bg-green-50 border-2 border-green-500 rounded-xl">
                     <div className="w-2.5 h-2.5 bg-green-500 rounded-full" />
-                    <p className="text-green-300 text-xs font-medium">WhatsApp access token is configured for this business</p>
+                    <p className="text-green-700 text-xs font-medium">WhatsApp access token is configured for this business</p>
                   </div>
                 )}
 
                 <div className="pt-2 flex items-center justify-between">
                   <button
                     onClick={() => setStep(1)}
-                    className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-200"
+                    className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900"
                   >
                     <ArrowLeft size={14} /> Back
                   </button>
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setStep(3)}
-                      className="text-sm text-gray-400 hover:text-gray-200 underline underline-offset-2"
+                      className="text-sm text-gray-500 hover:text-gray-900 underline underline-offset-2"
                     >
                       Skip for now
                     </button>
                     <button
                       onClick={() => setStep(3)}
-                      className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg shadow-green-500/25"
+                      className="btn-primary flex items-center gap-2 px-6 py-3 text-sm"
                     >
                       Next <ArrowRight size={16} />
                     </button>
@@ -546,32 +546,32 @@ export default function SetupPage() {
 
         {/* Step 3 — AI / Knowledge Base */}
         {step === 3 && (
-          <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl shadow-glass border border-white/10 p-8">
+          <div className="bg-white rounded-2xl shadow-pop-lg border-2 border-gray-900 p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-                <Bot className="w-5 h-5 text-purple-300" />
+              <div className="w-11 h-11 rounded-xl bg-purple-50 border-2 border-gray-900 flex items-center justify-center">
+                <Bot className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <h2 className="font-bold text-gray-100 text-lg">Set Up AI Knowledge Base</h2>
-                <p className="text-gray-500 text-sm">Help your AI understand your business</p>
+                <h2 className="font-bold text-gray-900 text-lg">Set Up AI Knowledge Base</h2>
+                <p className="text-gray-400 text-sm">Help your AI understand your business</p>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   Company Name
                 </label>
                 <input
                   value={kbForm.companyName}
                   onChange={(e) => setKbForm({ ...kbForm, companyName: e.target.value })}
                   placeholder="Your company name"
-                  className="w-full px-4 py-3 border border-white/10 rounded-xl text-sm text-gray-100 bg-white/5 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all"
+                  className="input w-full px-4 py-3"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   Company Description
                 </label>
                 <textarea
@@ -579,31 +579,31 @@ export default function SetupPage() {
                   onChange={(e) => setKbForm({ ...kbForm, companyDescription: e.target.value })}
                   rows={3}
                   placeholder="What does your company do? Who do you serve?"
-                  className="w-full px-4 py-3 border border-white/10 rounded-xl text-sm text-gray-100 bg-white/5 placeholder:text-gray-500 resize-none focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all"
+                  className="input w-full px-4 py-3 resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   Services / Products
                 </label>
                 <input
                   value={kbForm.services}
                   onChange={(e) => setKbForm({ ...kbForm, services: e.target.value })}
                   placeholder="e.g. Web Design, SEO, Social Media Marketing"
-                  className="w-full px-4 py-3 border border-white/10 rounded-xl text-sm text-gray-100 bg-white/5 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all"
+                  className="input w-full px-4 py-3"
                 />
-                <p className="text-xs text-gray-500 mt-1">Separate multiple services with commas</p>
+                <p className="text-xs text-gray-400 mt-1">Separate multiple services with commas</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   Tone of Voice
                 </label>
                 <select
                   value={kbForm.tone}
                   onChange={(e) => setKbForm({ ...kbForm, tone: e.target.value })}
-                  className="w-full px-4 py-3 border border-white/10 rounded-xl text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-400 transition-all bg-surface-900"
+                  className="input w-full px-4 py-3"
                 >
                   <option>Professional</option>
                   <option>Friendly</option>
@@ -614,14 +614,14 @@ export default function SetupPage() {
               <div className="pt-2 flex items-center justify-between">
                 <button
                   onClick={() => setStep(2)}
-                  className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-200"
+                  className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900"
                 >
                   <ArrowLeft size={14} /> Back
                 </button>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => handleStep3(true)}
-                    className="text-sm text-gray-400 hover:text-gray-200 underline underline-offset-2"
+                    className="text-sm text-gray-500 hover:text-gray-900 underline underline-offset-2"
                   >
                     Skip for now
                   </button>
@@ -629,7 +629,7 @@ export default function SetupPage() {
                     onClick={() => handleStep3(false)}
                     disabled={isLoading}
                     className={cn(
-                      'flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg shadow-green-500/25',
+                      'btn-primary flex items-center gap-2 px-6 py-3 text-sm',
                       isLoading && 'opacity-60 cursor-not-allowed'
                     )}
                   >
@@ -647,14 +647,14 @@ export default function SetupPage() {
 
         {/* Step 4 — Availability */}
         {step === 4 && (
-          <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl shadow-glass border border-white/10 p-8">
+          <div className="bg-white rounded-2xl shadow-pop-lg border-2 border-gray-900 p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-11 h-11 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
-                <Clock className="w-5 h-5 text-orange-300" />
+              <div className="w-11 h-11 rounded-xl bg-orange-50 border-2 border-gray-900 flex items-center justify-center">
+                <Clock className="w-5 h-5 text-orange-600" />
               </div>
               <div>
-                <h2 className="font-bold text-gray-100 text-lg">Set Your Availability</h2>
-                <p className="text-gray-500 text-sm">When can customers book appointments?</p>
+                <h2 className="font-bold text-gray-900 text-lg">Set Your Availability</h2>
+                <p className="text-gray-400 text-sm">When can customers book appointments?</p>
               </div>
             </div>
 
@@ -663,16 +663,16 @@ export default function SetupPage() {
                 <div
                   key={day}
                   className={cn(
-                    'flex items-center gap-4 p-3.5 rounded-xl border transition-colors',
-                    enabledDays[day] ? 'border-green-500/20 bg-green-500/10' : 'border-white/10 bg-white/5'
+                    'flex items-center gap-4 p-3.5 rounded-xl border-2 transition-colors',
+                    enabledDays[day] ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-gray-50'
                   )}
                 >
                   <button
                     type="button"
                     onClick={() => setEnabledDays((prev) => ({ ...prev, [day]: !prev[day] }))}
                     className={cn(
-                      'w-10 h-6 rounded-full transition-colors flex-shrink-0 relative',
-                      enabledDays[day] ? 'bg-green-500' : 'bg-white/10'
+                      'w-10 h-6 rounded-full transition-colors flex-shrink-0 relative border-2 border-gray-900',
+                      enabledDays[day] ? 'bg-green-500' : 'bg-gray-200'
                     )}
                   >
                     <span className={cn(
@@ -680,26 +680,26 @@ export default function SetupPage() {
                       enabledDays[day] ? 'translate-x-4' : 'translate-x-0.5'
                     )} />
                   </button>
-                  <p className="text-sm font-medium text-gray-100 w-24">{day}</p>
+                  <p className="text-sm font-medium text-gray-900 w-24">{day}</p>
                   {enabledDays[day] && (
                     <div className="flex items-center gap-2 flex-1">
                       <input
                         type="time"
                         value={dayHours[day].start}
                         onChange={(e) => setDayHours((prev) => ({ ...prev, [day]: { ...prev[day], start: e.target.value } }))}
-                        className="px-3 py-1.5 border border-white/10 rounded-lg text-xs text-gray-100 bg-white/5 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+                        className="input px-3 py-1.5 text-xs"
                       />
-                      <span className="text-gray-500 text-xs">—</span>
+                      <span className="text-gray-400 text-xs">—</span>
                       <input
                         type="time"
                         value={dayHours[day].end}
                         onChange={(e) => setDayHours((prev) => ({ ...prev, [day]: { ...prev[day], end: e.target.value } }))}
-                        className="px-3 py-1.5 border border-white/10 rounded-lg text-xs text-gray-100 bg-white/5 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+                        className="input px-3 py-1.5 text-xs"
                       />
                     </div>
                   )}
                   {!enabledDays[day] && (
-                    <p className="text-xs text-gray-500 flex-1">Closed</p>
+                    <p className="text-xs text-gray-400 flex-1">Closed</p>
                   )}
                 </div>
               ))}
@@ -708,14 +708,14 @@ export default function SetupPage() {
             <div className="pt-2 flex items-center justify-between">
               <button
                 onClick={() => setStep(3)}
-                className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-200"
+                className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900"
               >
                 <ArrowLeft size={14} /> Back
               </button>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => handleStep4(true)}
-                  className="text-sm text-gray-400 hover:text-gray-200 underline underline-offset-2"
+                  className="text-sm text-gray-500 hover:text-gray-900 underline underline-offset-2"
                 >
                   Skip for now
                 </button>
@@ -723,7 +723,7 @@ export default function SetupPage() {
                   onClick={() => handleStep4(false)}
                   disabled={isLoading}
                   className={cn(
-                    'flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg shadow-green-500/25',
+                    'btn-primary flex items-center gap-2 px-6 py-3 text-sm',
                     isLoading && 'opacity-60 cursor-not-allowed'
                   )}
                 >
@@ -740,13 +740,13 @@ export default function SetupPage() {
 
         {/* Step 5 — All Done */}
         {step === 5 && (
-          <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl shadow-glass border border-white/10 p-8 text-center">
+          <div className="bg-white rounded-2xl shadow-pop-lg border-2 border-gray-900 p-8 text-center">
             <div className="flex flex-col items-center mb-8">
-              <div className="w-20 h-20 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-4 animate-[scale-in_0.4s_ease-out]">
-                <CheckCircle className="w-10 h-10 text-green-400" />
+              <div className="w-20 h-20 rounded-full bg-green-50 border-2 border-gray-900 flex items-center justify-center mb-4 animate-bounce-in">
+                <CheckCircle className="w-10 h-10 text-green-600" />
               </div>
-              <h2 className="font-bold text-gray-100 text-2xl mb-2">You&apos;re all set!</h2>
-              <p className="text-gray-500 text-sm max-w-sm">
+              <h2 className="font-bold text-gray-900 text-2xl mb-2">You&apos;re all set!</h2>
+              <p className="text-gray-400 text-sm max-w-sm">
                 Your Whatsodo account is ready. Start capturing and converting WhatsApp leads with AI.
               </p>
             </div>
@@ -760,21 +760,21 @@ export default function SetupPage() {
                 <div
                   key={label}
                   className={cn(
-                    'p-4 rounded-xl border',
-                    done ? 'border-green-500/20 bg-green-500/10' : 'border-white/10 bg-white/5'
+                    'p-4 rounded-xl border-2',
+                    done ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-gray-50'
                   )}
                 >
                   <div className={cn(
-                    'w-9 h-9 rounded-lg flex items-center justify-center mx-auto mb-2',
-                    color === 'blue' ? 'bg-blue-500/10 border border-blue-500/20' : color === 'purple' ? 'bg-purple-500/10 border border-purple-500/20' : 'bg-orange-500/10 border border-orange-500/20'
+                    'w-9 h-9 rounded-lg flex items-center justify-center mx-auto mb-2 border-2 border-gray-900',
+                    color === 'blue' ? 'bg-blue-50' : color === 'purple' ? 'bg-purple-50' : 'bg-orange-50'
                   )}>
                     <Icon size={18} className={cn(
-                      color === 'blue' ? 'text-blue-300' : color === 'purple' ? 'text-purple-300' : 'text-orange-300'
+                      color === 'blue' ? 'text-blue-600' : color === 'purple' ? 'text-purple-600' : 'text-orange-600'
                     )} />
                   </div>
-                  <p className="text-xs font-medium text-gray-300">{label}</p>
+                  <p className="text-xs font-medium text-gray-700">{label}</p>
                   {done && (
-                    <p className="text-xs text-green-400 mt-0.5 font-medium">Configured</p>
+                    <p className="text-xs text-green-600 mt-0.5 font-medium">Configured</p>
                   )}
                 </div>
               ))}
@@ -783,11 +783,11 @@ export default function SetupPage() {
             <div className="space-y-3">
               <button
                 onClick={handleFinish}
-                className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg shadow-green-500/25"
+                className="btn-primary w-full flex items-center justify-center gap-2 py-3 px-6 text-sm"
               >
                 Go to Dashboard <ArrowRight size={16} />
               </button>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-400">
                 You can update all settings later from the Settings page.
               </p>
             </div>

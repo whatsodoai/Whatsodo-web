@@ -16,10 +16,10 @@ import {
 import { cn, formatRelativeTime, LEAD_STATUSES } from '@/lib/utils';
 
 const STATUS_BADGE: Record<Campaign['status'], { bg: string; color: string; label: string }> = {
-  draft: { bg: 'bg-white/5', color: 'text-gray-400', label: 'Draft' },
-  sending: { bg: 'bg-blue-500/10', color: 'text-blue-300', label: 'Sending' },
-  completed: { bg: 'bg-green-500/10', color: 'text-green-300', label: 'Completed' },
-  failed: { bg: 'bg-red-500/10', color: 'text-red-300', label: 'Failed' },
+  draft: { bg: 'bg-gray-100', color: 'text-gray-500', label: 'Draft' },
+  sending: { bg: 'bg-blue-500', color: 'text-white', label: 'Sending' },
+  completed: { bg: 'bg-green-500', color: 'text-white', label: 'Completed' },
+  failed: { bg: 'bg-red-500', color: 'text-white', label: 'Failed' },
 };
 
 function NewCampaignModal({
@@ -69,27 +69,27 @@ function NewCampaignModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-surface-900 rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto border border-white/10">
-        <div className="flex items-center justify-between p-5 border-b border-white/10">
-          <h2 className="font-bold text-gray-100">New Broadcast Campaign</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-200">
+      <div className="bg-white rounded-2xl shadow-pop-lg w-full max-w-md max-h-[90vh] overflow-y-auto border-2 border-gray-900">
+        <div className="flex items-center justify-between p-5 border-b-2 border-gray-900">
+          <h2 className="font-bold text-gray-900">New Broadcast Campaign</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-900">
             <X size={18} />
           </button>
         </div>
 
         <div className="p-5 space-y-4">
           {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-300 text-sm">{error}</div>
+            <div className="p-3 bg-red-50 border-2 border-gray-900 rounded-xl text-red-600 text-sm">{error}</div>
           )}
 
           {templates.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center py-4">
+            <p className="text-sm text-gray-400 text-center py-4">
               No templates registered yet. Go to Settings → Templates to register one first.
             </p>
           ) : (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">Template</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Template</label>
                 <select value={templateName} onChange={(e) => setTemplateName(e.target.value)} className="input">
                   <option value="">Select a template...</option>
                   {templates.map((t) => (
@@ -99,7 +99,7 @@ function NewCampaignModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">Send to leads where...</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Send to leads where...</label>
                 <div className="flex gap-2">
                   <select
                     value={segmentType}
@@ -138,12 +138,12 @@ function NewCampaignModal({
               </div>
 
               {selectedTemplate?.bodyPreview && (
-                <div className="p-3 bg-white/5 rounded-xl text-xs text-gray-300">{selectedTemplate.bodyPreview}</div>
+                <div className="p-3 bg-gray-50 border-2 border-gray-900 rounded-xl text-xs text-gray-700">{selectedTemplate.bodyPreview}</div>
               )}
 
               {variables.map((v, i) => (
                 <div key={i}>
-                  <label className="block text-sm font-medium text-gray-300 mb-1.5">Variable {`{{${i + 1}}}`}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Variable {`{{${i + 1}}}`}</label>
                   <input
                     value={v}
                     onChange={(e) => setVariables((prev) => prev.map((p, idx) => (idx === i ? e.target.value : p)))}
@@ -155,8 +155,8 @@ function NewCampaignModal({
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 p-5 border-t border-white/10">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-400 hover:text-gray-100">Cancel</button>
+        <div className="flex items-center justify-end gap-3 p-5 border-t-2 border-gray-900">
+          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-900">Cancel</button>
           <button
             onClick={handleCreate}
             disabled={!selectedTemplate || creating}
@@ -204,7 +204,7 @@ export default function CampaignsPage() {
     <div className="page-container">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-gray-400 text-sm">{campaigns.length} campaign{campaigns.length !== 1 ? 's' : ''}</p>
+          <p className="text-gray-500 text-sm">{campaigns.length} campaign{campaigns.length !== 1 ? 's' : ''}</p>
         </div>
         <button onClick={() => setShowNew(true)} className="btn-primary">
           <Plus size={15} /> New Campaign
@@ -219,37 +219,37 @@ export default function CampaignsPage() {
         </div>
       ) : campaigns.length === 0 ? (
         <div className="card p-12 text-center">
-          <Megaphone className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-          <p className="text-gray-300 font-medium">No campaigns yet</p>
-          <p className="text-gray-500 text-sm mt-1">
+          <Megaphone className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-700 font-medium">No campaigns yet</p>
+          <p className="text-gray-400 text-sm mt-1">
             Broadcast a WhatsApp template to a segment of leads, or select leads on the Leads page.
           </p>
         </div>
       ) : (
-        <div className="card divide-y divide-white/10">
+        <div className="card divide-y-2 divide-gray-100">
           {campaigns.map((c) => {
             const badge = STATUS_BADGE[c.status];
             return (
               <div key={c._id} className="flex items-center gap-4 p-4">
-                <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
-                  <Megaphone className="w-4.5 h-4.5 text-green-400" />
+                <div className="w-10 h-10 rounded-xl bg-green-50 border-2 border-gray-900 flex items-center justify-center flex-shrink-0">
+                  <Megaphone className="w-4.5 h-4.5 text-green-600" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-100">{c.templateName}</p>
-                  <p className="text-xs text-gray-500">{formatRelativeTime(c.createdAt)}</p>
+                  <p className="text-sm font-semibold text-gray-900">{c.templateName}</p>
+                  <p className="text-xs text-gray-400">{formatRelativeTime(c.createdAt)}</p>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-gray-400">
+                <div className="flex items-center gap-4 text-xs text-gray-500">
                   <span className="flex items-center gap-1">
-                    <CheckCircle size={12} className="text-green-400" /> {c.stats.sent} sent
+                    <CheckCircle size={12} className="text-green-600" /> {c.stats.sent} sent
                   </span>
                   {c.stats.failed > 0 && (
                     <span className="flex items-center gap-1">
-                      <XCircle size={12} className="text-red-400" /> {c.stats.failed} failed
+                      <XCircle size={12} className="text-red-600" /> {c.stats.failed} failed
                     </span>
                   )}
                   <span>{c.stats.total} total</span>
                 </div>
-                <span className={cn('text-xs font-medium px-2.5 py-1 rounded-full', badge.bg, badge.color)}>
+                <span className={cn('text-xs font-medium px-2.5 py-1 rounded-full border-2 border-gray-900', badge.bg, badge.color)}>
                   {badge.label}
                 </span>
               </div>

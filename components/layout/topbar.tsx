@@ -55,9 +55,9 @@ export function Topbar() {
   });
 
   return (
-    <header className="h-16 bg-surface-950/80 backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-6 sticky top-0 z-40">
+    <header className="h-16 bg-white border-b-2 border-gray-900 flex items-center justify-between px-6 sticky top-0 z-40">
       <div>
-        <h1 className="text-gray-100 font-semibold text-lg leading-tight">{title}</h1>
+        <h1 className="text-gray-900 font-extrabold text-lg leading-tight">{title}</h1>
         <p className="text-gray-500 text-xs">
           {dateStr} · {timeStr}
         </p>
@@ -66,18 +66,18 @@ export function Topbar() {
       <div className="flex items-center gap-2">
         <button
           onClick={() => document.dispatchEvent(new CustomEvent('open-command-palette'))}
-          className="relative hidden md:flex items-center pl-8 pr-2.5 py-1.5 text-sm bg-white/5 text-gray-500 border border-white/10 rounded-lg hover:bg-white/10 hover:border-white/20 transition-all w-52"
+          className="relative hidden md:flex items-center pl-8 pr-2.5 py-1.5 text-sm bg-white text-gray-500 border-2 border-gray-900 rounded-lg hover:bg-yellow-50 transition-all w-52"
         >
           <Search className="absolute left-3 w-3.5 h-3.5 text-gray-500 pointer-events-none" />
           <span className="flex-1 text-left">Search...</span>
-          <kbd className="text-[10px] text-gray-500 bg-white/5 border border-white/10 rounded px-1 py-0.5">
+          <kbd className="text-[10px] text-gray-600 bg-gray-100 border border-gray-300 rounded px-1 py-0.5">
             ⌘K
           </kbd>
         </button>
 
         <button
           onClick={() => refreshBusinesses()}
-          className="p-2 rounded-lg text-gray-400 hover:bg-white/5 hover:text-gray-100 transition-colors"
+          className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
           title="Refresh"
         >
           <RefreshCw size={16} />
@@ -89,7 +89,7 @@ export function Topbar() {
               setOpen((v) => !v);
               if (!open) markAllRead();
             }}
-            className="relative p-2 rounded-lg text-gray-400 hover:bg-white/5 hover:text-gray-100 transition-colors"
+            className="relative p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
             title={connected ? 'Live' : 'Polling'}
           >
             <Bell size={16} />
@@ -99,21 +99,19 @@ export function Topbar() {
               }`}
             />
             {unreadCount > 0 && (
-              <span className="absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 flex items-center justify-center text-[10px] font-bold text-white bg-red-500 rounded-full">
+              <span className="absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 flex items-center justify-center text-[10px] font-bold text-white bg-pink-500 border border-gray-900 rounded-full">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}
           </button>
 
           {open && (
-            <div className="absolute right-0 mt-2 w-80 bg-surface-900/95 backdrop-blur-xl rounded-xl border border-white/10 shadow-glass z-50 overflow-hidden">
-              <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
-                <p className="text-sm font-semibold text-gray-100">Notifications</p>
+            <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl border-2 border-gray-900 shadow-pop-lg z-50 overflow-hidden animate-bounce-in">
+              <div className="px-4 py-3 border-b-2 border-gray-900 flex items-center justify-between">
+                <p className="text-sm font-bold text-gray-900">Notifications</p>
                 <span
-                  className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${
-                    connected
-                      ? 'text-green-300 bg-green-500/10'
-                      : 'text-amber-300 bg-amber-500/10'
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-gray-900 ${
+                    connected ? 'text-white bg-green-500' : 'text-white bg-amber-500'
                   }`}
                 >
                   {connected ? 'Live' : 'Polling'}
@@ -121,7 +119,7 @@ export function Topbar() {
               </div>
               <div className="max-h-96 overflow-y-auto">
                 {notifications.length === 0 ? (
-                  <p className="px-4 py-8 text-center text-sm text-gray-500">No new messages</p>
+                  <p className="px-4 py-8 text-center text-sm text-gray-400">No new messages</p>
                 ) : (
                   notifications.map((n) => (
                     <button
@@ -131,19 +129,19 @@ export function Topbar() {
                         setOpen(false);
                         router.push('/inbox');
                       }}
-                      className={`w-full flex items-start gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 ${
-                        n.read ? '' : 'bg-green-500/[0.06]'
+                      className={`w-full flex items-start gap-3 px-4 py-3 text-left hover:bg-yellow-50 transition-colors border-b border-gray-100 last:border-0 ${
+                        n.read ? '' : 'bg-pink-50'
                       }`}
                     >
-                      <div className="w-8 h-8 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0">
-                        <MessageSquare size={14} className="text-green-400" />
+                      <div className="w-8 h-8 rounded-full bg-green-500 border-2 border-gray-900 flex items-center justify-center flex-shrink-0">
+                        <MessageSquare size={14} className="text-white" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-gray-100 truncate">
+                        <p className="text-sm font-semibold text-gray-900 truncate">
                           {n.leadName || n.phone}
                         </p>
-                        <p className="text-xs text-gray-400 truncate">{n.preview}</p>
-                        <p className="text-[10px] text-gray-500 mt-0.5">{formatRelativeTime(n.createdAt)}</p>
+                        <p className="text-xs text-gray-500 truncate">{n.preview}</p>
+                        <p className="text-[10px] text-gray-400 mt-0.5">{formatRelativeTime(n.createdAt)}</p>
                       </div>
                     </button>
                   ))

@@ -9,23 +9,23 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const toneClasses: Record<Tone, string> = {
-  gray: 'text-gray-300 bg-white/5 border border-white/10',
-  green: 'text-green-300 bg-green-500/10 border border-green-500/20',
-  blue: 'text-blue-300 bg-blue-500/10 border border-blue-500/20',
-  amber: 'text-amber-300 bg-amber-500/10 border border-amber-500/20',
-  red: 'text-red-300 bg-red-500/10 border border-red-500/20',
-  purple: 'text-purple-300 bg-purple-500/10 border border-purple-500/20',
-  cyan: 'text-cyan-300 bg-cyan-500/10 border border-cyan-500/20',
+  gray: 'text-gray-900 bg-white',
+  green: 'text-white bg-green-500',
+  blue: 'text-white bg-blue-500',
+  amber: 'text-white bg-amber-500',
+  red: 'text-white bg-red-500',
+  purple: 'text-white bg-purple-500',
+  cyan: 'text-white bg-cyan-500',
 };
 
 const dotClasses: Record<Tone, string> = {
-  gray: 'bg-gray-400',
-  green: 'bg-green-400',
-  blue: 'bg-blue-400',
-  amber: 'bg-amber-400',
-  red: 'bg-red-400',
-  purple: 'bg-purple-400',
-  cyan: 'bg-cyan-400',
+  gray: 'bg-gray-900',
+  green: 'bg-white/80',
+  blue: 'bg-white/80',
+  amber: 'bg-white/80',
+  red: 'bg-white/80',
+  purple: 'bg-white/80',
+  cyan: 'bg-white/80',
 };
 
 export function Badge({ className, tone = 'gray', dot, children, ...props }: BadgeProps) {

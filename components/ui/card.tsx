@@ -13,7 +13,7 @@ export function GlowCard({ className, ...props }: HTMLAttributes<HTMLDivElement>
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-xl shadow-glass',
+        'relative overflow-hidden rounded-2xl border-2 border-gray-900 bg-gradient-to-br from-pink-50 to-cyan-50 shadow-pop',
         className
       )}
       {...props}

@@ -58,19 +58,19 @@ export function BroadcastModal({ businessId, leadIds, onClose, onSent }: Props) 
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-surface-900 rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto border border-white/10">
-        <div className="flex items-center justify-between p-5 border-b border-white/10">
-          <h2 className="font-bold text-gray-100">
+      <div className="bg-white rounded-2xl shadow-pop-lg w-full max-w-md max-h-[90vh] overflow-y-auto border-2 border-gray-900 animate-bounce-in">
+        <div className="flex items-center justify-between p-5 border-b-2 border-gray-900">
+          <h2 className="font-bold text-gray-900">
             Send Broadcast to {leadIds.length} lead{leadIds.length > 1 ? 's' : ''}
           </h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-200">
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-900">
             <X size={18} />
           </button>
         </div>
 
         <div className="p-5 space-y-4">
           {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-300 text-sm">{error}</div>
+            <div className="p-3 bg-red-50 border-2 border-red-300 rounded-xl text-red-700 text-sm">{error}</div>
           )}
 
           {templatesLoading ? (
@@ -82,7 +82,7 @@ export function BroadcastModal({ businessId, leadIds, onClose, onSent }: Props) 
           ) : (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">Template</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Template</label>
                 <select
                   value={selectedName}
                   onChange={(e) => setSelectedName(e.target.value)}
@@ -96,14 +96,14 @@ export function BroadcastModal({ businessId, leadIds, onClose, onSent }: Props) 
               </div>
 
               {selectedTemplate?.bodyPreview && (
-                <div className="p-3 bg-white/5 rounded-xl text-xs text-gray-300">
+                <div className="p-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-xs text-gray-700">
                   {selectedTemplate.bodyPreview}
                 </div>
               )}
 
               {variables.map((v, i) => (
                 <div key={i}>
-                  <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Variable {`{{${i + 1}}}`}
                   </label>
                   <input
@@ -119,8 +119,8 @@ export function BroadcastModal({ businessId, leadIds, onClose, onSent }: Props) 
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 p-5 border-t border-white/10">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-400 hover:text-gray-100">
+        <div className="flex items-center justify-end gap-3 p-5 border-t-2 border-gray-900">
+          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-900">
             Cancel
           </button>
           <button

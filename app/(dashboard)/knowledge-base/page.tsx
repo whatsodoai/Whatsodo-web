@@ -176,8 +176,8 @@ export default function KnowledgeBasePage() {
     <div className="page-container">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-            <Bot className="w-5 h-5 text-purple-300" />
+          <div className="w-10 h-10 rounded-xl bg-purple-50 border-2 border-gray-900 flex items-center justify-center">
+            <Bot className="w-5 h-5 text-purple-600" />
           </div>
           <div>
             <p className="text-sm text-gray-400">Configure what your AI knows</p>
@@ -218,21 +218,21 @@ export default function KnowledgeBasePage() {
       </div>
 
       {importError && (
-        <div className="flex items-center gap-2.5 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-300 text-sm">
+        <div className="flex items-center gap-2.5 p-4 bg-red-50 border-2 border-gray-900 rounded-xl text-red-600 text-sm">
           <AlertTriangle size={16} />
           {importError}
         </div>
       )}
 
       {saved && (
-        <div className="flex items-center gap-2.5 p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-green-300 text-sm">
+        <div className="flex items-center gap-2.5 p-4 bg-green-50 border-2 border-gray-900 rounded-xl text-green-700 text-sm">
           <CheckCircle size={16} />
           Knowledge base updated successfully. Your AI will use this information.
         </div>
       )}
 
       {/* Tab Navigation */}
-      <div className="flex items-center gap-1 bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-xl p-1 w-fit shadow-glass">
+      <div className="flex items-center gap-1 bg-white border-2 border-gray-900 rounded-xl p-1 w-fit shadow-pop-sm">
         {TABS.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -240,8 +240,8 @@ export default function KnowledgeBasePage() {
             className={cn(
               'flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all',
               activeTab === id
-                ? 'bg-white/15 text-gray-100 shadow-sm'
-                : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                ? 'bg-gray-900 text-white'
+                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
             )}
           >
             <Icon size={14} />
@@ -257,7 +257,7 @@ export default function KnowledgeBasePage() {
           <div className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   Company Name
                 </label>
                 <input
@@ -268,7 +268,7 @@ export default function KnowledgeBasePage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   AI Tone
                 </label>
                 <select
@@ -282,7 +282,7 @@ export default function KnowledgeBasePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 Company Description
               </label>
               <textarea
@@ -296,7 +296,7 @@ export default function KnowledgeBasePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   Contact Email
                 </label>
                 <input
@@ -308,7 +308,7 @@ export default function KnowledgeBasePage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   Contact Phone
                 </label>
                 <input
@@ -328,7 +328,7 @@ export default function KnowledgeBasePage() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300">Services Offered</label>
+                  <label className="block text-sm font-medium text-gray-700">Services Offered</label>
                   <p className="text-xs text-gray-400 mt-0.5">List your main services or products</p>
                 </div>
                 <button onClick={() => addItem('services')} className="btn-secondary text-xs py-1.5">
@@ -346,14 +346,14 @@ export default function KnowledgeBasePage() {
                     />
                     <button
                       onClick={() => removeItem('services', i)}
-                      className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                     >
                       <Trash2 size={15} />
                     </button>
                   </div>
                 ))}
                 {(kb.services || []).length === 0 && (
-                  <div className="text-center py-6 border-2 border-dashed border-white/10 rounded-xl text-gray-500 text-sm">
+                  <div className="text-center py-6 border-2 border-dashed border-gray-300 rounded-xl text-gray-400 text-sm">
                     No services added. Click &quot;Add Service&quot; to start.
                   </div>
                 )}
@@ -363,7 +363,7 @@ export default function KnowledgeBasePage() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300">Current Offers</label>
+                  <label className="block text-sm font-medium text-gray-700">Current Offers</label>
                   <p className="text-xs text-gray-400 mt-0.5">Promotions or discounts to mention</p>
                 </div>
                 <button onClick={() => addItem('offers')} className="btn-secondary text-xs py-1.5">
@@ -381,7 +381,7 @@ export default function KnowledgeBasePage() {
                     />
                     <button
                       onClick={() => removeItem('offers', i)}
-                      className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                     >
                       <Trash2 size={15} />
                     </button>
@@ -397,7 +397,7 @@ export default function KnowledgeBasePage() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-400">
                   Common questions your AI will answer automatically
                 </p>
               </div>
@@ -407,16 +407,16 @@ export default function KnowledgeBasePage() {
             </div>
             <div className="space-y-4">
               {(kb.faqs || []).map((faq, i) => (
-                <div key={i} className="p-4 border border-white/10 rounded-xl bg-white/5 relative">
+                <div key={i} className="p-4 border-2 border-gray-200 rounded-xl bg-gray-50 relative">
                   <button
                     onClick={() => removeFaq(i)}
-                    className="absolute top-3 right-3 p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                    className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     <Trash2 size={13} />
                   </button>
                   <div className="space-y-2.5 pr-8">
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Question</label>
+                      <label className="block text-xs font-medium text-gray-400 mb-1">Question</label>
                       <input
                         value={faq.question}
                         onChange={(e) => updateFaq(i, 'question', e.target.value)}
@@ -425,7 +425,7 @@ export default function KnowledgeBasePage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Answer</label>
+                      <label className="block text-xs font-medium text-gray-400 mb-1">Answer</label>
                       <textarea
                         value={faq.answer}
                         onChange={(e) => updateFaq(i, 'answer', e.target.value)}
@@ -438,7 +438,7 @@ export default function KnowledgeBasePage() {
                 </div>
               ))}
               {(kb.faqs || []).length === 0 && (
-                <div className="text-center py-10 border-2 border-dashed border-white/10 rounded-xl text-gray-500 text-sm">
+                <div className="text-center py-10 border-2 border-dashed border-gray-300 rounded-xl text-gray-400 text-sm">
                   No FAQs added yet. Add questions your customers frequently ask.
                 </div>
               )}
@@ -450,7 +450,7 @@ export default function KnowledgeBasePage() {
         {activeTab === 'sales' && (
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 Sales Instructions
               </label>
               <p className="text-xs text-gray-400 mb-2">
@@ -466,7 +466,7 @@ export default function KnowledgeBasePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 Appointment Instructions
               </label>
               <p className="text-xs text-gray-400 mb-2">
@@ -484,7 +484,7 @@ export default function KnowledgeBasePage() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300">
+                  <label className="block text-sm font-medium text-gray-700">
                     Lead Qualification Questions
                   </label>
                   <p className="text-xs text-gray-400 mt-0.5">
@@ -506,7 +506,7 @@ export default function KnowledgeBasePage() {
                     />
                     <button
                       onClick={() => removeItem('leadQualificationQuestions', i)}
-                      className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                     >
                       <Trash2 size={15} />
                     </button>
@@ -518,7 +518,7 @@ export default function KnowledgeBasePage() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300">
+                  <label className="block text-sm font-medium text-gray-700">
                     Call-to-Action Phrases
                   </label>
                   <p className="text-xs text-gray-400 mt-0.5">
@@ -540,7 +540,7 @@ export default function KnowledgeBasePage() {
                     />
                     <button
                       onClick={() => removeItem('callToActions', i)}
-                      className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                     >
                       <Trash2 size={15} />
                     </button>
@@ -556,7 +556,7 @@ export default function KnowledgeBasePage() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-400">
                   How the AI responds to common customer objections
                 </p>
               </div>
@@ -566,16 +566,16 @@ export default function KnowledgeBasePage() {
             </div>
             <div className="space-y-4">
               {(kb.objectionHandling || []).map((obj, i) => (
-                <div key={i} className="p-4 border border-white/10 rounded-xl bg-white/5 relative">
+                <div key={i} className="p-4 border-2 border-gray-200 rounded-xl bg-gray-50 relative">
                   <button
                     onClick={() => removeObjection(i)}
-                    className="absolute top-3 right-3 p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                    className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     <Trash2 size={13} />
                   </button>
                   <div className="space-y-2.5 pr-8">
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-gray-400 mb-1">
                         Customer Objection
                       </label>
                       <input
@@ -586,7 +586,7 @@ export default function KnowledgeBasePage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-gray-400 mb-1">
                         AI Response
                       </label>
                       <textarea
@@ -601,7 +601,7 @@ export default function KnowledgeBasePage() {
                 </div>
               ))}
               {(kb.objectionHandling || []).length === 0 && (
-                <div className="text-center py-10 border-2 border-dashed border-white/10 rounded-xl text-gray-500 text-sm">
+                <div className="text-center py-10 border-2 border-dashed border-gray-300 rounded-xl text-gray-400 text-sm">
                   No objection handlers yet. Add common customer objections.
                 </div>
               )}
@@ -617,21 +617,21 @@ export default function KnowledgeBasePage() {
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-100">Test Your AI Agent</h3>
+            <h3 className="font-semibold text-gray-900">Test Your AI Agent</h3>
             <p className="text-xs text-gray-500">Send a sample WhatsApp message and see how your AI replies</p>
           </div>
         </div>
 
         {/* Chat history */}
         {testHistory.length > 0 && (
-          <div className="bg-white/5 rounded-xl p-4 mb-4 space-y-3 max-h-72 overflow-y-auto">
+          <div className="bg-gray-50 rounded-xl p-4 mb-4 space-y-3 max-h-72 overflow-y-auto border-2 border-gray-200">
             {testHistory.map((msg, i) => (
               <div key={i} className={cn('flex', msg.role === 'user' ? 'justify-end' : 'justify-start')}>
                 <div className={cn(
                   'max-w-xs lg:max-w-md px-4 py-2.5 rounded-2xl text-sm',
                   msg.role === 'user'
                     ? 'bg-green-500 text-white rounded-br-sm'
-                    : 'bg-surface-800 border border-white/10 text-gray-200 rounded-bl-sm shadow-sm'
+                    : 'bg-white border-2 border-gray-900 text-gray-900 rounded-bl-sm shadow-sm'
                 )}>
                   {msg.role === 'ai' && (
                     <div className="flex items-center gap-1.5 mb-1">
@@ -645,7 +645,7 @@ export default function KnowledgeBasePage() {
             ))}
             {testLoading && (
               <div className="flex justify-start">
-                <div className="bg-surface-800 border border-white/10 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
+                <div className="bg-white border-2 border-gray-900 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
                   <div className="flex gap-1">
                     <span className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                     <span className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -682,7 +682,7 @@ export default function KnowledgeBasePage() {
         {testHistory.length > 0 && (
           <button
             onClick={() => { setTestHistory([]); setTestReply(''); }}
-            className="mt-2 text-xs text-gray-500 hover:text-gray-300"
+            className="mt-2 text-xs text-gray-400 hover:text-gray-700"
           >
             Clear chat
           </button>
