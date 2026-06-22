@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useBusiness } from '@/contexts/business-context';
 import { useAuth } from '@/contexts/auth-context';
+import { ConnectWhatsAppButton } from '@/components/connect-whatsapp-button';
 import { api } from '@/lib/api';
 import { Availability, Business as BusinessType } from '@/types';
 import {
@@ -572,6 +573,17 @@ export default function SettingsPage() {
                   </div>
                 </div>
               </div>
+
+              {/* One-click connect via Meta Embedded Signup */}
+              {activeBusiness && (
+                <ConnectWhatsAppButton
+                  businessId={activeBusiness._id}
+                  onConnected={() => {
+                    setWaSaved(true);
+                    setWaDefaults(null);
+                  }}
+                />
+              )}
 
               {/* Your own WhatsApp Business credentials */}
               <div className="card p-6">

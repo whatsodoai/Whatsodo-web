@@ -94,6 +94,15 @@ export const api = {
       `/business/whatsapp-defaults?businessId=${businessId}`
     ),
 
+  connectWhatsAppEmbedded: (
+    businessId: string,
+    data: { code: string; wabaId: string; phoneNumberId: string }
+  ) =>
+    request<import('@/types').Business>(`/business/${businessId}/whatsapp/connect`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
   getBusiness: (id: string) => request<import('@/types').Business>(`/business/${id}`),
 
   addBusinessMember: (businessId: string, email: string, role: 'admin' | 'agent') =>
