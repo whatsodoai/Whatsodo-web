@@ -95,6 +95,10 @@ export function ConnectWhatsAppButton({ businessId, onConnected }: ConnectWhatsA
         config_id: META_CONFIG_ID,
         response_type: 'code',
         override_default_response_type: true,
+        extras: {
+          sessionInfoVersion: '3',
+          featureType: 'whatsapp_business_app_onboarding',
+        },
       }
     );
   };
