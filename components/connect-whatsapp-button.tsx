@@ -54,9 +54,20 @@ const MODE_COPY = {
 
 export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existing' }: ConnectWhatsAppButtonProps) {
   const [sdkReady, setSdkReady] = useState(false);
+  const [sdkBlocked, setSdkBlocked] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState('');
   const signupData = useRef<SignupData>({});
+
+  useEffect(() => {
+    // If the SDK script never calls back within 8s (ad-blocker / privacy
+    // extension blocking connect.facebook.net is the common cause), surface
+    // that instead of leaving the button silently disabled forever.
+    const timeout = setTimeout(() => {
+      if (!window.FB) setSdkBlocked(true);
+    }, 8000);
+    return () => clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
     window.fbAsyncInit = () => {
@@ -129,7 +140,11 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
 
   return (
     <>
-      <Script src="https://connect.facebook.net/en_US/sdk.js" strategy="lazyOnload" />
+      <Script
+        src="https://connect.facebook.net/en_US/sdk.js"
+        strategy="afterInteractive"
+        onError={() => setSdkBlocked(true)}
+      />
 
       <div className="card p-6">
         <h3 className="font-bold text-gray-900 mb-1">{copy.title}</h3>
@@ -138,6 +153,14 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
         {error && (
           <p className="text-red-700 text-sm mb-3 bg-red-50 border-2 border-gray-900 rounded-xl p-3">
             {error}
+          </p>
+        )}
+
+        {sdkBlocked && !sdkReady && (
+          <p className="text-amber-700 text-sm mb-3 bg-amber-50 border border-amber-200 rounded-xl p-3">
+            Meta&apos;s connect SDK didn&apos;t load. This is usually an ad-blocker or privacy
+            extension blocking <code className="text-xs">connect.facebook.net</code> — try disabling
+            it for this site, or use an incognito window, then reload.
           </p>
         )}
 
@@ -155,7 +178,7 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
           ) : (
             <Facebook size={15} />
           )}
-          {connecting ? 'Connecting…' : copy.cta}
+          {connecting ? 'Connecting…' : !sdkReady ? 'Loading…' : copy.cta}
         </button>
 
         {mode === 'existing' && (
