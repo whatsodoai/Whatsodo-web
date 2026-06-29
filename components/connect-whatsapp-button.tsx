@@ -30,9 +30,29 @@ interface SignupData {
 interface ConnectWhatsAppButtonProps {
   businessId: string;
   onConnected: () => void;
+  /**
+   * 'existing' uses Meta's coexistence flow — links a number that's
+   * currently active in the WhatsApp Business App without disconnecting it.
+   * 'new' uses the standard flow for registering a fresh number that has
+   * never been on WhatsApp before.
+   */
+  mode?: 'existing' | 'new';
 }
 
-export function ConnectWhatsAppButton({ businessId, onConnected }: ConnectWhatsAppButtonProps) {
+const MODE_COPY = {
+  existing: {
+    title: 'Connect Existing Number',
+    description: 'Link the WhatsApp Business number you already use on your phone — it keeps working in the app, messages just sync here too.',
+    cta: 'Continue with Meta',
+  },
+  new: {
+    title: 'Create New Number',
+    description: "Set up a fresh number on Meta's Cloud API. The number must not already be registered on WhatsApp (personal or business app).",
+    cta: 'Set Up New Number',
+  },
+};
+
+export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existing' }: ConnectWhatsAppButtonProps) {
   const [sdkReady, setSdkReady] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState('');
@@ -97,7 +117,7 @@ export function ConnectWhatsAppButton({ businessId, onConnected }: ConnectWhatsA
         override_default_response_type: true,
         extras: {
           sessionInfoVersion: '3',
-          featureType: 'whatsapp_business_app_onboarding',
+          ...(mode === 'existing' && { featureType: 'whatsapp_business_app_onboarding' }),
         },
       }
     );
@@ -105,15 +125,15 @@ export function ConnectWhatsAppButton({ businessId, onConnected }: ConnectWhatsA
 
   if (!META_APP_ID || !META_CONFIG_ID) return null;
 
+  const copy = MODE_COPY[mode];
+
   return (
     <>
       <Script src="https://connect.facebook.net/en_US/sdk.js" strategy="lazyOnload" />
 
       <div className="card p-6">
-        <h3 className="font-bold text-gray-900 mb-1">Connect with Meta</h3>
-        <p className="text-gray-500 text-sm mb-4">
-          Link your existing WhatsApp Business number in one click — no manual tokens needed.
-        </p>
+        <h3 className="font-bold text-gray-900 mb-1">{copy.title}</h3>
+        <p className="text-gray-500 text-sm mb-4">{copy.description}</p>
 
         {error && (
           <p className="text-red-700 text-sm mb-3 bg-red-50 border-2 border-gray-900 rounded-xl p-3">
@@ -135,14 +155,16 @@ export function ConnectWhatsAppButton({ businessId, onConnected }: ConnectWhatsA
           ) : (
             <Facebook size={15} />
           )}
-          {connecting ? 'Connecting…' : 'Continue with Meta'}
+          {connecting ? 'Connecting…' : copy.cta}
         </button>
 
-        <div className="flex items-center gap-3 mt-5 mb-1">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-xs text-gray-400">or enter credentials manually</span>
-          <div className="flex-1 h-px bg-gray-200" />
-        </div>
+        {mode === 'existing' && (
+          <div className="flex items-center gap-3 mt-5 mb-1">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-400">or enter credentials manually</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+        )}
       </div>
     </>
   );

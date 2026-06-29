@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useBusiness } from '@/contexts/business-context';
 import { api } from '@/lib/api';
+import { ConnectWhatsAppButton } from '@/components/connect-whatsapp-button';
 import {
   Zap,
   Building2,
@@ -377,9 +378,24 @@ export default function SetupPage() {
               </div>
             ) : (
               <div className="space-y-5">
+                {(createdBusinessId || activeBusiness?._id) && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <ConnectWhatsAppButton
+                      mode="existing"
+                      businessId={(createdBusinessId || activeBusiness!._id) as string}
+                      onConnected={() => { setWaSaved(true); fetchWaDefaults(); }}
+                    />
+                    <ConnectWhatsAppButton
+                      mode="new"
+                      businessId={(createdBusinessId || activeBusiness!._id) as string}
+                      onConnected={() => { setWaSaved(true); fetchWaDefaults(); }}
+                    />
+                  </div>
+                )}
+
                 <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
                   <p className="text-amber-700 font-semibold text-sm mb-1">
-                    Connect your existing WhatsApp Business number
+                    Prefer to enter credentials manually?
                   </p>
                   <p className="text-amber-700/80 text-xs leading-relaxed">
                     In Meta Developer Console → your App → WhatsApp → API Setup, you can add a phone number you

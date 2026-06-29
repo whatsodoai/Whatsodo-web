@@ -574,15 +574,26 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* One-click connect via Meta Embedded Signup */}
+              {/* One-click connect via Meta Embedded Signup — existing number or brand new */}
               {activeBusiness && (
-                <ConnectWhatsAppButton
-                  businessId={activeBusiness._id}
-                  onConnected={() => {
-                    setWaSaved(true);
-                    setWaDefaults(null);
-                  }}
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <ConnectWhatsAppButton
+                    mode="existing"
+                    businessId={activeBusiness._id}
+                    onConnected={() => {
+                      setWaSaved(true);
+                      setWaDefaults(null);
+                    }}
+                  />
+                  <ConnectWhatsAppButton
+                    mode="new"
+                    businessId={activeBusiness._id}
+                    onConnected={() => {
+                      setWaSaved(true);
+                      setWaDefaults(null);
+                    }}
+                  />
+                </div>
               )}
 
               {/* Your own WhatsApp Business credentials */}
