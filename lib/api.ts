@@ -285,9 +285,9 @@ export const api = {
   }) => request<{ success: boolean }>('/availability', { method: 'POST', body: JSON.stringify(data) }),
 
   // ── Test WhatsApp ─────────────────────────────────────────────────────────
-  sendTestWhatsApp: (phone: string, message: string) =>
+  sendTestWhatsApp: (businessId: string, phone: string) =>
     request<{ success: boolean }>('/test-whatsapp/send', {
       method: 'POST',
-      body: JSON.stringify({ phone, message }),
+      body: JSON.stringify({ businessId, phone }),
     }),
 };
