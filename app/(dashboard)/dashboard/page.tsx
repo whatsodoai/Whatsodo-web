@@ -64,44 +64,49 @@ interface StatCardProps {
   title: string;
   value: number | string;
   icon: React.ElementType;
-  iconBg: string;
+  gradient: string;
   trend: number[];
-  trendColor: string;
   changePct?: number;
   href?: string;
 }
 
-function StatCard({ title, value, icon: Icon, iconBg, trend, trendColor, changePct, href }: StatCardProps) {
+function StatCard({ title, value, icon: Icon, gradient, trend, changePct, href }: StatCardProps) {
   const gradientId = `spark-${title.replace(/\s+/g, '-')}`;
   const content = (
-    <div className="stat-card group relative overflow-hidden">
-      <div className="flex items-start justify-between mb-3">
-        <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center', iconBg)}>
-          <Icon className="w-5 h-5" />
+    <div className={cn(
+      'group relative overflow-hidden rounded-2xl p-5 shadow-soft-lg hover:-translate-y-0.5 hover:shadow-soft-xl transition-all duration-200',
+      gradient
+    )}>
+      <div className="absolute -right-6 -top-10 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
+      <div className="absolute -left-8 -bottom-10 w-28 h-28 rounded-full bg-black/10 blur-2xl" />
+
+      <div className="relative flex items-start justify-between mb-4">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20 backdrop-blur-sm">
+          <Icon className="w-5 h-5 text-white" />
         </div>
-        <MoreHorizontal className="w-4 h-4 text-gray-300 group-hover:text-gray-400 transition-colors" />
+        <MoreHorizontal className="w-4 h-4 text-white/50 group-hover:text-white/80 transition-colors" />
       </div>
-      <p className="text-gray-400 text-xs">{title}</p>
-      <p className="text-2xl font-bold text-gray-900 mt-0.5 mb-1">{value}</p>
+      <p className="relative text-white/75 text-xs font-medium">{title}</p>
+      <p className="relative text-3xl font-extrabold text-white mt-1 mb-1.5 tracking-tight">{value}</p>
       {changePct !== undefined && (
         <p className={cn(
-          'text-xs font-medium flex items-center gap-1',
-          changePct > 0 ? 'text-green-600' : changePct < 0 ? 'text-red-500' : 'text-gray-400'
+          'relative text-xs font-semibold flex items-center gap-1',
+          changePct > 0 ? 'text-emerald-200' : changePct < 0 ? 'text-rose-200' : 'text-white/60'
         )}>
           {changePct > 0 ? <ArrowUp size={11} /> : changePct < 0 ? <ArrowDown size={11} /> : <Minus size={11} />}
           {Math.abs(changePct)}% vs last week
         </p>
       )}
-      <div className="h-8 mt-2 -mx-1">
+      <div className="relative h-12 mt-3 -mx-1">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={trend.map((v, i) => ({ v, i }))} margin={{ top: 2, right: 0, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={trendColor} stopOpacity={0.35} />
-                <stop offset="100%" stopColor={trendColor} stopOpacity={0} />
+                <stop offset="0%" stopColor="#ffffff" stopOpacity={0.55} />
+                <stop offset="100%" stopColor="#ffffff" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <Area type="monotone" dataKey="v" stroke={trendColor} strokeWidth={2} fill={`url(#${gradientId})`} dot={false} isAnimationActive={false} />
+            <Area type="monotone" dataKey="v" stroke="#ffffff" strokeWidth={2.5} fill={`url(#${gradientId})`} dot={false} isAnimationActive={false} />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -132,9 +137,9 @@ function LeadVelocityBar({ leads }: { leads: Lead[] }) {
   ];
 
   return (
-    <div className="card p-4 flex items-center gap-6 flex-wrap">
+    <div className="card p-4 flex items-center gap-6 flex-wrap shadow-soft-lg border-gray-100/80">
       <div className="flex items-center gap-2.5">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-soft">
           <Zap className="w-4 h-4 text-white" />
         </div>
         <p className="font-semibold text-gray-900 text-sm">Lead Velocity</p>
@@ -142,7 +147,7 @@ function LeadVelocityBar({ leads }: { leads: Lead[] }) {
       <div className="flex items-center gap-6 flex-1 flex-wrap">
         {items.map(({ label, value, color }) => (
           <div key={label} className="flex items-center gap-2">
-            <span className={cn('text-xl font-bold tabular-nums px-2.5 py-0.5 rounded-lg', color)}>
+            <span className={cn('text-xl font-bold tabular-nums px-3 py-1 rounded-lg', color)}>
               {value}
             </span>
             <span className="text-xs text-gray-400">{label}</span>
@@ -556,37 +561,34 @@ export default function DashboardPage() {
       <LeadVelocityBar leads={leads} />
 
       {/* KPI Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         {[
           {
             title: 'Total Leads', value: s.totalLeads, icon: Users,
-            iconBg: 'bg-blue-50 text-blue-500', trend: leadsTrend.trend, changePct: leadsTrend.changePct,
-            trendColor: '#3b82f6', href: '/leads',
+            gradient: 'bg-gradient-to-br from-blue-500 to-indigo-600', trend: leadsTrend.trend, changePct: leadsTrend.changePct,
+            href: '/leads',
           },
           {
             title: 'New Leads', value: s.newLeads, icon: UserPlus,
-            iconBg: 'bg-indigo-50 text-indigo-500', trend: leadsTrend.trend, changePct: leadsTrend.changePct,
-            trendColor: '#6366f1', href: '/leads',
+            gradient: 'bg-gradient-to-br from-indigo-500 to-violet-600', trend: leadsTrend.trend, changePct: leadsTrend.changePct,
+            href: '/leads',
           },
           {
             title: 'Appointments', value: s.totalAppointments, icon: Calendar,
-            iconBg: 'bg-orange-50 text-orange-500', trend: appointmentsTrend.trend, changePct: appointmentsTrend.changePct,
-            trendColor: '#f97316', href: '/appointments',
+            gradient: 'bg-gradient-to-br from-orange-500 to-red-500', trend: appointmentsTrend.trend, changePct: appointmentsTrend.changePct,
+            href: '/appointments',
           },
           {
             title: 'Contacted', value: s.contacted, icon: Phone,
-            iconBg: 'bg-purple-50 text-purple-500', trend: contactedTrend.trend, changePct: contactedTrend.changePct,
-            trendColor: '#a855f7',
+            gradient: 'bg-gradient-to-br from-purple-500 to-fuchsia-600', trend: contactedTrend.trend, changePct: contactedTrend.changePct,
           },
           {
             title: 'Won Deals', value: s.won, icon: Trophy,
-            iconBg: 'bg-teal-50 text-teal-500', trend: wonTrend.trend, changePct: wonTrend.changePct,
-            trendColor: '#14b8a6',
+            gradient: 'bg-gradient-to-br from-teal-500 to-emerald-600', trend: wonTrend.trend, changePct: wonTrend.changePct,
           },
           {
             title: 'Conversion', value: conversionRate, icon: TrendingUp,
-            iconBg: 'bg-pink-50 text-pink-500', trend: wonTrend.trend, changePct: wonTrend.changePct,
-            trendColor: '#ec4899',
+            gradient: 'bg-gradient-to-br from-pink-500 to-rose-600', trend: wonTrend.trend, changePct: wonTrend.changePct,
           },
         ].map((kpi, i) => (
           <Reveal key={kpi.title} index={i}>
