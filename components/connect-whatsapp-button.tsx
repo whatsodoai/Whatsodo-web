@@ -60,11 +60,15 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
   const signupData = useRef<SignupData>({});
 
   useEffect(() => {
-    // If the SDK script never calls back within 8s (ad-blocker / privacy
-    // extension blocking connect.facebook.net is the common cause), surface
-    // that instead of leaving the button silently disabled forever.
+    // If fbAsyncInit never fires within 8s (ad-blocker / privacy extension
+    // blocking connect.facebook.net, or the script loading but never
+    // calling back, is the common cause), surface that instead of leaving
+    // the button silently stuck on "Loading…" forever.
     const timeout = setTimeout(() => {
-      if (!window.FB) setSdkBlocked(true);
+      setSdkReady((ready) => {
+        if (!ready) setSdkBlocked(true);
+        return ready;
+      });
     }, 8000);
     return () => clearTimeout(timeout);
   }, []);
