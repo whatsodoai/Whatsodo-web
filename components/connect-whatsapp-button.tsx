@@ -21,6 +21,56 @@ declare global {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Module-level shared FB SDK state
+// Two component instances on the same page share one SDK load.
+// ---------------------------------------------------------------------------
+type ReadyCallback = () => void;
+const readyCallbacks: ReadyCallback[] = [];
+let sdkLoaded = false;   // FB SDK script finished loading
+let sdkInitialized = false; // FB.init() called
+let pendingAppId = '';   // stored as soon as we fetch it from the backend
+
+/** Called by the Script onLoad (or fbAsyncInit fallback). */
+function onSdkScriptLoaded() {
+  sdkLoaded = true;
+  if (pendingAppId && !sdkInitialized) {
+    sdkInitialized = true;
+    window.FB?.init({ appId: pendingAppId, version: 'v21.0', xfbml: false });
+    readyCallbacks.splice(0).forEach((cb) => cb());
+  }
+}
+
+/** Called when we receive the appId from the backend. */
+function onAppIdAvailable(appId: string) {
+  pendingAppId = appId;
+  if (sdkLoaded && !sdkInitialized) {
+    sdkInitialized = true;
+    window.FB?.init({ appId, version: 'v21.0', xfbml: false });
+    readyCallbacks.splice(0).forEach((cb) => cb());
+  }
+}
+
+/** Register a per-instance callback that fires when FB is ready. */
+function registerReadyCb(cb: ReadyCallback): () => void {
+  if (sdkInitialized) {
+    cb();
+    return () => {};
+  }
+  readyCallbacks.push(cb);
+  return () => {
+    const idx = readyCallbacks.indexOf(cb);
+    if (idx !== -1) readyCallbacks.splice(idx, 1);
+  };
+}
+
+// fbAsyncInit is the FB SDK's own hook — set it early so it fires even if
+// the script loads before our useEffect runs.
+if (typeof window !== 'undefined') {
+  window.fbAsyncInit = onSdkScriptLoaded;
+}
+// ---------------------------------------------------------------------------
+
 interface SignupData {
   wabaId?: string;
   phoneNumberId?: string;
@@ -34,12 +84,6 @@ interface MetaConfig {
 interface ConnectWhatsAppButtonProps {
   businessId: string;
   onConnected: () => void;
-  /**
-   * 'existing' uses Meta's coexistence flow — links a number that's
-   * currently active in the WhatsApp Business App without disconnecting it.
-   * 'new' uses the standard flow for registering a fresh number that has
-   * never been on WhatsApp before.
-   */
   mode?: 'existing' | 'new';
 }
 
@@ -68,7 +112,7 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
   const [error, setError] = useState('');
   const signupData = useRef<SignupData>({});
 
-  // Step 1 — fetch App ID + Config ID from the backend (no Vercel env vars needed)
+  // Step 1 — fetch App ID + Config ID from the backend
   useEffect(() => {
     fetch(`${BASE_URL}/meta/app-config`)
       .then((r) => r.json())
@@ -76,6 +120,9 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
         if (json?.data?.appId && json?.data?.configId) {
           metaConfigRef.current = json.data;
           setMetaConfig(json.data);
+          // Notify the shared SDK manager — handles the case where the SDK
+          // script already loaded before this fetch completed.
+          onAppIdAvailable(json.data.appId);
         } else {
           setConfigError(true);
         }
@@ -84,26 +131,28 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
       .finally(() => setConfigLoading(false));
   }, []);
 
-  // Step 2 — SDK blocked guard (8 s timeout)
+  // Step 2 — register for the shared "FB ready" event + 10s blocked guard
   useEffect(() => {
     if (!metaConfig) return;
+
+    const unregister = registerReadyCb(() => setSdkReady(true));
+
     const timeout = setTimeout(() => {
       setSdkReady((ready) => {
         if (!ready) setSdkBlocked(true);
         return ready;
       });
-    }, 8000);
-    return () => clearTimeout(timeout);
+    }, 10000);
+
+    return () => {
+      unregister();
+      clearTimeout(timeout);
+    };
   }, [metaConfig]);
 
-  // Step 3 — FB SDK init + message listener
+  // Step 3 — message listener for embedded signup data
   useEffect(() => {
     if (!metaConfig) return;
-
-    window.fbAsyncInit = () => {
-      window.FB?.init({ appId: metaConfigRef.current?.appId, version: 'v21.0', xfbml: false });
-      setSdkReady(true);
-    };
 
     const onMessage = (event: MessageEvent) => {
       if (!event.origin.endsWith('facebook.com')) return;
@@ -175,7 +224,6 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
 
   const copy = MODE_COPY[mode];
 
-  // Config still loading
   if (configLoading) {
     return (
       <div className="card p-6 flex items-center gap-3 text-gray-400 text-sm">
@@ -185,7 +233,6 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
     );
   }
 
-  // Backend didn't return a valid config (Meta App not configured on the server)
   if (configError || !metaConfig) {
     return (
       <div className="card p-6">
@@ -205,10 +252,11 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
 
   return (
     <>
-      {/* Only inject the FB SDK script once we have the appId */}
+      {/* Next.js deduplicates scripts with the same src — loads once for both instances */}
       <Script
         src="https://connect.facebook.net/en_US/sdk.js"
         strategy="afterInteractive"
+        onLoad={onSdkScriptLoaded}
         onError={() => setSdkBlocked(true)}
       />
 
