@@ -2,12 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
-import { Facebook, Loader2 } from 'lucide-react';
+import { Facebook, Loader2, AlertCircle } from 'lucide-react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
-const META_APP_ID = process.env.NEXT_PUBLIC_META_APP_ID;
-const META_CONFIG_ID = process.env.NEXT_PUBLIC_META_CONFIG_ID;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 declare global {
   interface Window {
@@ -25,6 +24,11 @@ declare global {
 interface SignupData {
   wabaId?: string;
   phoneNumberId?: string;
+}
+
+interface MetaConfig {
+  appId: string;
+  configId: string;
 }
 
 interface ConnectWhatsAppButtonProps {
@@ -53,17 +57,36 @@ const MODE_COPY = {
 };
 
 export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existing' }: ConnectWhatsAppButtonProps) {
+  const [metaConfig, setMetaConfig] = useState<MetaConfig | null>(null);
+  const [configLoading, setConfigLoading] = useState(true);
+  const [configError, setConfigError] = useState(false);
+  const metaConfigRef = useRef<MetaConfig | null>(null);
+
   const [sdkReady, setSdkReady] = useState(false);
   const [sdkBlocked, setSdkBlocked] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState('');
   const signupData = useRef<SignupData>({});
 
+  // Step 1 — fetch App ID + Config ID from the backend (no Vercel env vars needed)
   useEffect(() => {
-    // If fbAsyncInit never fires within 8s (ad-blocker / privacy extension
-    // blocking connect.facebook.net, or the script loading but never
-    // calling back, is the common cause), surface that instead of leaving
-    // the button silently stuck on "Loading…" forever.
+    fetch(`${BASE_URL}/meta/app-config`)
+      .then((r) => r.json())
+      .then((json) => {
+        if (json?.data?.appId && json?.data?.configId) {
+          metaConfigRef.current = json.data;
+          setMetaConfig(json.data);
+        } else {
+          setConfigError(true);
+        }
+      })
+      .catch(() => setConfigError(true))
+      .finally(() => setConfigLoading(false));
+  }, []);
+
+  // Step 2 — SDK blocked guard (8 s timeout)
+  useEffect(() => {
+    if (!metaConfig) return;
     const timeout = setTimeout(() => {
       setSdkReady((ready) => {
         if (!ready) setSdkBlocked(true);
@@ -71,11 +94,14 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
       });
     }, 8000);
     return () => clearTimeout(timeout);
-  }, []);
+  }, [metaConfig]);
 
+  // Step 3 — FB SDK init + message listener
   useEffect(() => {
+    if (!metaConfig) return;
+
     window.fbAsyncInit = () => {
-      window.FB?.init({ appId: META_APP_ID, version: 'v21.0', xfbml: false });
+      window.FB?.init({ appId: metaConfigRef.current?.appId, version: 'v21.0', xfbml: false });
       setSdkReady(true);
     };
 
@@ -83,8 +109,6 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
       if (!event.origin.endsWith('facebook.com')) return;
       try {
         const data = JSON.parse(typeof event.data === 'string' ? event.data : '{}');
-        // Accept both the standard FINISH event and the coexistence-specific
-        // FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING event.
         const isFinish =
           data.type === 'WA_EMBEDDED_SIGNUP' &&
           (data.event === 'FINISH' || data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING');
@@ -98,10 +122,10 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
     };
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
-  }, []);
+  }, [metaConfig]);
 
   const handleConnect = () => {
-    if (!window.FB || !META_CONFIG_ID) return;
+    if (!window.FB || !metaConfigRef.current?.configId) return;
     setError('');
     setConnecting(true);
     signupData.current = {};
@@ -116,8 +140,6 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
         }
 
         const { wabaId, phoneNumberId } = signupData.current;
-        // Coexistence (existing number) flow only sends waba_id in the event —
-        // phone_number_id is looked up server-side from the WABA after token exchange.
         const isCoexistence = mode === 'existing';
         if (!wabaId || (!isCoexistence && !phoneNumberId)) {
           setConnecting(false);
@@ -140,7 +162,7 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
         }
       },
       {
-        config_id: META_CONFIG_ID,
+        config_id: metaConfigRef.current.configId,
         response_type: 'code',
         override_default_response_type: true,
         extras: {
@@ -151,12 +173,39 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
     );
   };
 
-  if (!META_APP_ID || !META_CONFIG_ID) return null;
-
   const copy = MODE_COPY[mode];
+
+  // Config still loading
+  if (configLoading) {
+    return (
+      <div className="card p-6 flex items-center gap-3 text-gray-400 text-sm">
+        <Loader2 size={15} className="animate-spin flex-shrink-0" />
+        Loading…
+      </div>
+    );
+  }
+
+  // Backend didn't return a valid config (Meta App not configured on the server)
+  if (configError || !metaConfig) {
+    return (
+      <div className="card p-6">
+        <h3 className="font-bold text-gray-900 mb-1">{copy.title}</h3>
+        <div className="flex items-start gap-2 mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
+          <AlertCircle size={13} className="mt-0.5 flex-shrink-0" />
+          <span>
+            Meta Embedded Signup is not configured on the server. Add{' '}
+            <code className="font-mono">META_APP_ID</code>,{' '}
+            <code className="font-mono">META_APP_SECRET</code>, and{' '}
+            <code className="font-mono">META_CONFIG_ID</code> to your backend environment variables, then redeploy.
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
+      {/* Only inject the FB SDK script once we have the appId */}
       <Script
         src="https://connect.facebook.net/en_US/sdk.js"
         strategy="afterInteractive"
