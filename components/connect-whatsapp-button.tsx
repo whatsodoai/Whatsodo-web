@@ -116,7 +116,10 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
         }
 
         const { wabaId, phoneNumberId } = signupData.current;
-        if (!wabaId || !phoneNumberId) {
+        // Coexistence (existing number) flow only sends waba_id in the event —
+        // phone_number_id is looked up server-side from the WABA after token exchange.
+        const isCoexistence = mode === 'existing';
+        if (!wabaId || (!isCoexistence && !phoneNumberId)) {
           setConnecting(false);
           setError('Could not detect the connected WhatsApp Business Account. Please try again.');
           return;
@@ -126,8 +129,8 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
           await api.connectWhatsAppEmbedded(businessId, {
             code,
             wabaId,
-            phoneNumberId,
-            isCoexistence: mode === 'existing',
+            ...(phoneNumberId && { phoneNumberId }),
+            isCoexistence,
           });
           onConnected();
         } catch (err) {

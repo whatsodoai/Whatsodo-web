@@ -96,7 +96,7 @@ export const api = {
 
   connectWhatsAppEmbedded: (
     businessId: string,
-    data: { code: string; wabaId: string; phoneNumberId: string; isCoexistence?: boolean }
+    data: { code: string; wabaId: string; phoneNumberId?: string; isCoexistence?: boolean }
   ) =>
     request<import('@/types').Business>(`/business/${businessId}/whatsapp/connect`, {
       method: 'POST',
