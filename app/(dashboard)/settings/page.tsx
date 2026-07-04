@@ -24,6 +24,11 @@ import {
   Copy,
   Check,
   MessageSquare,
+  RefreshCw,
+  Wifi,
+  WifiOff,
+  History,
+  Contact,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -262,6 +267,22 @@ export default function SettingsPage() {
     hasAccessToken: boolean;
   } | null>(null);
 
+  const [connectionHealth, setConnectionHealth] = useState<{
+    connected: boolean;
+    mode: 'coexistence' | 'cloud_api';
+    coexistenceStatus: 'connected' | 'disconnected' | 'syncing' | null;
+    historyImported: boolean;
+    contactsSynced: boolean;
+    lastSyncAt: string | null;
+    disconnectReason: string | null;
+    messagingLimit: string | null;
+    qualityRating: string | null;
+    phoneNumber: string;
+    connectedAt: string | null;
+  } | null>(null);
+  const [syncingContacts, setSyncingContacts] = useState(false);
+  const [syncingHistory, setSyncingHistory] = useState(false);
+
   const [waForm, setWaForm] = useState({
     whatsappAccessToken: '',
     whatsappPhoneNumberId: '',
@@ -296,10 +317,35 @@ export default function SettingsPage() {
   }, [activeBusiness]);
 
   useEffect(() => {
-    if (activeTab === 'whatsapp' && activeBusiness && !waDefaults) {
-      api.getWhatsAppDefaults(activeBusiness._id).then(setWaDefaults).catch(() => {});
+    if (activeTab === 'whatsapp' && activeBusiness) {
+      if (!waDefaults) {
+        api.getWhatsAppDefaults(activeBusiness._id).then(setWaDefaults).catch(() => {});
+      }
+      api.getConnectionHealth(activeBusiness._id).then(setConnectionHealth).catch(() => {});
     }
   }, [activeTab, activeBusiness, waDefaults]);
+
+  const handleSyncContacts = async () => {
+    if (!activeBusiness) return;
+    setSyncingContacts(true);
+    try {
+      await api.syncContacts(activeBusiness._id);
+      const health = await api.getConnectionHealth(activeBusiness._id);
+      setConnectionHealth(health);
+    } catch { /* noop */ } finally {
+      setSyncingContacts(false);
+    }
+  };
+
+  const handleSyncHistory = async () => {
+    if (!activeBusiness) return;
+    setSyncingHistory(true);
+    try {
+      await api.syncHistory(activeBusiness._id);
+    } catch { /* noop */ } finally {
+      setSyncingHistory(false);
+    }
+  };
 
   const handleSaveWhatsApp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -572,6 +618,117 @@ export default function SettingsPage() {
                     </p>
                   </div>
                 </div>
+
+                {/* Coexistence connection health card */}
+                {connectionHealth && connectionHealth.mode === 'coexistence' && (
+                  <div className="mt-4 rounded-xl border border-gray-200 overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
+                      <div className="flex items-center gap-2">
+                        <div className={cn(
+                          'w-2.5 h-2.5 rounded-full',
+                          connectionHealth.coexistenceStatus === 'connected' && 'bg-green-500 animate-pulse',
+                          connectionHealth.coexistenceStatus === 'syncing' && 'bg-amber-400 animate-pulse',
+                          connectionHealth.coexistenceStatus === 'disconnected' && 'bg-red-500',
+                          !connectionHealth.coexistenceStatus && 'bg-gray-400',
+                        )} />
+                        <span className="text-sm font-semibold text-gray-900">
+                          Business App + Cloud API
+                        </span>
+                        <span className={cn(
+                          'text-xs px-2 py-0.5 rounded-full font-medium',
+                          connectionHealth.coexistenceStatus === 'connected' && 'bg-green-100 text-green-700',
+                          connectionHealth.coexistenceStatus === 'syncing' && 'bg-amber-100 text-amber-700',
+                          connectionHealth.coexistenceStatus === 'disconnected' && 'bg-red-100 text-red-700',
+                          !connectionHealth.coexistenceStatus && 'bg-gray-100 text-gray-600',
+                        )}>
+                          {connectionHealth.coexistenceStatus ?? 'unknown'}
+                        </span>
+                      </div>
+                      {connectionHealth.coexistenceStatus === 'connected' ? (
+                        <Wifi size={16} className="text-green-500" />
+                      ) : (
+                        <WifiOff size={16} className="text-red-400" />
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 divide-x divide-y divide-gray-100">
+                      <div className="px-4 py-3">
+                        <p className="text-xs text-gray-500 mb-0.5 flex items-center gap-1.5">
+                          <Contact size={11} /> Contacts
+                        </p>
+                        <p className={cn('text-sm font-semibold', connectionHealth.contactsSynced ? 'text-green-700' : 'text-amber-600')}>
+                          {connectionHealth.contactsSynced ? 'Synced' : 'Pending'}
+                        </p>
+                      </div>
+                      <div className="px-4 py-3">
+                        <p className="text-xs text-gray-500 mb-0.5 flex items-center gap-1.5">
+                          <History size={11} /> Chat History
+                        </p>
+                        <p className={cn('text-sm font-semibold', connectionHealth.historyImported ? 'text-green-700' : 'text-amber-600')}>
+                          {connectionHealth.historyImported ? 'Imported' : 'Pending'}
+                        </p>
+                      </div>
+                      {connectionHealth.qualityRating && (
+                        <div className="px-4 py-3">
+                          <p className="text-xs text-gray-500 mb-0.5">Quality Rating</p>
+                          <p className={cn(
+                            'text-sm font-semibold',
+                            connectionHealth.qualityRating === 'GREEN' ? 'text-green-700' :
+                            connectionHealth.qualityRating === 'YELLOW' ? 'text-amber-600' : 'text-red-600'
+                          )}>
+                            {connectionHealth.qualityRating}
+                          </p>
+                        </div>
+                      )}
+                      {connectionHealth.messagingLimit && (
+                        <div className="px-4 py-3">
+                          <p className="text-xs text-gray-500 mb-0.5">Messaging Limit</p>
+                          <p className="text-sm font-semibold text-gray-900">{connectionHealth.messagingLimit}</p>
+                        </div>
+                      )}
+                      {connectionHealth.lastSyncAt && (
+                        <div className="px-4 py-3 col-span-2">
+                          <p className="text-xs text-gray-500">
+                            Last sync: {new Date(connectionHealth.lastSyncAt).toLocaleString()}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {connectionHealth.coexistenceStatus === 'disconnected' && connectionHealth.disconnectReason && (
+                      <div className="px-4 py-3 bg-red-50 border-t border-red-100">
+                        <p className="text-xs text-red-700 flex items-center gap-1.5">
+                          <AlertCircle size={12} />
+                          Disconnected: {connectionHealth.disconnectReason.replace(/_/g, ' ')}
+                        </p>
+                        <p className="text-xs text-red-600 mt-1">
+                          To reconnect, open the WhatsApp Business App → Settings → Account → Business Platform.
+                        </p>
+                      </div>
+                    )}
+
+                    {connectionHealth.coexistenceStatus !== 'disconnected' && isOwner && (
+                      <div className="px-4 py-3 border-t border-gray-100 flex gap-2 flex-wrap">
+                        <button
+                          onClick={handleSyncContacts}
+                          disabled={syncingContacts}
+                          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors disabled:opacity-60"
+                        >
+                          <RefreshCw size={12} className={syncingContacts ? 'animate-spin' : ''} />
+                          {syncingContacts ? 'Syncing…' : 'Sync Contacts'}
+                        </button>
+                        <button
+                          onClick={handleSyncHistory}
+                          disabled={syncingHistory}
+                          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors disabled:opacity-60"
+                        >
+                          <History size={12} className={syncingHistory ? 'animate-spin' : ''} />
+                          {syncingHistory ? 'Importing…' : 'Import History'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* One-click connect via Meta Embedded Signup — existing number or brand new */}
@@ -583,6 +740,7 @@ export default function SettingsPage() {
                     onConnected={() => {
                       setWaSaved(true);
                       setWaDefaults(null);
+                      setConnectionHealth(null);
                     }}
                   />
                   <ConnectWhatsAppButton
@@ -591,6 +749,7 @@ export default function SettingsPage() {
                     onConnected={() => {
                       setWaSaved(true);
                       setWaDefaults(null);
+                      setConnectionHealth(null);
                     }}
                   />
                 </div>

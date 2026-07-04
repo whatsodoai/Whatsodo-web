@@ -20,10 +20,14 @@ import {
   Zap,
   Download,
   Upload,
+  FileText,
+  Globe,
+  Sparkles,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-type Tab = 'company' | 'services' | 'faqs' | 'sales' | 'objections';
+type Tab = 'company' | 'services' | 'faqs' | 'sales' | 'objections' | 'train';
 
 const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: 'company', label: 'Company Info', icon: BookOpen },
@@ -31,6 +35,7 @@ const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: 'faqs', label: 'FAQs', icon: HelpCircle },
   { id: 'sales', label: 'Sales Config', icon: Megaphone },
   { id: 'objections', label: 'Objections', icon: AlertTriangle },
+  { id: 'train', label: 'Train AI', icon: Sparkles },
 ];
 
 const TONE_OPTIONS = ['Professional', 'Friendly', 'Casual', 'Formal', 'Energetic'];
@@ -62,6 +67,16 @@ export default function KnowledgeBasePage() {
   const [testHistory, setTestHistory] = useState<{ role: 'user' | 'ai'; text: string }[]>([]);
   const [importError, setImportError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const pdfInputRef = useRef<HTMLInputElement>(null);
+
+  // Train AI tab state
+  const [trainMode, setTrainMode] = useState<'pdf' | 'website'>('pdf');
+  const [websiteUrl, setWebsiteUrl] = useState('');
+  const [extractedText, setExtractedText] = useState('');
+  const [extractedTitle, setExtractedTitle] = useState('');
+  const [extracting, setExtracting] = useState(false);
+  const [extractError, setExtractError] = useState('');
+  const [mergeTarget, setMergeTarget] = useState<'description' | 'instructions' | null>(null);
 
   useEffect(() => {
     if (!activeBusiness) return;
@@ -161,6 +176,51 @@ export default function KnowledgeBasePage() {
     } finally {
       setTestLoading(false);
     }
+  };
+
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setExtracting(true);
+    setExtractError('');
+    setExtractedText('');
+    try {
+      const result = await api.extractPdf(file);
+      setExtractedText(result.text);
+      setExtractedTitle(`PDF: ${file.name} (${result.pages} pages)`);
+    } catch (err: any) {
+      setExtractError(err.message || 'Failed to extract PDF text');
+    } finally {
+      setExtracting(false);
+    }
+  };
+
+  const handleWebsiteScrape = async () => {
+    if (!websiteUrl.trim()) return;
+    setExtracting(true);
+    setExtractError('');
+    setExtractedText('');
+    try {
+      const result = await api.extractWebsite(websiteUrl.trim());
+      setExtractedText(result.text);
+      setExtractedTitle(result.title || websiteUrl.trim());
+    } catch (err: any) {
+      setExtractError(err.message || 'Failed to extract website content');
+    } finally {
+      setExtracting(false);
+    }
+  };
+
+  const handleMergeExtracted = (target: 'description' | 'instructions') => {
+    if (!extractedText) return;
+    if (target === 'description') {
+      updateKb('companyDescription', (kb.companyDescription ? kb.companyDescription + '\n\n' : '') + extractedText.slice(0, 3000));
+    } else {
+      updateKb('salesInstructions', (kb.salesInstructions ? kb.salesInstructions + '\n\n' : '') + extractedText.slice(0, 2000));
+    }
+    setMergeTarget(target);
+    setTimeout(() => setMergeTarget(null), 2000);
   };
 
   if (loading) {
@@ -688,6 +748,143 @@ export default function KnowledgeBasePage() {
           </button>
         )}
       </div>
+
+      {/* Train AI tab */}
+      {activeTab === 'train' && (
+        <div className="card p-6 space-y-5">
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-1">Train AI from Documents</h3>
+            <p className="text-sm text-gray-500">
+              Extract content from a PDF or website and merge it into your knowledge base.
+            </p>
+          </div>
+
+          {/* Mode toggle */}
+          <div className="flex gap-2 p-1 bg-gray-100 rounded-xl w-fit">
+            <button
+              onClick={() => { setTrainMode('pdf'); setExtractedText(''); setExtractError(''); }}
+              className={cn(
+                'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all',
+                trainMode === 'pdf' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              )}
+            >
+              <FileText size={14} /> PDF Upload
+            </button>
+            <button
+              onClick={() => { setTrainMode('website'); setExtractedText(''); setExtractError(''); }}
+              className={cn(
+                'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all',
+                trainMode === 'website' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              )}
+            >
+              <Globe size={14} /> Website URL
+            </button>
+          </div>
+
+          {/* PDF upload */}
+          {trainMode === 'pdf' && (
+            <div>
+              <input ref={pdfInputRef} type="file" accept=".pdf" className="hidden" onChange={handlePdfUpload} />
+              <button
+                onClick={() => pdfInputRef.current?.click()}
+                disabled={extracting}
+                className="w-full border-2 border-dashed border-gray-200 rounded-2xl p-10 flex flex-col items-center gap-3 hover:border-gray-300 hover:bg-gray-50 transition-all cursor-pointer disabled:opacity-50"
+              >
+                {extracting ? (
+                  <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+                ) : (
+                  <FileText className="w-8 h-8 text-gray-400" />
+                )}
+                <div className="text-center">
+                  <p className="text-sm font-medium text-gray-700">
+                    {extracting ? 'Extracting text…' : 'Click to upload PDF'}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">Supports PDF files up to 20MB</p>
+                </div>
+              </button>
+            </div>
+          )}
+
+          {/* Website URL */}
+          {trainMode === 'website' && (
+            <div className="flex gap-2">
+              <input
+                value={websiteUrl}
+                onChange={(e) => setWebsiteUrl(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleWebsiteScrape()}
+                placeholder="https://yourbusiness.com/about"
+                className="input flex-1"
+                disabled={extracting}
+              />
+              <button
+                onClick={handleWebsiteScrape}
+                disabled={extracting || !websiteUrl.trim()}
+                className={cn('btn-primary', (extracting || !websiteUrl.trim()) && 'opacity-50')}
+              >
+                {extracting ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Globe size={15} />
+                )}
+              </button>
+            </div>
+          )}
+
+          {extractError && (
+            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+              <AlertTriangle size={14} />
+              {extractError}
+            </div>
+          )}
+
+          {/* Extracted text preview */}
+          {extractedText && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-gray-700">{extractedTitle}</p>
+                <button onClick={() => setExtractedText('')} className="text-gray-400 hover:text-gray-600">
+                  <X size={14} />
+                </button>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4 max-h-48 overflow-y-auto">
+                <p className="text-xs text-gray-600 whitespace-pre-wrap leading-relaxed">
+                  {extractedText.slice(0, 1500)}{extractedText.length > 1500 ? '…' : ''}
+                </p>
+              </div>
+              <p className="text-xs text-gray-500">
+                {extractedText.length.toLocaleString()} characters extracted. Merge into your knowledge base:
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleMergeExtracted('description')}
+                  className={cn(
+                    'flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border transition-colors',
+                    mergeTarget === 'description'
+                      ? 'bg-green-50 border-green-300 text-green-700'
+                      : 'border-gray-200 hover:border-gray-300 text-gray-600 hover:bg-gray-50'
+                  )}
+                >
+                  <CheckCircle size={13} className={mergeTarget === 'description' ? 'text-green-500' : 'text-gray-400'} />
+                  {mergeTarget === 'description' ? 'Merged!' : 'Add to Company Description'}
+                </button>
+                <button
+                  onClick={() => handleMergeExtracted('instructions')}
+                  className={cn(
+                    'flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border transition-colors',
+                    mergeTarget === 'instructions'
+                      ? 'bg-green-50 border-green-300 text-green-700'
+                      : 'border-gray-200 hover:border-gray-300 text-gray-600 hover:bg-gray-50'
+                  )}
+                >
+                  <CheckCircle size={13} className={mergeTarget === 'instructions' ? 'text-green-500' : 'text-gray-400'} />
+                  {mergeTarget === 'instructions' ? 'Merged!' : 'Add to Sales Instructions'}
+                </button>
+              </div>
+              <p className="text-xs text-gray-400">After merging, click "Save Changes" to apply to your AI.</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

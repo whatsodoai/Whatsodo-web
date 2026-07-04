@@ -96,11 +96,36 @@ export const api = {
 
   connectWhatsAppEmbedded: (
     businessId: string,
-    data: { code: string; wabaId: string; phoneNumberId: string }
+    data: { code: string; wabaId: string; phoneNumberId: string; isCoexistence?: boolean }
   ) =>
     request<import('@/types').Business>(`/business/${businessId}/whatsapp/connect`, {
       method: 'POST',
       body: JSON.stringify(data),
+    }),
+
+  getConnectionHealth: (businessId: string) =>
+    request<{
+      connected: boolean;
+      mode: 'coexistence' | 'cloud_api';
+      coexistenceStatus: 'connected' | 'disconnected' | 'syncing' | null;
+      historyImported: boolean;
+      contactsSynced: boolean;
+      lastSyncAt: string | null;
+      disconnectReason: string | null;
+      messagingLimit: string | null;
+      qualityRating: string | null;
+      phoneNumber: string;
+      connectedAt: string | null;
+    }>(`/business/${businessId}/whatsapp/health`),
+
+  syncContacts: (businessId: string) =>
+    request<{ requestId: string | null }>(`/business/${businessId}/whatsapp/sync-contacts`, {
+      method: 'POST',
+    }),
+
+  syncHistory: (businessId: string) =>
+    request<{ requestId: string | null }>(`/business/${businessId}/whatsapp/sync-history`, {
+      method: 'POST',
     }),
 
   getBusiness: (id: string) => request<import('@/types').Business>(`/business/${id}`),
@@ -289,5 +314,43 @@ export const api = {
     request<{ success: boolean }>('/test-whatsapp/send', {
       method: 'POST',
       body: JSON.stringify({ businessId, phone }),
+    }),
+
+  // ── AI Employees ──────────────────────────────────────────────────────────
+  listAiEmployees: (businessId: string) =>
+    request<import('@/types').AiEmployee[]>(`/ai-employees/${businessId}`),
+
+  createAiEmployee: (data: Partial<import('@/types').AiEmployee>) =>
+    request<import('@/types').AiEmployee>('/ai-employees', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  updateAiEmployee: (id: string, data: Partial<import('@/types').AiEmployee>) =>
+    request<import('@/types').AiEmployee>(`/ai-employees/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  deleteAiEmployee: (id: string) =>
+    request<{ success: boolean }>(`/ai-employees/${id}`, { method: 'DELETE' }),
+
+  activateAiEmployee: (id: string) =>
+    request<import('@/types').AiEmployee>(`/ai-employees/${id}/activate`, { method: 'PUT' }),
+
+  deactivateAiEmployee: (id: string) =>
+    request<import('@/types').AiEmployee>(`/ai-employees/${id}/deactivate`, { method: 'PUT' }),
+
+  // ── Knowledge Base Training ───────────────────────────────────────────────
+  extractPdf: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return requestFormData<{ text: string; pages: number }>('/knowledge-base/extract/pdf', formData);
+  },
+
+  extractWebsite: (url: string) =>
+    request<{ text: string; title: string; url: string }>('/knowledge-base/extract/website', {
+      method: 'POST',
+      body: JSON.stringify({ url }),
     }),
 };

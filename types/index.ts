@@ -177,6 +177,23 @@ export interface CampaignRecipient {
   sentAt?: string;
 }
 
+export interface AiEmployee {
+  _id: string;
+  businessId: string;
+  name: string;
+  role: string;
+  department: string;
+  personality: string;
+  language: string;
+  avatar: string;
+  responsibilities: string[];
+  workingInstructions: string;
+  escalationRules: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;

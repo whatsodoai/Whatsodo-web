@@ -17,6 +17,7 @@ import {
   ArrowRight,
   ArrowLeft,
   ChevronRight,
+  Users2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -31,7 +32,7 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 const STEPS = [
   { id: 1, label: 'Create Business', icon: Building2 },
   { id: 2, label: 'Connect WhatsApp', icon: Smartphone },
-  { id: 3, label: 'Set Up AI', icon: Bot },
+  { id: 3, label: 'Hire AI Employee', icon: Users2 },
   { id: 4, label: 'Availability', icon: Clock },
   { id: 5, label: "You're Ready!", icon: CheckCircle },
 ];
@@ -85,13 +86,22 @@ export default function SetupPage() {
   const [waSaving, setWaSaving] = useState(false);
   const [waSaved, setWaSaved] = useState(false);
 
-  // Step 3
+  // Step 3 — AI Employee + quick KB
   const [kbForm, setKbForm] = useState({
     companyName: '',
     companyDescription: '',
     services: '',
     tone: 'Professional',
   });
+  const [aiEmpForm, setAiEmpForm] = useState({
+    name: '',
+    role: 'AI Sales Executive',
+    department: 'Sales',
+    personality: 'Professional and friendly',
+    language: 'English',
+    avatar: '🤖',
+  });
+  const [aiEmpSaved, setAiEmpSaved] = useState(false);
 
   // Step 4
   const [enabledDays, setEnabledDays] = useState<Record<string, boolean>>({
@@ -186,13 +196,31 @@ export default function SetupPage() {
     if (!businessId || skip) { setStep(4); return; }
     setIsLoading(true);
     try {
+      // Save knowledge base
       await api.createKnowledgeBase({
         businessId,
-        companyName: kbForm.companyName,
+        companyName: kbForm.companyName || bizForm.businessName,
         companyDescription: kbForm.companyDescription,
         services: kbForm.services.split(',').map((s) => s.trim()).filter(Boolean),
         tone: kbForm.tone,
       });
+      // Create the first AI Employee if name is provided
+      if (aiEmpForm.name.trim()) {
+        await api.createAiEmployee({
+          businessId,
+          name: aiEmpForm.name.trim(),
+          role: aiEmpForm.role,
+          department: aiEmpForm.department,
+          personality: aiEmpForm.personality,
+          language: aiEmpForm.language,
+          avatar: aiEmpForm.avatar,
+          isActive: true,
+          responsibilities: [],
+          workingInstructions: '',
+          escalationRules: 'Escalate to a human agent when the customer requests it, expresses frustration, or asks about billing/refunds.',
+        });
+        setAiEmpSaved(true);
+      }
     } catch {
       // non-fatal
     } finally {
@@ -560,71 +588,103 @@ export default function SetupPage() {
           </div>
         )}
 
-        {/* Step 3 — AI / Knowledge Base */}
+        {/* Step 3 — Hire AI Employee + KB */}
         {step === 3 && (
           <div className="bg-white rounded-2xl shadow-soft-lg p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center">
-                <Bot className="w-5 h-5 text-purple-600" />
+              <div className="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center">
+                <Users2 className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <h2 className="font-bold text-gray-900 text-lg">Set Up AI Knowledge Base</h2>
-                <p className="text-gray-400 text-sm">Help your AI understand your business</p>
+                <h2 className="font-bold text-gray-900 text-lg">Hire Your First AI Employee</h2>
+                <p className="text-gray-400 text-sm">Your AI employee will handle WhatsApp conversations automatically</p>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Company Name
-                </label>
-                <input
-                  value={kbForm.companyName}
-                  onChange={(e) => setKbForm({ ...kbForm, companyName: e.target.value })}
-                  placeholder="Your company name"
-                  className="input w-full px-4 py-3"
-                />
+            <div className="space-y-5">
+              {/* AI Employee Card */}
+              <div className="rounded-2xl border-2 border-green-200 bg-green-50/30 p-5 space-y-4">
+                <p className="text-sm font-semibold text-green-800">AI Employee Details</p>
+
+                {/* Avatar picker */}
+                <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap gap-1.5">
+                    {['🤖','👩‍💼','👨‍💼','💼','🌟','⚡','🎯','💡'].map((av) => (
+                      <button
+                        key={av}
+                        type="button"
+                        onClick={() => setAiEmpForm({ ...aiEmpForm, avatar: av })}
+                        className={cn(
+                          'w-9 h-9 rounded-xl text-xl flex items-center justify-center border-2 transition-colors',
+                          aiEmpForm.avatar === av ? 'border-green-500 bg-green-50' : 'border-transparent hover:border-gray-200'
+                        )}
+                      >
+                        {av}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      value={aiEmpForm.name}
+                      onChange={(e) => setAiEmpForm({ ...aiEmpForm, name: e.target.value })}
+                      placeholder="Employee name (e.g. Aria, Max, Priya)"
+                      className="input w-full"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">Give your AI employee a friendly name</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Role</label>
+                    <select
+                      value={aiEmpForm.role}
+                      onChange={(e) => setAiEmpForm({ ...aiEmpForm, role: e.target.value })}
+                      className="input w-full text-sm"
+                    >
+                      {['AI Sales Executive','AI Receptionist','AI Customer Support Executive','AI Course Counselor','AI Appointment Manager','AI HR Assistant','AI Marketing Executive'].map((r) => (
+                        <option key={r}>{r}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Language</label>
+                    <select
+                      value={aiEmpForm.language}
+                      onChange={(e) => setAiEmpForm({ ...aiEmpForm, language: e.target.value })}
+                      className="input w-full text-sm"
+                    >
+                      {['English','Hindi','Tamil','Telugu','Kannada','Malayalam','Bengali','Arabic','Spanish'].map((l) => (
+                        <option key={l}>{l}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Company Description
-                </label>
-                <textarea
-                  value={kbForm.companyDescription}
-                  onChange={(e) => setKbForm({ ...kbForm, companyDescription: e.target.value })}
-                  rows={3}
-                  placeholder="What does your company do? Who do you serve?"
-                  className="input w-full px-4 py-3 resize-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Services / Products
-                </label>
-                <input
-                  value={kbForm.services}
-                  onChange={(e) => setKbForm({ ...kbForm, services: e.target.value })}
-                  placeholder="e.g. Web Design, SEO, Social Media Marketing"
-                  className="input w-full px-4 py-3"
-                />
-                <p className="text-xs text-gray-400 mt-1">Separate multiple services with commas</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Tone of Voice
-                </label>
-                <select
-                  value={kbForm.tone}
-                  onChange={(e) => setKbForm({ ...kbForm, tone: e.target.value })}
-                  className="input w-full px-4 py-3"
-                >
-                  <option>Professional</option>
-                  <option>Friendly</option>
-                  <option>Casual</option>
-                </select>
+              {/* Knowledge base quick setup */}
+              <div className="rounded-2xl border border-gray-100 bg-gray-50/30 p-5 space-y-3">
+                <p className="text-sm font-semibold text-gray-700">Business Knowledge</p>
+                <p className="text-xs text-gray-500">Tell your AI employee about your business (you can expand this later in Knowledge Base)</p>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Company Description</label>
+                  <textarea
+                    value={kbForm.companyDescription}
+                    onChange={(e) => setKbForm({ ...kbForm, companyDescription: e.target.value })}
+                    rows={2}
+                    placeholder="What does your company do? Who do you serve?"
+                    className="input w-full resize-none text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Services / Products</label>
+                  <input
+                    value={kbForm.services}
+                    onChange={(e) => setKbForm({ ...kbForm, services: e.target.value })}
+                    placeholder="e.g. Web Design, SEO, Social Media (comma-separated)"
+                    className="input w-full text-sm"
+                  />
+                </div>
               </div>
 
               <div className="pt-2 flex items-center justify-between">
@@ -652,7 +712,7 @@ export default function SetupPage() {
                     {isLoading ? (
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (
-                      <>Save & Next <ArrowRight size={16} /></>
+                      <>Hire & Continue <ArrowRight size={16} /></>
                     )}
                   </button>
                 </div>

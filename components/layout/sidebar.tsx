@@ -16,6 +16,7 @@ import {
   Zap,
   Megaphone,
   Crown,
+  Bot,
 } from 'lucide-react';
 import { cn, getInitials, avatarColor } from '@/lib/utils';
 import { useAuth } from '@/contexts/auth-context';
@@ -25,6 +26,7 @@ import { useState } from 'react';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/ai-employees', label: 'AI Employees', icon: Bot },
   { href: '/leads', label: 'Leads', icon: Users },
   { href: '/inbox', label: 'Inbox', icon: MessageSquare, badgeKey: 'unread' as const },
   { href: '/appointments', label: 'Appointments', icon: Calendar },
@@ -49,7 +51,7 @@ export function Sidebar() {
         </div>
         <div>
           <p className="text-white font-bold text-base leading-tight">Whatsodo</p>
-          <p className="text-gray-500 text-[11px]">AI WhatsApp CRM</p>
+          <p className="text-gray-500 text-[11px]">AI Employee Platform</p>
         </div>
       </div>
 

@@ -83,7 +83,12 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
       if (!event.origin.endsWith('facebook.com')) return;
       try {
         const data = JSON.parse(typeof event.data === 'string' ? event.data : '{}');
-        if (data.type === 'WA_EMBEDDED_SIGNUP' && data.event === 'FINISH') {
+        // Accept both the standard FINISH event and the coexistence-specific
+        // FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING event.
+        const isFinish =
+          data.type === 'WA_EMBEDDED_SIGNUP' &&
+          (data.event === 'FINISH' || data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING');
+        if (isFinish) {
           signupData.current = {
             wabaId: data.data?.waba_id,
             phoneNumberId: data.data?.phone_number_id,
@@ -118,7 +123,12 @@ export function ConnectWhatsAppButton({ businessId, onConnected, mode = 'existin
         }
 
         try {
-          await api.connectWhatsAppEmbedded(businessId, { code, wabaId, phoneNumberId });
+          await api.connectWhatsAppEmbedded(businessId, {
+            code,
+            wabaId,
+            phoneNumberId,
+            isCoexistence: mode === 'existing',
+          });
           onConnected();
         } catch (err) {
           setError(err instanceof Error ? err.message : 'Failed to connect WhatsApp account.');
