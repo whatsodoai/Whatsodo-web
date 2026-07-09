@@ -148,6 +148,7 @@ export interface Availability {
   startTime: string;
   endTime: string;
   isAvailable: boolean;
+  slotDuration: number; // minutes: 30 | 45 | 60 | 90 | 120
 }
 
 export interface Campaign {

@@ -17,6 +17,7 @@ import {
   Megaphone,
   Crown,
   Bot,
+  Mic,
 } from 'lucide-react';
 import { cn, getInitials, avatarColor } from '@/lib/utils';
 import { useAuth } from '@/contexts/auth-context';
@@ -32,6 +33,7 @@ const NAV_ITEMS = [
   { href: '/appointments', label: 'Appointments', icon: Calendar },
   { href: '/campaigns', label: 'Campaigns', icon: Megaphone },
   { href: '/knowledge-base', label: 'Knowledge Base', icon: BookOpen },
+  { href: '/voice-agent', label: 'Voice Agent', icon: Mic },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
 ];
 

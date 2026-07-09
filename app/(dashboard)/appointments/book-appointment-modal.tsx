@@ -1,10 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, RefreshCw } from 'lucide-react';
+import { io, Socket } from 'socket.io-client';
 import { api } from '@/lib/api';
 import { Lead } from '@/types';
 import { cn } from '@/lib/utils';
+
+const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
 
 interface Props {
   businessId: string;
@@ -24,6 +27,8 @@ export function BookAppointmentModal({ businessId, leads, onClose, onBooked }: P
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const socketRef = useRef<Socket | null>(null);
+  const currentDateRef = useRef(form.date);
 
   const fetchSlots = async (date: string) => {
     if (!businessId || !date) return;
@@ -43,7 +48,25 @@ export function BookAppointmentModal({ businessId, leads, onClose, onBooked }: P
     }
   };
 
-  useEffect(() => { fetchSlots(form.date); }, [form.date]);
+  useEffect(() => {
+    currentDateRef.current = form.date;
+    fetchSlots(form.date);
+  }, [form.date]);
+
+  // Live refresh: when another appointment is booked on the same date, re-fetch slots
+  useEffect(() => {
+    const socket = io(SOCKET_URL, { transports: ['websocket', 'polling'] });
+    socketRef.current = socket;
+    socket.on('connect', () => socket.emit('join:business', businessId));
+    socket.on('appointment:booked', (payload: { date: string }) => {
+      if (payload.date === currentDateRef.current) fetchSlots(currentDateRef.current);
+    });
+    socket.on('appointment:rescheduled', (payload: { date: string }) => {
+      if (payload.date === currentDateRef.current) fetchSlots(currentDateRef.current);
+    });
+    return () => { socket.disconnect(); socketRef.current = null; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [businessId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

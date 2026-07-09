@@ -266,6 +266,12 @@ export const api = {
       body: JSON.stringify({ status, ...(notes !== undefined && { notes }) }),
     }),
 
+  rescheduleAppointment: (id: string, date: string, time: string) =>
+    request<import('@/types').Appointment>(`/appointments/${id}/reschedule`, {
+      method: 'PATCH',
+      body: JSON.stringify({ date, time }),
+    }),
+
   // ── Slots ─────────────────────────────────────────────────────────────────
   getSlots: async (businessId: string, date: string): Promise<string[]> => {
     const res = await request<{ success: boolean; slots: string[] }>(`/slots/${businessId}/${date}`);
@@ -307,7 +313,11 @@ export const api = {
     startTime: string;
     endTime: string;
     isAvailable?: boolean;
-  }) => request<{ success: boolean }>('/availability', { method: 'POST', body: JSON.stringify(data) }),
+    slotDuration?: number;
+  }) => request<import('@/types').Availability>('/availability', { method: 'POST', body: JSON.stringify(data) }),
+
+  deleteAvailability: (businessId: string, day: string) =>
+    request<{ success: boolean }>(`/availability/${businessId}/${encodeURIComponent(day)}`, { method: 'DELETE' }),
 
   // ── Test WhatsApp ─────────────────────────────────────────────────────────
   sendTestWhatsApp: (businessId: string, phone: string) =>

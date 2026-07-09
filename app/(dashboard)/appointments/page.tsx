@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
+import { io, Socket } from 'socket.io-client';
 import { useBusiness } from '@/contexts/business-context';
 import { api } from '@/lib/api';
 import { Appointment, Lead } from '@/types';
@@ -12,13 +13,16 @@ import {
   User,
   CheckCircle,
   XCircle,
-  LayoutGrid,
-  List,
-  Filter,
+  CalendarClock,
+  Settings2,
 } from 'lucide-react';
 import { cn, formatDate, getInitials, avatarColor } from '@/lib/utils';
 import { BookAppointmentModal } from './book-appointment-modal';
+import { RescheduleModal } from './reschedule-modal';
+import { AvailabilitySettingsModal } from './availability-settings-modal';
 import { Reveal } from '@/components/motion/reveal';
+
+const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
 
 type AptStatus = 'All' | 'Booked' | 'Completed' | 'Cancelled';
 
@@ -33,9 +37,11 @@ export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<'list' | 'calendar'>('list');
   const [statusFilter, setStatusFilter] = useState<AptStatus>('All');
   const [showBook, setShowBook] = useState(false);
+  const [showAvailability, setShowAvailability] = useState(false);
+  const [rescheduleTarget, setRescheduleTarget] = useState<Appointment | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
   const fetchData = async () => {
     if (!activeBusiness) return;
@@ -47,9 +53,7 @@ export default function AppointmentsPage() {
       ]);
       setAppointments(apts);
       setLeads(ls);
-    } catch {
-      //
-    } finally {
+    } catch { /* noop */ } finally {
       setLoading(false);
     }
   };
@@ -59,11 +63,31 @@ export default function AppointmentsPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeBusiness]);
 
+  // Live updates — refresh when any appointment is booked or rescheduled
+  useEffect(() => {
+    if (!activeBusiness) return;
+    const socket = io(SOCKET_URL, { transports: ['websocket', 'polling'] });
+    socketRef.current = socket;
+    socket.on('connect', () => socket.emit('join:business', activeBusiness._id));
+    socket.on('appointment:booked', fetchData);
+    socket.on('appointment:rescheduled', fetchData);
+    return () => {
+      socket.emit('leave:business', activeBusiness._id);
+      socket.disconnect();
+      socketRef.current = null;
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeBusiness]);
+
   const handleStatusUpdate = async (id: string, status: 'Booked' | 'Completed' | 'Cancelled') => {
     try {
       await api.updateAppointmentStatus(id, status);
       setAppointments((prev) => prev.map((a) => a._id === id ? { ...a, status } : a));
     } catch { /* noop */ }
+  };
+
+  const handleRescheduled = (updated: Appointment) => {
+    setAppointments((prev) => prev.map((a) => a._id === updated._id ? { ...a, ...updated } : a));
   };
 
   const getLeadName = (apt: Appointment): string => {
@@ -83,12 +107,8 @@ export default function AppointmentsPage() {
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const today = new Date();
-  const upcoming = filtered.filter(
-    (a) => a.status === 'Booked' && new Date(a.date) >= today
-  );
-  const past = filtered.filter(
-    (a) => a.status !== 'Booked' || new Date(a.date) < today
-  );
+  const upcoming = filtered.filter((a) => a.status === 'Booked' && new Date(a.date) >= today);
+  const past = filtered.filter((a) => a.status !== 'Booked' || new Date(a.date) < today);
 
   return (
     <div className="page-container">
@@ -100,10 +120,10 @@ export default function AppointmentsPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Link
-            href="/appointments/calendar"
-            className="btn-secondary"
-          >
+          <button onClick={() => setShowAvailability(true)} className="btn-secondary">
+            <Settings2 size={15} /> Availability
+          </button>
+          <Link href="/appointments/calendar" className="btn-secondary">
             <Calendar size={15} /> Calendar View
           </Link>
           <button onClick={() => setShowBook(true)} className="btn-primary">
@@ -145,19 +165,13 @@ export default function AppointmentsPage() {
         <div className="card p-12 text-center">
           <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-700 font-medium">No appointments found</p>
-          <p className="text-gray-400 text-sm mt-1">
-            Book your first appointment to get started
-          </p>
-          <button
-            onClick={() => setShowBook(true)}
-            className="btn-primary inline-flex mt-4 mx-auto"
-          >
+          <p className="text-gray-400 text-sm mt-1">Book your first appointment to get started</p>
+          <button onClick={() => setShowBook(true)} className="btn-primary inline-flex mt-4 mx-auto">
             <Plus size={15} /> Book Appointment
           </button>
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Upcoming */}
           {upcoming.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
@@ -172,14 +186,13 @@ export default function AppointmentsPage() {
                       phone={getLeadPhone(apt)}
                       leads={leads}
                       onStatusUpdate={handleStatusUpdate}
+                      onReschedule={() => setRescheduleTarget(apt)}
                     />
                   </Reveal>
                 ))}
               </div>
             </div>
           )}
-
-          {/* Past / Completed / Cancelled */}
           {past.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
@@ -194,6 +207,7 @@ export default function AppointmentsPage() {
                       phone={getLeadPhone(apt)}
                       leads={leads}
                       onStatusUpdate={handleStatusUpdate}
+                      onReschedule={() => setRescheduleTarget(apt)}
                     />
                   </Reveal>
                 ))}
@@ -211,6 +225,22 @@ export default function AppointmentsPage() {
           onBooked={fetchData}
         />
       )}
+
+      {showAvailability && activeBusiness && (
+        <AvailabilitySettingsModal
+          businessId={activeBusiness._id}
+          onClose={() => setShowAvailability(false)}
+        />
+      )}
+
+      {rescheduleTarget && activeBusiness && (
+        <RescheduleModal
+          appointment={rescheduleTarget}
+          businessId={activeBusiness._id}
+          onClose={() => setRescheduleTarget(null)}
+          onRescheduled={handleRescheduled}
+        />
+      )}
     </div>
   );
 }
@@ -221,19 +251,20 @@ function AppointmentCard({
   phone,
   leads,
   onStatusUpdate,
+  onReschedule,
 }: {
   apt: Appointment;
   name: string;
   phone: string;
   leads: Lead[];
   onStatusUpdate: (id: string, status: 'Booked' | 'Completed' | 'Cancelled') => void;
+  onReschedule: () => void;
 }) {
   const [updating, setUpdating] = useState(false);
   const cfg = STATUS_COLORS[apt.status] || STATUS_COLORS['Booked'];
   const aptDate = new Date(apt.date);
   const isToday = aptDate.toDateString() === new Date().toDateString();
-  const isTomorrow =
-    aptDate.toDateString() === new Date(Date.now() + 86400000).toDateString();
+  const isTomorrow = aptDate.toDateString() === new Date(Date.now() + 86400000).toDateString();
 
   const lead = leads.find((l) => {
     if (typeof apt.leadId === 'object') return (apt.leadId as Lead)._id === l._id;
@@ -247,33 +278,13 @@ function AppointmentCard({
   };
 
   return (
-    <div
-      className={cn(
-        'card p-4 flex items-center gap-4',
-        apt.status === 'Booked' && 'border-l-4 border-l-green-500'
-      )}
-    >
+    <div className={cn('card p-4 flex items-center gap-4', apt.status === 'Booked' && 'border-l-4 border-l-green-500')}>
       {/* Date block */}
-      <div
-        className={cn(
-          'w-14 h-14 rounded-2xl flex flex-col items-center justify-center flex-shrink-0',
-          apt.status === 'Booked' ? 'bg-green-50' : 'bg-gray-50'
-        )}
-      >
-        <p
-          className={cn(
-            'text-[10px] font-bold uppercase leading-none',
-            apt.status === 'Booked' ? 'text-green-600' : 'text-gray-400'
-          )}
-        >
+      <div className={cn('w-14 h-14 rounded-2xl flex flex-col items-center justify-center flex-shrink-0', apt.status === 'Booked' ? 'bg-green-50' : 'bg-gray-50')}>
+        <p className={cn('text-[10px] font-bold uppercase leading-none', apt.status === 'Booked' ? 'text-green-600' : 'text-gray-400')}>
           {aptDate.toLocaleDateString('en', { month: 'short' })}
         </p>
-        <p
-          className={cn(
-            'text-2xl font-bold leading-tight',
-            apt.status === 'Booked' ? 'text-green-600' : 'text-gray-500'
-          )}
-        >
+        <p className={cn('text-2xl font-bold leading-tight', apt.status === 'Booked' ? 'text-green-600' : 'text-gray-500')}>
           {aptDate.getDate()}
         </p>
       </div>
@@ -281,42 +292,18 @@ function AppointmentCard({
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <div
-            className={cn(
-              'w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0',
-              avatarColor(name)
-            )}
-          >
+          <div className={cn('w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0', avatarColor(name))}>
             {getInitials(name)}
           </div>
           <p className="font-semibold text-gray-900 truncate">{name}</p>
-          {isToday && (
-            <span className="text-[10px] font-bold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">
-              TODAY
-            </span>
-          )}
-          {isTomorrow && (
-            <span className="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
-              TOMORROW
-            </span>
-          )}
+          {isToday && <span className="text-[10px] font-bold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">TODAY</span>}
+          {isTomorrow && <span className="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">TOMORROW</span>}
         </div>
         <div className="flex items-center gap-3 text-sm text-gray-500">
-          <span className="flex items-center gap-1">
-            <Clock size={12} /> {apt.time}
-          </span>
-          {phone && (
-            <a
-              href={`tel:${phone}`}
-              className="text-gray-500 hover:text-blue-600 font-mono text-xs"
-            >
-              {phone}
-            </a>
-          )}
+          <span className="flex items-center gap-1"><Clock size={12} /> {apt.time}</span>
+          {phone && <a href={`tel:${phone}`} className="text-gray-500 hover:text-blue-600 font-mono text-xs">{phone}</a>}
         </div>
-        {apt.notes && (
-          <p className="text-xs text-gray-400 mt-1 truncate">{apt.notes}</p>
-        )}
+        {apt.notes && <p className="text-xs text-gray-400 mt-1 truncate">{apt.notes}</p>}
       </div>
 
       {/* Status + Actions */}
@@ -327,6 +314,13 @@ function AppointmentCard({
         </span>
         {apt.status === 'Booked' && (
           <>
+            <button
+              onClick={onReschedule}
+              disabled={updating}
+              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-lg transition-colors disabled:opacity-50"
+            >
+              <CalendarClock size={12} /> Reschedule
+            </button>
             <button
               onClick={() => handleUpdate('Completed')}
               disabled={updating}
@@ -353,10 +347,7 @@ function AppointmentCard({
           </button>
         )}
         {lead && (
-          <Link
-            href={`/leads/${lead._id}`}
-            className="p-1.5 rounded-lg text-gray-500 hover:text-purple-600 hover:bg-purple-50 transition-colors"
-          >
+          <Link href={`/leads/${lead._id}`} className="p-1.5 rounded-lg text-gray-500 hover:text-purple-600 hover:bg-purple-50 transition-colors">
             <User size={14} />
           </Link>
         )}
